@@ -1,0 +1,4 @@
+﻿variables:
+  Module.Name: GitWorktreeProjects
+  Module.ArtifactName: GitWorktreeProjects
+  Repository.ArtifactName: Repository

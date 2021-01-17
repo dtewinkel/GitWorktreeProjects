@@ -1,0 +1,83 @@
+﻿stages:
+- stage: build
+  displayName: Version and build
+  jobs:
+
+  - job: run_build
+    displayName: Build, publish GitWorktreeProjects Module
+    variables:
+      Module.Path: $(Module.Name)
+      Module.Tests.Path: $(Module.Name).Tests
+      Module.ArtifactPath: Modules/$(Module.Name)
+      Repository.Name: Local$(Module.Name)Repo
+      Repository.ArtifactPath: Repositories/$(Repository.Name)
+      CompanyName: Daniël te Winkel
+      Author: Daniël te Winkel
+      Pester.TestOutput: $(System.DefaultWorkingDirectory)/TestResults.Pester.xml
+      Pester.CoverageOutput: $(System.DefaultWorkingDirectory)/Coverage.Pester.xml
+    pool:
+      vmImage: windows-latest
+    steps:
+
+    - task: GitVersion@5
+      displayName: Determine Version using GitVersion
+      inputs:
+        configFilePath: GitVersion.yml
+
+    - task: PowerShell@2
+      displayName: Install required PowerShell modules
+      inputs:
+        filePath: deployment/pipelines/scripts/Install-Modules.ps1
+        pwsh: true
+
+    - task: PowerShell@2
+      displayName: Build GitWorktreeProjects module
+      inputs:
+        filePath: deployment/pipelines/scripts/Build-Module.ps1
+        arguments: -GitVersionJson $(GitVersion) -RepositoryName $(Repository.Name) -CleanupRepository
+        pwsh: true
+
+    - pwsh: |
+        Invoke-ScriptAnalyzer "$(Module.ArtifactPath)" -EnableExit -ExcludeRule PSReviewUnusedParameter
+      displayName: Run PowerShell ScriptAnalyzer
+
+    - pwsh: |
+        Import-Module Pester
+        $configuration = [PesterConfiguration]@{
+            TestResult = @{
+                Enabled = $true
+                OutputPath = '$(Pester.TestOutput)'
+            }
+            Output = @{
+                Verbosity = 'Detailed'
+            }
+            CodeCoverage = @{
+              Enabled = $true
+              Path = '../$(Module.ArtifactPath)/*.psm1', '../$(Module.ArtifactPath)/*-*.ps1'
+              OutputPath = '$(Pester.CoverageOutput)'
+            }
+        }
+        Invoke-Pester -Configuration $configuration
+      workingDirectory: $(Module.Tests.Path)
+      displayName: Run Pester Unit tests
+
+    - task: PublishTestResults@2
+      inputs:
+        testRunner: NUnit
+        testResultsFiles: $(Pester.TestOutput)
+        testRunTitle: Pester Unit Tests
+        failTaskOnFailedTests: true
+      displayName: Publish Pester Unit Test Results
+      condition: in(variables['Agent.JobStatus'], 'Succeeded', 'SucceededWithIssues', 'Failed')
+
+    - task: PublishCodeCoverageResults@1
+      inputs:
+        codeCoverageTool: JaCoCo
+        summaryFileLocation: $(Pester.CoverageOutput)
+        pathToSources: $(Module.ArtifactPath)
+      displayName: Publish Pester Unit Test Code Coverage
+      condition: in(variables['Agent.JobStatus'], 'Succeeded', 'SucceededWithIssues', 'Failed')
+
+    - publish: $(Repository.ArtifactPath)
+      artifact: $(Repository.ArtifactName)
+      displayName: Publish $(Repository.ArtifactName) Artifact
