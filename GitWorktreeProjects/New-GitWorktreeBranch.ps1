@@ -14,4 +14,4 @@
 	}
 }
 
-New-alias -Name ngwb Open-GitWorktreeBranch
+New-alias -Name ngwb New-GitWorktreeBranch
