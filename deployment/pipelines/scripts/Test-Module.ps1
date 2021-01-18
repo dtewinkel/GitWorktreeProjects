@@ -10,7 +10,7 @@ $testOutput = Join-Path $testOutputFolder TestResults.Pester.xml
 $coverageOutput = Join-Path $testOutputFolder Coverage.Pester.xml
 $reportGenerator = Join-Path $toolsFolder reportgenerator.exe
 
-Invoke-ScriptAnalyzer (Join-Path -Path $moduleFolder -ChildPath *.ps1) -ExcludeRule PSReviewUnusedParameter, PSShouldProcess, PSUseShouldProcessForStateChangingFunctions
+Invoke-ScriptAnalyzer (Join-Path -Path $moduleFolder -ChildPath *.ps1) -ExcludeRule PSReviewUnusedParameter, PSUseShouldProcessForStateChangingFunctions
 Invoke-ScriptAnalyzer $testFolder -Severity Error
 
 if(-not (Test-Path $reportGenerator))

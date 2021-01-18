@@ -38,7 +38,7 @@
         pwsh: true
 
     - pwsh: |
-        Invoke-ScriptAnalyzer "$(Module.ArtifactPath)" -EnableExit -ExcludeRule PSReviewUnusedParameter
+        Invoke-ScriptAnalyzer "$(Module.ArtifactPath)/*.ps1" -EnableExit -ExcludeRule PSReviewUnusedParameter, PSUseShouldProcessForStateChangingFunctions
       displayName: Run PowerShell ScriptAnalyzer
 
     - pwsh: |
