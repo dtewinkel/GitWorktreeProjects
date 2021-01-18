@@ -1,5 +1,5 @@
 ﻿#
-# Module manifest for module 'AzureCli'
+# Module manifest for module 'GitWorktreeProjects'
 #
 
 @{
