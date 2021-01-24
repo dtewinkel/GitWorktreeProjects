@@ -74,7 +74,7 @@
       inputs:
         codeCoverageTool: JaCoCo
         summaryFileLocation: $(Pester.CoverageOutput)
-        pathToSources: $(Module.ArtifactPath)/**
+        pathToSources: $(Module.ArtifactPath);$(Module.ArtifactPath)/Config;$(Module.ArtifactPath)/ArgumentCompleters
       displayName: Publish Pester Unit Test Code Coverage
       condition: in(variables['Agent.JobStatus'], 'Succeeded', 'SucceededWithIssues', 'Failed')
 
