@@ -26,9 +26,9 @@
 			throw "git not found!"
 		}
 
-		if (-not $Commitish -and -not $Path -and -not $Name)
+		if (-not $Commitish -and -not $Path -and -not $Name -and -not $NewBranch)
 		{
-			throw "At lease one of -Commitish, -Path and -Name must be given."
+			throw "At lease one of -Commitish, -Path, -NewBranch, and -Name must be given."
 		}
 	}
 
@@ -40,13 +40,13 @@
 		{
 			$Commitish = $projectConfig.MainBranch
 		}
-		if (-not $Name)
+		if (-not $Name -and $NewBranch)
 		{
 			$Name = $NewBranch
-			if (-not $Name)
-			{
-				$Name = $Commitish
-			}
+		}
+		if (-not $Name)
+		{
+			$Name = $Commitish
 		}
 		if (-not $Path)
 		{
@@ -74,12 +74,23 @@
 		{
 			git worktree add $branchPath $Commitish
 		}
-		Set-Location $branchPath
-		$branchInfo = [BranchInfo]::new()
-		$branchInfo.Name = $Name
-		$branchInfo.RelativePath = $Path
-		$projectConfig.Branches = $projectConfig.Branches + @($branchInfo)
-		SetProjectConfig -Project $Project -Config $projectConfig
+		if($LastExitCode -ne 0)
+		{
+			throw "Git failed with exit code ${LastExitCode}."
+		}
+		if (Test-Path $branchPath)
+		{
+			Set-Location $branchPath
+			$branchInfo = [BranchInfo]::new()
+			$branchInfo.Name = $Name
+			$branchInfo.RelativePath = $Path
+			$projectConfig.Branches = $projectConfig.Branches + @($branchInfo)
+			SetProjectConfig -Project $Project -Config $projectConfig
+		}
+		else
+		{
+			throw "Failed to create folder '${branchPath}'. Worktree not created"
+		}
 	}
 }
 
