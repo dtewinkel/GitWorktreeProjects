@@ -2,7 +2,7 @@
 {
 	[cmdletbinding()]
 	param(
-		[Parameter(Mandatory)]
+		[Parameter()]
 		[String] $DefaultRoot,
 
 		[Parameter()]
@@ -11,5 +11,6 @@
 
 	process
 	{
+		GetGlobalConfig -DefaultRootPath $DefaultRoot -DefaultBranch $DefaultBranch -SaveChanges
 	}
 }
