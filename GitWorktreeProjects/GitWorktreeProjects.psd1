@@ -25,7 +25,7 @@
 	Copyright         = 'Copyright © 2021, Daniël te Winkel. All rights reserved.'
 
 	# Description of the functionality provided by this module
-	Description       = 'Cmdlets to manage Git Worktree projects in a coinvniet way'
+	Description       = 'Cmdlets to manage Git Worktree projects in a convenient way.'
 
 	# Minimum version of the PowerShell engine required by this module
 	# PowerShellVersion = ''
