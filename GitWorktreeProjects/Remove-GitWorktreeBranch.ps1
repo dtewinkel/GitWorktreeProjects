@@ -6,7 +6,10 @@
 		[String] $Project,
 
 		[Parameter(Mandatory)]
-		[String] $Branch
+		[String] $Branch,
+
+		[Parameter()]
+		[Switch] $Force
 	)
 
 	process
@@ -31,7 +34,20 @@
 		try
 		{
 			Set-Location $gitPath
-			git worktree remove $branchInfo.RelativePath
+			$forceParameter = @()
+			if($Force.IsPresent)
+			{
+				$forceParameter = @('--force')
+			}
+			git worktree remove @forceParameter $branchInfo.RelativePath
+			if($LastExitCode -ne 0)
+			{
+				throw "Git failed with exit code ${LastExitCode}."
+			}
+			if (Test-Path $branchPath)
+			{
+				throw "failed to remove folder '${branchPath}'."
+			}
 			if ($config.Branches.Length -eq 1)
 			{
 				$config.Branches = $null
