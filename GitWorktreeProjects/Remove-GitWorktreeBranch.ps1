@@ -40,6 +40,7 @@
 			{
 				$config.Branches = $config.Branches | Where-Object Name -NE $Branch
 			}
+			SetProjectConfig -Project $Project -Config $config
 		}
 		finally
 		{
