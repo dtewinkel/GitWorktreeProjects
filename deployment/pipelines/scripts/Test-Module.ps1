@@ -48,5 +48,5 @@ finally
 	Pop-Location
 }
 
-& $reportGenerator "-targetdir:${testOutputFolder}" "-reports:${coverageOutput}" "-sourcedirs:${moduleFolder}" -verbosity:warning
+& $reportGenerator "-targetdir:${testOutputFolder}" "-reports:${coverageOutput}" "-sourcedirs:${moduleFolder};${moduleFolder}/Config;${moduleFolder}/ArgumentCompleters" -verbosity:warning
 Write-Host "Coverage report written to ${testOutputFolder}\index.htm"
