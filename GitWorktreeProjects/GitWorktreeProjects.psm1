@@ -1,4 +1,4 @@
-﻿Get-ChildItem (Join-Path $PSScriptRoot Types *.ps1) | ForEach-Object FullName | Resolve-Path | Import-Module
+﻿Get-ChildItem (Join-Path $PSScriptRoot Config *.ps1) | ForEach-Object FullName | Resolve-Path | Import-Module
 Get-ChildItem (Join-Path $PSScriptRoot ArgumentCompleters *.ps1) | ForEach-Object FullName | Resolve-Path | Import-Module
 Get-ChildItem (Join-Path $PSScriptRoot *.ps1) | ForEach-Object FullName | Resolve-Path | Import-Module
 
