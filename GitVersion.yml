@@ -4,5 +4,5 @@ continuous-delivery-fallback-tag: ''
 next-version: 1.0.0
 branches:
   master:
-    regex: ^master$|^main$
+    regex: ^main$
     increment: Minor
