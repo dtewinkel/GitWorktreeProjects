@@ -6,10 +6,7 @@
 		[String] $Project,
 
 		[Parameter(Mandatory)]
-		[String] $Branch,
-
-		[Parameter()]
-		[Switch] $NoTools
+		[String] $Branch
 	)
 
 	process
