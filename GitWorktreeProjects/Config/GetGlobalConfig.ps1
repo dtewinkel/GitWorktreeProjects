@@ -7,7 +7,7 @@ function GetGlobalConfig
 		[String] $DefaultRootPath,
 
 		[Parameter()]
-		[String] $DefaultMainBranch,
+		[String] $DefaultBranch,
 
 		[Parameter()]
 		[Switch] $SaveChanges
@@ -16,10 +16,16 @@ function GetGlobalConfig
 	process
 	{
 		$globalConfigFileName = "configuration.json"
-		$configFilePath = Join-Path -Path ${HOME} -ChildPath .gitworktree -AdditionalChildPath $globalConfigFileName
-		if (Test-Path $configFilePath)
+		$configFilePath = $env:GitWorktreeConfigPath
+		if(-not $configFilePath)
 		{
-			$config = [GlobalConfig](Get-Content -Path $configFilePath | ConvertFrom-Json)
+			$configFilePath = Join-Path -Path ${HOME} -ChildPath .gitworktree
+		}
+		$configFile = Join-Path -Path $configFilePath -ChildPath $globalConfigFileName
+
+		if (Test-Path -Path $configFile)
+		{
+			$config = [GlobalConfig](Get-Content -Path $configFile | ConvertFrom-Json)
 		}
 		else
 		{
@@ -29,20 +35,20 @@ function GetGlobalConfig
 
 		if ($DefaultRootPath)
 		{
-			if (-not (Test-Path $DefaultRootPath))
+			if (-not (Test-Path -Path $DefaultRootPath))
 			{
 				throw "DefaultRootPath '${DefaultRootPath}' must exist!"
 			}
 			$config.DefaultRootPath = $DefaultRootPath
 		}
-		if ($DefaultMainBranch)
+		if ($DefaultBranch)
 		{
-			$config.DefaultMainBranch = $DefaultMainBranch
+			$config.DefaultMainBranch = $DefaultBranch
 		}
 
 		if ($SaveChanges.IsPresent)
 		{
-			$config | ConvertTo-Json | Out-File -FilePath $configFilePath -Encoding utf8BOM
+			$config | ConvertTo-Json | Out-File -FilePath $configFile -Encoding utf8BOM
 		}
 
 		$config
