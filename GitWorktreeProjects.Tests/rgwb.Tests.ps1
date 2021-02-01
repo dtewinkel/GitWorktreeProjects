@@ -1,8 +1,10 @@
 ﻿Describe "rgwb" {
 
-	It "should be an alias of Remove-GitWorktreeBranch" {
-
+	BeforeAll {
 		. $PSScriptRoot/Helpers/LoadModule.ps1
+	}
+
+	It "should be an alias of Remove-GitWorktreeBranch" {
 
 		$alias = Get-Alias rgwb
 

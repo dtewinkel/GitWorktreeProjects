@@ -1,8 +1,10 @@
 ﻿Describe "ogwb" {
 
-	It "should be an alias of Open-GitWorktreeBranch" {
-
+	BeforeAll {
 		. $PSScriptRoot/Helpers/LoadModule.ps1
+	}
+
+	It "should be an alias of Open-GitWorktreeBranch" {
 
 		$alias = Get-Alias ogwb
 
