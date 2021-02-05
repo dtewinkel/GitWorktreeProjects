@@ -4,5 +4,8 @@
 }
 else
 {
-	Remove-Item $env:GitWorktreeConfigPath
+	if($env:GitWorktreeConfigPath)
+	{
+		Remove-Item env:GitWorktreeConfigPath
+	}
 }

@@ -25,11 +25,11 @@
 		{
 			throw "git not found!"
 		}
+		Push-Location
 	}
 
 	process
 	{
-		Push-Location
 		$projectConfig = GetProjectConfig -Project $Project -ErrorAction SilentlyContinue
 		if($projectConfig)
 		{
@@ -43,24 +43,22 @@
 		{
 			throw "Folder ${projectPath} must not yet exist!"
 		}
-		try
-		{
-			$gitPath = Join-Path $projectPath .gitworktree
-			$null = mkdir $projectPath
-			$null = Set-Location $projectPath
-			git clone $Repository $gitPath
-			Set-Location $gitPath
-			git checkout -b bare $MainBranch
+		$gitPath = Join-Path $projectPath .gitworktree
+		$null = mkdir $projectPath
+		$null = Set-Location $projectPath
+		git clone $Repository $gitPath
+		Set-Location $gitPath
+		git checkout -b bare $MainBranch
 
-			$config = [ProjectConfig]::new()
-			$config.RootPath = $projectPath
-			$config.MainBranch = $MainBranch
-			$config.GitPath = $gitPath
-			SetProjectConfig -Project $Project -Config $config
-		}
-		finally
-		{
-			Pop-Location
-		}
+		$config = [ProjectConfig]::new()
+		$config.RootPath = $projectPath
+		$config.MainBranch = $MainBranch
+		$config.GitPath = $gitPath
+		SetProjectConfig -Project $Project -Config $config
+	}
+
+	end
+	{
+		Pop-Location
 	}
 }

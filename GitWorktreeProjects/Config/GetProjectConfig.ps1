@@ -9,13 +9,7 @@ function GetProjectConfig
 
 	process
 	{
-		$projectConfigFileName = "${Project}.project"
-		$configFilePath = $env:GitWorktreeConfigPath
-		if(-not $configFilePath)
-		{
-			$configFilePath = Join-Path -Path ${HOME} -ChildPath .gitworktree
-		}
-		$configFile = Join-Path -Path $configFilePath -ChildPath $projectConfigFileName
+		$configFile = GetConfigFilePath -ChildPath "${Project}.project"
 		if (-not (Test-Path $configFile))
 		{
 			throw "Project Config File '${configFile}' for project '${Project}' not found! Use New-GitWorktreeProject to create it."

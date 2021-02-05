@@ -13,13 +13,10 @@ BeforeAll {
 
 Describe "Set-GitWorktreeConfig" {
 
-	BeforeAll {
-		. $PSScriptRoot/Helpers/SetGitWorktreeConfigPath.ps1
-	}
-
 	Context "Without Default configuration" {
 
 		BeforeAll {
+			. $PSScriptRoot/Helpers/SetGitWorktreeConfigPath.ps1
 			$expectedFile = Join-Path $env:GitWorktreeConfigPath configuration.json
 		}
 

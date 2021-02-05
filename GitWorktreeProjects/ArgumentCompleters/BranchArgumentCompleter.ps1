@@ -3,7 +3,7 @@
 	$Project = $fakeBoundParameters.Project
 	if ($Project)
 	{
-		$configFile = Join-Path -Path ${HOME} -ChildPath .gitworktree -AdditionalChildPath "${Project}.project"
+		$configFile = GetConfigFilePath -ChildPath "${Project}.project"
 		if (Test-Path $configFile)
 		{
 			((Get-Content $configFile | ConvertFrom-Json).Branches | Where-Object Name -Like "*${wordToComplete}*").Name

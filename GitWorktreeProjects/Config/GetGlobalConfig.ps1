@@ -15,13 +15,7 @@ function GetGlobalConfig
 
 	process
 	{
-		$globalConfigFileName = "configuration.json"
-		$configFilePath = $env:GitWorktreeConfigPath
-		if(-not $configFilePath)
-		{
-			$configFilePath = Join-Path -Path ${HOME} -ChildPath .gitworktree
-		}
-		$configFile = Join-Path -Path $configFilePath -ChildPath $globalConfigFileName
+		$configFile = GetConfigFilePath -ChildPath "configuration.json"
 
 		if (Test-Path -Path $configFile)
 		{
