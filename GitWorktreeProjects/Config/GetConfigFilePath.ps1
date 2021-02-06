@@ -14,7 +14,7 @@ function GetConfigFilePath
 		{
 			$configFilePath = Join-Path -Path ${HOME} -ChildPath .gitworktree
 		}
-		if(ChildPath)
+		if($ChildPath)
 		{
 			Join-Path -Path $configFilePath -ChildPath $ChildPath
 		}
