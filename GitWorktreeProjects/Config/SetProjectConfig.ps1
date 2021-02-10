@@ -6,12 +6,12 @@ function SetProjectConfig
 		[String] $Project,
 
 		[Parameter()]
-		[ProjectConfig] $Config
+		[ProjectConfig] $ProjectConfig
 	)
 
 	process
 	{
-		$configFilePath = Join-Path -Path ${HOME} -ChildPath .gitworktree -AdditionalChildPath "${Project}.project"
-		$config | ConvertTo-Json | Out-File $configFilePath -Encoding utf8BOM
+		$configFilePath = GetConfigFilePath -ChildPath "${Project}.project"
+		$ProjectConfig | ConvertTo-Json | Out-File $configFilePath -Encoding utf8BOM
 	}
 }

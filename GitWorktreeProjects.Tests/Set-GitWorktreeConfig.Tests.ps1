@@ -4,10 +4,10 @@ BeforeAll {
 	. $PSScriptRoot/Helpers/LoadModule.ps1
 
 	$defaultRootPath = 'c:\myExcelentProjects'
-	$defaultBranch = 'greatest'
+	$defaultSourceBranch = 'greatest'
 	$defaultConfiguration = @{
 		DefaultRootPath = $defaultRootPath
-		DefaultMainBranch = $defaultBranch
+		DefaultSourceBranch = $defaultSourceBranch
 	}
 }
 
@@ -23,13 +23,13 @@ Describe "Set-GitWorktreeConfig" {
 		It "should create the config if it doesn't exist" {
 
 			$expectedDefaultRoot = "${TestDrive}"
-			$expectedBranch = "testing"
+			$expectedBranch = "testing-1"
 			Mock Test-Path { $false } -ParameterFilter { $Path -eq $expectedFile } -Verifiable
 			Mock Test-Path { $true } -ParameterFilter { $Path -eq $expectedDefaultRoot } -Verifiable
 			Mock Write-Warning {} -ParameterFilter { $Message -eq "Creating Default configuration." } -Verifiable
 			$config = Set-GitWorktreeConfig -DefaultRoot $expectedDefaultRoot -DefaultBranch $expectedBranch
 			$config.DefaultRootPath | Should -Be $expectedDefaultRoot
-			$config.DefaultMainBranch | Should -Be $expectedBranch
+			$config.DefaultSourceBranch | Should -Be $expectedBranch
 			Should -InvokeVerifiable
 			Should -Invoke Out-File -Times 1 -ParameterFilter { $FilePath -eq $expectedFile -and $Encoding -eq "utf8BOM" }
 		}
@@ -37,7 +37,7 @@ Describe "Set-GitWorktreeConfig" {
 		It "should fail if DefaultRoot does not exist" {
 
 			$expectedDefaultRoot = "${TestDrive}"
-			$expectedBranch = "testing"
+			$expectedBranch = "testing-2"
 			Mock Test-Path { $false } -ParameterFilter { $Path -eq $expectedFile } -Verifiable
 			Mock Test-Path { $false } -ParameterFilter { $Path -eq $expectedDefaultRoot } -Verifiable
 			Mock Write-Warning {} -ParameterFilter { $Message -eq "Creating Default configuration." } -Verifiable
@@ -55,7 +55,7 @@ Describe "Set-GitWorktreeConfig" {
 			Mock ConvertFrom-Json { $defaultConfiguration } -ParameterFilter { $InputObject -eq $mockedContent }
 			$config = Set-GitWorktreeConfig
 			$config.DefaultRootPath | Should -Be $defaultRootPath
-			$config.DefaultMainBranch | Should -Be $defaultBranch
+			$config.DefaultSourceBranch | Should -Be $defaultSourceBranch
 			Should -InvokeVerifiable
 		}
 
@@ -74,13 +74,13 @@ Describe "Set-GitWorktreeConfig" {
 
 		It "should create the config if it doesn't exist" {
 			$expectedDefaultRoot = "${TestDrive}"
-			$expectedBranch = "testing"
+			$expectedBranch = "testing-a"
 			Mock Test-Path { $false } -ParameterFilter { $Path -eq $expectedFile } -Verifiable
 			Mock Test-Path { $true } -ParameterFilter { $Path -eq $expectedDefaultRoot } -Verifiable
 			Mock Write-Warning {} -ParameterFilter { $Message -eq "Creating Default configuration." } -Verifiable
 			$config = Set-GitWorktreeConfig -DefaultRoot $expectedDefaultRoot -DefaultBranch $expectedBranch
 			$config.DefaultRootPath | Should -Be $expectedDefaultRoot
-			$config.DefaultMainBranch | Should -Be $expectedBranch
+			$config.DefaultSourceBranch | Should -Be $expectedBranch
 			Should -InvokeVerifiable
 			Should -Invoke Out-File -Times 1 -ParameterFilter { $FilePath -eq $expectedFile -and $Encoding -eq "utf8BOM" }
 		}
@@ -88,7 +88,7 @@ Describe "Set-GitWorktreeConfig" {
 		It "should fail if DefaultRoot does not exist" {
 
 			$expectedDefaultRoot = "${TestDrive}"
-			$expectedBranch = "testing"
+			$expectedBranch = "testing-b"
 			Mock Test-Path { $false } -ParameterFilter { $Path -eq $expectedFile } -Verifiable
 			Mock Test-Path { $false } -ParameterFilter { $Path -eq $expectedDefaultRoot } -Verifiable
 			Mock Write-Warning {} -ParameterFilter { $Message -eq "Creating Default configuration." } -Verifiable
@@ -106,7 +106,7 @@ Describe "Set-GitWorktreeConfig" {
 			Mock ConvertFrom-Json { $defaultConfiguration } -ParameterFilter { $InputObject -eq $mockedContent }
 			$config = Set-GitWorktreeConfig
 			$config.DefaultRootPath | Should -Be $defaultRootPath
-			$config.DefaultMainBranch | Should -Be $defaultBranch
+			$config.DefaultSourceBranch | Should -Be $defaultSourceBranch
 			Should -InvokeVerifiable
 		}
 

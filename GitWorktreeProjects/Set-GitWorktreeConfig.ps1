@@ -11,6 +11,6 @@
 
 	process
 	{
-		GetGlobalConfig -DefaultRootPath $DefaultRoot -DefaultBranch $DefaultBranch -SaveChanges
+		GetGlobalConfig -DefaultRootPath $DefaultRoot -DefaultSourceBranch $DefaultBranch -SaveChanges
 	}
 }

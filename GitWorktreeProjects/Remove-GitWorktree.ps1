@@ -1,4 +1,4 @@
-﻿function Remove-GitWorktreeBranch
+﻿function Remove-GitWorktree
 {
 	[cmdletbinding()]
 	param(
@@ -6,7 +6,7 @@
 		[String] $Project,
 
 		[Parameter(Mandatory)]
-		[String] $Branch,
+		[String] $Worktree,
 
 		[Parameter()]
 		[Switch] $Force
@@ -15,15 +15,15 @@
 	process
 	{
 		$config = GetProjectConfig -Project $Project
-		$branchInfo = $config.Branches | Where-Object Name -EQ $Branch
-		if (-not $branchInfo)
+		$worktree = $config.worktrees | Where-Object Name -EQ $Worktree
+		if (-not $worktree)
 		{
-			throw "Branch '${Branch}' not found in project configuration!"
+			throw "Worktree '${Worktree}' not found in project configuration!"
 		}
-		$branchPath = Join-Path $config.RootPath $branchInfo.RelativePath
-		if (-not (Test-Path $branchPath))
+		$worktreePath = Join-Path $config.RootPath $worktree.RelativePath
+		if (-not (Test-Path $worktreePath))
 		{
-			throw "Branch Path '${branchPath} not found"
+			throw "Branch Path '${worktreePath} not found"
 		}
 		$gitPath = $config.GitPath
 		if (-not (Test-Path $gitPath))
@@ -48,13 +48,13 @@
 			{
 				throw "failed to remove folder '${branchPath}'."
 			}
-			if ($config.Branches.Length -eq 1)
+			if ($config.Worktrees.Length -eq 1)
 			{
-				$config.Branches = $null
+				$config.Worktrees = $null
 			}
 			else
 			{
-				$config.Branches = $config.Branches | Where-Object Name -NE $Branch
+				$config.Worktrees = $config.Worktrees | Where-Object Name -NE $Worktree
 			}
 			SetProjectConfig -Project $Project -Config $config
 		}
@@ -65,7 +65,7 @@
 	}
 }
 
-Register-ArgumentCompleter -CommandName Remove-GitWorktreeBranch -ParameterName Project -ScriptBlock ${function:ProjectArgumentCompleter}
-Register-ArgumentCompleter -CommandName Remove-GitWorktreeBranch -ParameterName Branch -ScriptBlock ${function:BranchArgumentCompleter}
+Register-ArgumentCompleter -CommandName Remove-GitWorktree -ParameterName Project -ScriptBlock ${function:ProjectArgumentCompleter}
+Register-ArgumentCompleter -CommandName Remove-GitWorktree -ParameterName Branch -ScriptBlock ${function:WorktreeArgumentCompleter}
 
-New-Alias -Name rgwb Remove-GitWorktreeBranch
+New-Alias -Name rgw Remove-GitWorktree

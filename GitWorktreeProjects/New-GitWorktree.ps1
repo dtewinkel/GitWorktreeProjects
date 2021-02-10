@@ -5,60 +5,96 @@
 		[Parameter(Mandatory)]
 		[String] $Project,
 
-		[Parameter(Mandatory)]
-		[String] $Repository,
+		[Parameter()]
+		[String] $Commitish,
 
 		[Parameter()]
-		[String] $TargetPath,
+		[String] $NewBranch,
 
 		[Parameter()]
-		[String] $MainBranch,
+		[String] $Name,
 
 		[Parameter()]
-		[Switch] $Force
+		[String] $Path
 	)
 
 	begin
 	{
 		$git = Get-Command git
-		if(-not $git)
+		if (-not $git)
 		{
 			throw "git not found!"
 		}
-		Push-Location
+
+		if (-not $Commitish -and -not $Path -and -not $Name -and -not $NewBranch)
+		{
+			throw "At lease one of -Commitish, -Path, -NewBranch, and -Name must be given."
+		}
 	}
 
 	process
 	{
-		$projectConfig = GetProjectConfig -Project $Project -ErrorAction SilentlyContinue
-		if($projectConfig)
-		{
-			throw "Project '${Project}' already exists"
-		}
-		$globalConfig = GetGlobalConfig -DefaultRootPath $TargetPath -DefaultMainBranch $MainBranch
-		$TargetPath = $globalConfig.DefaultRootPath
-		$MainBranch = $globalConfig.DefaultMainBranch
-		$projectPath = Join-Path $TargetPath $Project
-		if((Test-Path $projectPath) -and -not $Force.IsPresent)
-		{
-			throw "Folder ${projectPath} must not yet exist!"
-		}
-		$gitPath = Join-Path $projectPath .gitworktree
-		$null = mkdir $projectPath
-		$null = Set-Location $projectPath
-		git clone $Repository $gitPath
-		Set-Location $gitPath
-		git checkout -b bare $MainBranch
+		$projectConfig = GetProjectConfig -Project $Project
 
-		$config = [ProjectConfig]::new()
-		$config.RootPath = $projectPath
-		$config.MainBranch = $MainBranch
-		$config.GitPath = $gitPath
-		SetProjectConfig -Project $Project -Config $config
-	}
+		if (-not $Commitish)
+		{
+			$Commitish = $projectConfig.SourceBranch
+		}
+		if (-not $Name -and $NewBranch)
+		{
+			$Name = $NewBranch
+		}
+		if (-not $Name)
+		{
+			$Name = $Commitish
+		}
+		if (-not $Path)
+		{
+			$Path = $Name
+		}
 
-	end
-	{
-		Pop-Location
+		$branchInfo = $projectConfig.Branches | Where-Object Name -EQ $Name
+		if ($branchInfo)
+		{
+			throw "Branch with name '${Name}' already exists!"
+		}
+
+		Set-Location -Path $projectConfig.GitPath
+		$branchPath = Join-Path $projectConfig.RootPath $Path
+		if (Test-Path $branchPath)
+		{
+			throw "Path '${branchPath}' already exists!"
+		}
+
+		if ($NewBranch)
+		{
+			git worktree add -b $NewBranch $branchPath $Commitish
+		}
+		else
+		{
+			git worktree add $branchPath $Commitish
+		}
+		if($LastExitCode -ne 0)
+		{
+			throw "Git failed with exit code ${LastExitCode}."
+		}
+		if (Test-Path $branchPath)
+		{
+			Set-Location $branchPath
+			$branchInfo = [BranchInfo]::new()
+			$branchInfo.Name = $Name
+			$branchInfo.InitialCommitish = $Commitish
+			$branchInfo.RelativePath = $Path
+			$projectConfig.Branches = $projectConfig.Branches + @($branchInfo)
+			SetProjectConfig -Project $Project -Config $projectConfig
+		}
+		else
+		{
+			throw "Failed to create folder '${branchPath}'. Worktree not created"
+		}
 	}
 }
+
+Register-ArgumentCompleter -CommandName New-GitWorktree -ParameterName Project -ScriptBlock ${function:ProjectArgumentCompleter}
+
+New-Alias -Name ngw New-GitWorktree

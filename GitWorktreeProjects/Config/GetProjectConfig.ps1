@@ -14,6 +14,6 @@ function GetProjectConfig
 		{
 			throw "Project Config File '${configFile}' for project '${Project}' not found! Use New-GitWorktreeProject to create it."
 		}
-		[ProjectConfig](Get-Content -Path $configFile | ConvertFrom-Json)
+		[ProjectConfig]::FromJsonFile($configFile)
 	}
 }

@@ -18,19 +18,19 @@ Global configuration and configuration where projects can be found is stored in 
 
 The following cmdlets are supported:
 
-### New-GitWorktree
+### New-GitWorktreeProject
 
 Creates a new Git Worktree project based on a git remote repository. Checks out the repository and the initial branch (defaults to main).
 
-### New-GitWorktreeBranch
+### New-GitWorktree
 
 Creates a new branch in a Git Worktree project.
 
-### Open-GitWorktreeBranch
+### Open-GitWorktree
 
 opens a Git Worktree project for a given branch.
 
-### Remove-GitWorktreeBranch
+### Remove-GitWorktree
 
 Removes a branch for a Git Worktree project.
 

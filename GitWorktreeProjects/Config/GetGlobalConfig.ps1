@@ -7,7 +7,7 @@ function GetGlobalConfig
 		[String] $DefaultRootPath,
 
 		[Parameter()]
-		[String] $DefaultBranch,
+		[String] $DefaultSourceBranch,
 
 		[Parameter()]
 		[Switch] $SaveChanges
@@ -19,7 +19,7 @@ function GetGlobalConfig
 
 		if (Test-Path -Path $configFile)
 		{
-			$config = [GlobalConfig](Get-Content -Path $configFile | ConvertFrom-Json)
+			$config = [GlobalConfig]::FromJsonFile($configFile)
 		}
 		else
 		{
@@ -35,9 +35,9 @@ function GetGlobalConfig
 			}
 			$config.DefaultRootPath = $DefaultRootPath
 		}
-		if ($DefaultBranch)
+		if ($DefaultSourceBranch)
 		{
-			$config.DefaultMainBranch = $DefaultBranch
+			$config.DefaultSourceBranch = $DefaultSourceBranch
 		}
 
 		if ($SaveChanges.IsPresent)
