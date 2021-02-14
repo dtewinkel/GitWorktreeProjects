@@ -26,43 +26,29 @@
         configFilePath: GitVersion.yml
 
     - task: PowerShell@2
-      displayName: Install required PowerShell modules
+      displayName: Install required PowerShell modules and other tools
       inputs:
-        filePath: deployment/pipelines/scripts/Install-Modules.ps1
+        filePath: deployment/pipelines/scripts/Configure.ps1
         pwsh: true
 
     - task: PowerShell@2
       displayName: Build GitWorktreeProjects module
       inputs:
-        filePath: deployment/pipelines/scripts/Build-Module.ps1
-        arguments: -GitVersionJson $(GitVersion) -RepositoryName $(Repository.Name) -CleanupRepository
+        filePath: deployment/pipelines/scripts/Build.ps1
+        arguments: -GitVersionJson $(GitVersion)
         pwsh: true
 
-    - pwsh: |
-        Invoke-ScriptAnalyzer "$(Module.ArtifactPath)/*.ps1" -EnableExit -ExcludeRule PSReviewUnusedParameter, PSUseShouldProcessForStateChangingFunctions
-      displayName: Run PowerShell ScriptAnalyzer
+    - task: PowerShell@2
+      displayName: Run ScriptAnalyzer
+      inputs:
+        filePath: deployment/pipelines/scripts/AnalyzeScripts.ps1
+        pwsh: true
 
-    - pwsh: |
-        Import-Module Pester
-        $configuration = [PesterConfiguration]@{
-            TestResult = @{
-                Enabled = $true
-                OutputPath = '$(Pester.TestOutput)'
-            }
-            Output = @{
-                Verbosity = 'Detailed'
-            }
-            CodeCoverage = @{
-              Enabled = $true
-              Path = '../$(Module.ArtifactPath)/*.psm1', '../$(Module.ArtifactPath)/*-*.ps1', '../$(Module.ArtifactPath)/*/*.ps1'
-              OutputPath = '$(Pester.CoverageOutput)'
-            }
-        }
-        Invoke-Pester -Configuration $configuration
-        $modulePaths = (dir "$(Modules.Path)" -Directory -Recurse).FullName -join ';'
-        Write-Host "##vso[task.setvariable variable=ModulePaths]${modulePaths}"
-      workingDirectory: $(Module.Tests.Path)
-      displayName: Run Pester Unit tests
+    - task: PowerShell@2
+      displayName: Run Pester Unit Tests
+      inputs:
+        filePath: deployment/pipelines/scripts/Test.ps1
+        pwsh: true
 
     - task: PublishTestResults@2
       inputs:
@@ -72,6 +58,12 @@
         failTaskOnFailedTests: true
       displayName: Publish Pester Unit Test Results
       condition: in(variables['Agent.JobStatus'], 'Succeeded', 'SucceededWithIssues', 'Failed')
+
+    - pwsh: |
+        $modulePaths = (dir "$(Modules.Path)" -Directory -Recurse).FullName -join ';'
+        Write-Host "Setting ModulePaths based on '$(Modules.Path)' to '${modulePaths}'."
+        Write-Host "##vso[task.setvariable variable=ModulePaths]${modulePaths}"
+      displayName: Determine module paths
 
     - task: PublishCodeCoverageResults@1
       inputs:
