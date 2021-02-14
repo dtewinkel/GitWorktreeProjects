@@ -2,22 +2,26 @@
 
 param(
 	[Parameter()]
-	[String] $RootPath = (Resolve-Path (Join-Path $PSScriptRoot '..' '..', '..'))
+	[String] $RootPath = (Resolve-Path (Join-Path $PSScriptRoot '..' '..', '..')),
+
+	[Parameter()]
+	[String] $TestOutput = (Join-Path $RootPath TestResults TestResults.Pester.xml),
+
+	[Parameter()]
+	[String] $CoverageOutput = (Join-Path $RootPath TestResults Coverage.Pester.xml)
 )
 
 $modulesFolder = Join-Path $RootPath Modules
 $moduleFolder = Join-Path $modulesFolder GitWorktreeProjects
 $testFolder = Join-Path $RootPath GitWorktreeProjects.Tests
 $testOutputFolder = Join-Path $RootPath TestResults
-$testOutput = Join-Path $testOutputFolder TestResults.Pester.xml
-$coverageOutput = Join-Path $testOutputFolder Coverage.Pester.xml
 
 Import-Module Pester
 
 $configuration = [PesterConfiguration]@{
 		TestResult = @{
 				Enabled = $true
-				OutputPath = $testOutput
+				OutputPath = $TestOutput
 		}
 		Output = @{
 				Verbosity = 'Detailed'
@@ -25,7 +29,7 @@ $configuration = [PesterConfiguration]@{
 		CodeCoverage = @{
 			Enabled = $true
 			Path = "${moduleFolder}/*.psm1", "${moduleFolder}/*-*.ps1", "${moduleFolder}/*/*.ps1"
-			OutputPath = $coverageOutput
+			OutputPath = $CoverageOutput
 		}
 }
 

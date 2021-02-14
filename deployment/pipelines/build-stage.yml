@@ -6,14 +6,9 @@
   - job: run_build
     displayName: Build, publish GitWorktreeProjects Module
     variables:
-      Module.Path: $(Module.Name)
-      Module.Tests.Path: $(Module.Name).Tests
       Modules.Path: Modules
-      Module.ArtifactPath: Modules/$(Module.Name)
       Repository.Name: Local$(Module.Name)Repo
       Repository.ArtifactPath: Repositories/$(Repository.Name)
-      CompanyName: Daniël te Winkel
-      Author: Daniël te Winkel
       Pester.TestOutput: $(System.DefaultWorkingDirectory)/TestResults.Pester.xml
       Pester.CoverageOutput: $(System.DefaultWorkingDirectory)/Coverage.Pester.xml
     pool:
@@ -48,6 +43,7 @@
       displayName: Run Pester Unit Tests
       inputs:
         filePath: deployment/pipelines/scripts/Test.ps1
+        arguments: -TestOutput '$(Pester.TestOutput)' -CoverageOutput '$(Pester.CoverageOutput)'
         pwsh: true
 
     - task: PublishTestResults@2
