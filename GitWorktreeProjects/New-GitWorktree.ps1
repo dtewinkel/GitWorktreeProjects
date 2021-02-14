@@ -53,7 +53,7 @@
 			$Path = $Name
 		}
 
-		$branchInfo = $projectConfig.Branches | Where-Object Name -EQ $Name
+		$branchInfo = $projectConfig.Worktrees | Where-Object Name -EQ $Name
 		if ($branchInfo)
 		{
 			throw "Branch with name '${Name}' already exists!"
@@ -85,7 +85,7 @@
 			$branchInfo.Name = $Name
 			$branchInfo.InitialCommitish = $Commitish
 			$branchInfo.RelativePath = $Path
-			$projectConfig.Branches = $projectConfig.Branches + @($branchInfo)
+			$projectConfig.Worktrees = $projectConfig.Worktrees + @($branchInfo)
 			SetProjectConfig -Project $Project -Config $projectConfig
 		}
 		else

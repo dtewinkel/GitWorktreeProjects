@@ -11,7 +11,7 @@ BeforeAll {
 	}
 }
 
-Describe "Set-GitWorktreeConfig" {
+Describe "Set-GitWorktreeDefaults" {
 
 	Context "Without Default configuration" {
 
@@ -27,7 +27,7 @@ Describe "Set-GitWorktreeConfig" {
 			Mock Test-Path { $false } -ParameterFilter { $Path -eq $expectedFile } -Verifiable
 			Mock Test-Path { $true } -ParameterFilter { $Path -eq $expectedDefaultRoot } -Verifiable
 			Mock Write-Warning {} -ParameterFilter { $Message -eq "Creating Default configuration." } -Verifiable
-			$config = Set-GitWorktreeConfig -DefaultRoot $expectedDefaultRoot -DefaultBranch $expectedBranch
+			$config = Set-GitWorktreeDefaults -DefaultRoot $expectedDefaultRoot -DefaultBranch $expectedBranch
 			$config.DefaultRootPath | Should -Be $expectedDefaultRoot
 			$config.DefaultSourceBranch | Should -Be $expectedBranch
 			Should -InvokeVerifiable
@@ -42,7 +42,7 @@ Describe "Set-GitWorktreeConfig" {
 			Mock Test-Path { $false } -ParameterFilter { $Path -eq $expectedDefaultRoot } -Verifiable
 			Mock Write-Warning {} -ParameterFilter { $Message -eq "Creating Default configuration." } -Verifiable
 			{
-				Set-GitWorktreeConfig -DefaultRoot $expectedDefaultRoot -DefaultBranch $expectedBranch
+				Set-GitWorktreeDefaults -DefaultRoot $expectedDefaultRoot -DefaultBranch $expectedBranch
 			} | Should -Throw
 			Should -InvokeVerifiable
 		}
@@ -53,7 +53,7 @@ Describe "Set-GitWorktreeConfig" {
 			Mock Test-Path { $true } -ParameterFilter { $Path -eq $expectedFile } -Verifiable
 			Mock Get-Content { $mockedContent } -ParameterFilter { $Path -eq $expectedFile }
 			Mock ConvertFrom-Json { $defaultConfiguration } -ParameterFilter { $InputObject -eq $mockedContent }
-			$config = Set-GitWorktreeConfig
+			$config = Set-GitWorktreeDefaults
 			$config.DefaultRootPath | Should -Be $defaultRootPath
 			$config.DefaultSourceBranch | Should -Be $defaultSourceBranch
 			Should -InvokeVerifiable
@@ -78,7 +78,7 @@ Describe "Set-GitWorktreeConfig" {
 			Mock Test-Path { $false } -ParameterFilter { $Path -eq $expectedFile } -Verifiable
 			Mock Test-Path { $true } -ParameterFilter { $Path -eq $expectedDefaultRoot } -Verifiable
 			Mock Write-Warning {} -ParameterFilter { $Message -eq "Creating Default configuration." } -Verifiable
-			$config = Set-GitWorktreeConfig -DefaultRoot $expectedDefaultRoot -DefaultBranch $expectedBranch
+			$config = Set-GitWorktreeDefaults -DefaultRoot $expectedDefaultRoot -DefaultBranch $expectedBranch
 			$config.DefaultRootPath | Should -Be $expectedDefaultRoot
 			$config.DefaultSourceBranch | Should -Be $expectedBranch
 			Should -InvokeVerifiable
@@ -93,7 +93,7 @@ Describe "Set-GitWorktreeConfig" {
 			Mock Test-Path { $false } -ParameterFilter { $Path -eq $expectedDefaultRoot } -Verifiable
 			Mock Write-Warning {} -ParameterFilter { $Message -eq "Creating Default configuration." } -Verifiable
 			{
-				Set-GitWorktreeConfig -DefaultRoot $expectedDefaultRoot -DefaultBranch $expectedBranch
+				Set-GitWorktreeDefaults -DefaultRoot $expectedDefaultRoot -DefaultBranch $expectedBranch
 			} | Should -Throw
 			Should -InvokeVerifiable
 		}
@@ -104,7 +104,7 @@ Describe "Set-GitWorktreeConfig" {
 			Mock Test-Path { $true } -ParameterFilter { $Path -eq $expectedFile } -Verifiable
 			Mock Get-Content { $mockedContent } -ParameterFilter { $Path -eq $expectedFile }
 			Mock ConvertFrom-Json { $defaultConfiguration } -ParameterFilter { $InputObject -eq $mockedContent }
-			$config = Set-GitWorktreeConfig
+			$config = Set-GitWorktreeDefaults
 			$config.DefaultRootPath | Should -Be $defaultRootPath
 			$config.DefaultSourceBranch | Should -Be $defaultSourceBranch
 			Should -InvokeVerifiable

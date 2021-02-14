@@ -65,12 +65,14 @@
 
 	# Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
 	FunctionsToExport = @(
+		'Get-GitWorktree'
 		'Get-GitWorktreeProject'
-		'New-GitWorktreeProject'
 		'New-GitWorktree'
+		'New-GitWorktreeProject'
 		'Open-GitWorktree'
 		'Remove-GitWorktree'
-		'Set-GitWorktreeConfig'
+		'Get-GitWorktreeDefaults'
+		'Set-GitWorktreeDefaults'
 		)
 
 	# Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
@@ -80,7 +82,7 @@
 	# VariablesToExport = @()
 
 	# Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
-	AliasesToExport   = 'ngw', 'ogw', 'rgw', 'ggwp'
+	AliasesToExport   = 'ggw', 'ggwp', 'ngw', 'ngwp', 'ogw', 'rgw'
 
 	# DSC resources to export from this module
 	# DscResourcesToExport = @()

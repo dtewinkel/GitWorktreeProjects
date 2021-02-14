@@ -3,14 +3,17 @@
 	[cmdletbinding()]
 	param(
 		[Parameter()]
-		[String] $Filter = '*'
+		[String] $ProjectFilter = '*',
+
+		[Parameter()]
+		[String] $WorktreeFilter = '*'
 	)
 
 	process
 	{
-		foreach($project in (GetProjects ${Filter}))
+		foreach($project in (GetProjects $ProjectFilter))
 		{
-			$projectConfig = GetProjectConfig -Project $project
+			$projectConfig = GetProjectConfig -Project $project -WorktreeFilter $WorktreeFilter
 			[Project]::FromProjectConfig($project, $projectConfig)
 		}
 	}

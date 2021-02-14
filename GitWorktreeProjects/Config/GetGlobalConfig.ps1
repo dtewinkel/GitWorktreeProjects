@@ -2,16 +2,7 @@ function GetGlobalConfig
 {
 	[OutputType([GlobalConfig])]
 	[cmdletbinding()]
-	param(
-		[Parameter()]
-		[String] $DefaultRootPath,
-
-		[Parameter()]
-		[String] $DefaultSourceBranch,
-
-		[Parameter()]
-		[Switch] $SaveChanges
-	)
+	param()
 
 	process
 	{
@@ -26,25 +17,6 @@ function GetGlobalConfig
 			Write-Warning "Creating default configuration."
 			$config = [GlobalConfig]::new()
 		}
-
-		if ($DefaultRootPath)
-		{
-			if (-not (Test-Path -Path $DefaultRootPath))
-			{
-				throw "DefaultRootPath '${DefaultRootPath}' must exist!"
-			}
-			$config.DefaultRootPath = $DefaultRootPath
-		}
-		if ($DefaultSourceBranch)
-		{
-			$config.DefaultSourceBranch = $DefaultSourceBranch
-		}
-
-		if ($SaveChanges.IsPresent)
-		{
-			$config | ConvertTo-Json | Out-File -FilePath $configFile -Encoding utf8BOM
-		}
-
 		$config
 	}
 }

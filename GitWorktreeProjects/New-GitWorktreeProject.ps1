@@ -35,14 +35,28 @@
 		{
 			throw "Project '${Project}' already exists"
 		}
-		$globalConfig = GetGlobalConfig -DefaultRootPath $TargetPath -DefaultSourceBranch $SourceBranch
-		$TargetPath = $globalConfig.DefaultRootPath
-		$SourceBranch = $globalConfig.DefaultSourceBranch
+		$globalConfig = GetGlobalConfig
+
+		if(-not $TargetPath)
+		{
+			$TargetPath = $globalConfig.DefaultRootPath
+		}
+		if (-not (Test-Path -Path $TargetPath))
+		{
+				throw "TargetPath '${TargetPath}' must exist!"
+		}
+
+		if(-not $SourceBranch)
+		{
+			$SourceBranch = $globalConfig.DefaultSourceBranch
+		}
+
 		$projectPath = Join-Path $TargetPath $Project
 		if((Test-Path $projectPath) -and -not $Force.IsPresent)
 		{
 			throw "Folder ${projectPath} must not yet exist!"
 		}
+
 		$gitPath = Join-Path $projectPath .gitworktree
 		if(-not (Test-Path $projectPath))
 		{
@@ -66,3 +80,5 @@
 		Pop-Location
 	}
 }
+
+New-Alias -Name ngwp New-GitWorktreeProject

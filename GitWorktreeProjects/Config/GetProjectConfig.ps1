@@ -4,7 +4,10 @@ function GetProjectConfig
 	[cmdletbinding()]
 	param(
 		[Parameter()]
-		[String] $Project
+		[String] $Project,
+
+		[Parameter()]
+		[String] $WorktreeFilter = '*'
 	)
 
 	process
@@ -14,6 +17,11 @@ function GetProjectConfig
 		{
 			throw "Project Config File '${configFile}' for project '${Project}' not found! Use New-GitWorktreeProject to create it."
 		}
-		[ProjectConfig]::FromJsonFile($configFile)
+		$projectConfig = [ProjectConfig]::FromJsonFile($configFile)
+		$projectConfig.Worktrees = $projectConfig.Worktrees | Where-Object Name -like $WorktreeFilter
+		if($WorktreeFilter -eq '*' -or $projectConfig.Worktrees.Length -ne 0)
+		{
+			$projectConfig
+		}
 	}
 }

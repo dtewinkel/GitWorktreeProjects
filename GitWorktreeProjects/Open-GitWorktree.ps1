@@ -12,15 +12,15 @@
 	process
 	{
 		$config = GetProjectConfig -Project $Project
-		$worktree = $config.Worktrees | Where-Object Name -EQ $Worktree
-		if (-not $worktree)
+		$worktreeConfig = $config.Worktrees | Where-Object Name -EQ $Worktree
+		if (-not $worktreeConfig)
 		{
 			throw "Worktree '${Worktree}' for project '${Project}' not found!"
 		}
-		$fullPath = Join-Path $config.RootPath $worktree.RelativePath
+		$fullPath = Join-Path $config.RootPath $worktreeConfig.RelativePath
 		if (-not (Test-Path $fullPath))
 		{
-			throw "Path '${fullPath} for worktree '${Worktree}' not found"
+			throw "Path '${fullPath} for worktree '${Worktree}' in project '${Project}' not found!"
 		}
 		Set-Location $fullPath
 	}
