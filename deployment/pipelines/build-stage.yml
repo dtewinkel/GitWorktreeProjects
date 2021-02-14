@@ -18,12 +18,10 @@
     - task: gitversion/setup@0
       displayName: Install GitVersion
       inputs:
-        versionSpec: '5.x'
+        versionSpec: 5.x
 
     - task: gitversion/execute@0
       displayName: Determine Version using GitVersion
-      inputs:
-        useConfigFile: true
       
     - task: PowerShell@2
       displayName: Install required PowerShell modules and other tools
