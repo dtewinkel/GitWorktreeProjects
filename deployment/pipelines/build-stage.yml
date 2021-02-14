@@ -8,6 +8,7 @@
     variables:
       Module.Path: $(Module.Name)
       Module.Tests.Path: $(Module.Name).Tests
+      Modules.Path: Modules
       Module.ArtifactPath: Modules/$(Module.Name)
       Repository.Name: Local$(Module.Name)Repo
       Repository.ArtifactPath: Repositories/$(Repository.Name)
@@ -58,7 +59,7 @@
             }
         }
         Invoke-Pester -Configuration $configuration
-        $modulePaths = (dir $(Module.ArtifactPath)/.. -Directory -Recurse).FullName -join ';'
+        $modulePaths = (dir $(Module.Path) -Directory -Recurse).FullName -join ';'
         Write-Host "##vso[task.setvariable variable=ModulePaths]${modulePaths}"
       workingDirectory: $(Module.Tests.Path)
       displayName: Run Pester Unit tests
