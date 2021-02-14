@@ -15,11 +15,16 @@
       vmImage: windows-latest
     steps:
 
-    - task: GitVersion@5
+    - task: gitversion/setup@0
+      displayName: Install GitVersion
+      inputs:
+        versionSpec: '5.x'
+
+    - task: gitversion/execute@0
       displayName: Determine Version using GitVersion
       inputs:
-        configFilePath: GitVersion.yml
-
+        useConfigFile: true
+      
     - task: PowerShell@2
       displayName: Install required PowerShell modules and other tools
       inputs:
@@ -56,9 +61,7 @@
       condition: in(variables['Agent.JobStatus'], 'Succeeded', 'SucceededWithIssues', 'Failed')
 
     - pwsh: |
-        $modulePaths = (dir "$(Modules.Path)" -Directory -Recurse).FullName -join ';'
-        Write-Host "Setting ModulePaths based on '$(Modules.Path)' to '${modulePaths}'."
-        Write-Host "##vso[task.setvariable variable=ModulePaths]${modulePaths}"
+        Write-Host "##vso[task.setvariable variable=ModulePaths]$((dir "$(Modules.Path)" -Directory -Recurse).FullName -join ';')"
       displayName: Determine module paths
 
     - task: PublishCodeCoverageResults@1
