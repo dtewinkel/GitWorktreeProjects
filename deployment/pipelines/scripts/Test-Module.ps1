@@ -30,7 +30,7 @@ $configuration = [PesterConfiguration]@{
 		}
 		CodeCoverage = @{
 			Enabled = $true
-			Path = "${moduleFolder}/*.psm1", "${moduleFolder}/*-*.ps1", "${moduleFolder}/Config/*.ps1", "${moduleFolder}/ArgumentCompleters/*.ps1"
+			Path = "${moduleFolder}/*.psm1", "${moduleFolder}/*-*.ps1", "${moduleFolder}/Types/*.ps1", "${moduleFolder}/Config/*.ps1", "${moduleFolder}/ArgumentCompleters/*.ps1"
 			OutputPath = $coverageOutput
 		}
 }
@@ -48,5 +48,5 @@ finally
 	Pop-Location
 }
 
-& $reportGenerator "-targetdir:${testOutputFolder}" "-reports:${coverageOutput}" "-sourcedirs:${moduleFolder};${moduleFolder}/Config;${moduleFolder}/ArgumentCompleters" -verbosity:warning
+& $reportGenerator "-targetdir:${testOutputFolder}" "-reports:${coverageOutput}" "-sourcedirs:${moduleFolder};${moduleFolder}/Types;${moduleFolder}/Config;${moduleFolder}/ArgumentCompleters" -verbosity:warning
 Write-Host "Coverage report written to ${testOutputFolder}\index.htm"
