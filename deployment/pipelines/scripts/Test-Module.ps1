@@ -3,7 +3,8 @@
 $root = Resolve-Path (Join-Path $PSScriptRoot '..' '..', '..')
 
 $toolsFolder = Join-Path $root tools
-$moduleFolder = Join-Path $root Modules GitWorktreeProjects
+$modulesFolder = Join-Path $root Modules
+$moduleFolder = Join-Path $modulesFolder GitWorktreeProjects
 $testFolder = Join-Path $root GitWorktreeProjects.Tests
 $testOutputFolder = Join-Path $root TestResults
 $testOutput = Join-Path $testOutputFolder TestResults.Pester.xml
@@ -30,7 +31,7 @@ $configuration = [PesterConfiguration]@{
 		}
 		CodeCoverage = @{
 			Enabled = $true
-			Path = "${moduleFolder}/*.psm1", "${moduleFolder}/*-*.ps1", "${moduleFolder}/Types/*.ps1", "${moduleFolder}/Config/*.ps1", "${moduleFolder}/ArgumentCompleters/*.ps1"
+			Path = "${moduleFolder}/*.psm1", "${moduleFolder}/*-*.ps1", "${moduleFolder}/*/*.ps1"
 			OutputPath = $coverageOutput
 		}
 }
@@ -48,5 +49,6 @@ finally
 	Pop-Location
 }
 
-& $reportGenerator "-targetdir:${testOutputFolder}" "-reports:${coverageOutput}" "-sourcedirs:${moduleFolder};${moduleFolder}/Types;${moduleFolder}/Config;${moduleFolder}/ArgumentCompleters" -verbosity:warning
+$modulePaths = (Get-ChildItem "${modulesFolder}" -Directory -Recurse).FullName -join ';'
+& $reportGenerator "-targetdir:${testOutputFolder}" "-reports:${coverageOutput}" "-sourcedirs:${modulePaths}" -verbosity:warning
 Write-Host "Coverage report written to ${testOutputFolder}\index.htm"

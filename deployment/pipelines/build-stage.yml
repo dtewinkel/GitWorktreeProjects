@@ -53,11 +53,13 @@
             }
             CodeCoverage = @{
               Enabled = $true
-              Path = '../$(Module.ArtifactPath)/*.psm1', '../$(Module.ArtifactPath)/*-*.ps1', '../$(Module.ArtifactPath)/Types/*.ps1', '../$(Module.ArtifactPath)/Config/*.ps1', '../$(Module.ArtifactPath)/ArgumentCompleters/*.ps1'
+              Path = '../$(Module.ArtifactPath)/*.psm1', '../$(Module.ArtifactPath)/*-*.ps1', '../$(Module.ArtifactPath)/*/*.ps1'
               OutputPath = '$(Pester.CoverageOutput)'
             }
         }
         Invoke-Pester -Configuration $configuration
+        $modulePaths = (dir $(Module.ArtifactPath)/.. -Directory -Recurse).FullName -join ';'
+        Write-Host "##vso[task.setvariable variable=ModulePaths]${modulePaths}"
       workingDirectory: $(Module.Tests.Path)
       displayName: Run Pester Unit tests
 
@@ -74,7 +76,7 @@
       inputs:
         codeCoverageTool: JaCoCo
         summaryFileLocation: $(Pester.CoverageOutput)
-        pathToSources: $(Module.ArtifactPath);$(Module.ArtifactPath)/Types;$(Module.ArtifactPath)/Config;$(Module.ArtifactPath)/ArgumentCompleters
+        pathToSources: $(modulePaths)
       displayName: Publish Pester Unit Test Code Coverage
       condition: in(variables['Agent.JobStatus'], 'Succeeded', 'SucceededWithIssues', 'Failed')
 
