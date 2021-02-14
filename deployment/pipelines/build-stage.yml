@@ -60,6 +60,7 @@
         }
         Invoke-Pester -Configuration $configuration
         $modulePaths = (dir $(Module.Path) -Directory -Recurse).FullName -join ';'
+        Write-Host "Setting ModulePaths to '${modulePaths}'."
         Write-Host "##vso[task.setvariable variable=ModulePaths]${modulePaths}"
       workingDirectory: $(Module.Tests.Path)
       displayName: Run Pester Unit tests
@@ -77,7 +78,7 @@
       inputs:
         codeCoverageTool: JaCoCo
         summaryFileLocation: $(Pester.CoverageOutput)
-        pathToSources: $(modulePaths)
+        pathToSources: $(ModulePaths)
       displayName: Publish Pester Unit Test Code Coverage
       condition: in(variables['Agent.JobStatus'], 'Succeeded', 'SucceededWithIssues', 'Failed')
 
