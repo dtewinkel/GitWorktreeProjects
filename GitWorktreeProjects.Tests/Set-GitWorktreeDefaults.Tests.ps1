@@ -3,7 +3,8 @@ BeforeAll {
 	Mock Out-File -RemoveParameterType "Encoding"
 	. $PSScriptRoot/Helpers/LoadModule.ps1
 
-	$mockedContent = "{dummy}"
+	$mockedContent = "{original}"
+	$newMockedContent = "{new}"
 	$defaultRootPath = 'c:\myExcelentProjects'
 	$defaultSourceBranch = 'greatest'
 	$defaultConfiguration = @{
@@ -50,11 +51,12 @@ Describe "Set-GitWorktreeDefaults" {
 			Mock Test-Path { $true } -ParameterFilter { $Path -eq $expectedDefaultRoot } -Verifiable
 			Mock Get-Content { $mockedContent } -ParameterFilter { $Path -eq $expectedFile } -Verifiable
 			Mock ConvertFrom-Json { $defaultConfiguration } -ParameterFilter { $InputObject -eq $mockedContent } -Verifiable
+			Mock ConvertTo-Json { $newMockedContent } -ParameterFilter { $InputObject.DefaultRootPath -eq $expectedDefaultRoot -and $InputObject.DefaultSourceBranch -eq $expectedBranch } -Verifiable
 			$config = Set-GitWorktreeDefaults -DefaultRoot $expectedDefaultRoot -DefaultBranch $expectedBranch
 			Should -InvokeVerifiable
 			$config.DefaultRootPath | Should -Be $expectedDefaultRoot
 			$config.DefaultSourceBranch | Should -Be $expectedBranch
-			Should -Invoke Out-File -Times 1 -ParameterFilter { $FilePath -eq $expectedFile -and $Encoding -eq "utf8BOM" }
+			Should -Invoke Out-File -Times 1 -ParameterFilter { $FilePath -eq $expectedFile -and $Encoding -eq "utf8BOM" -and $InputObject -eq $newMockedContent }
 		}
 
 		It "should only update DefaultRoot if that is set" {
@@ -64,11 +66,12 @@ Describe "Set-GitWorktreeDefaults" {
 			Mock Test-Path { $true } -ParameterFilter { $Path -eq $expectedDefaultRoot } -Verifiable
 			Mock Get-Content { $mockedContent } -ParameterFilter { $Path -eq $expectedFile } -Verifiable
 			Mock ConvertFrom-Json { $defaultConfiguration } -ParameterFilter { $InputObject -eq $mockedContent } -Verifiable
+			Mock ConvertTo-Json { $newMockedContent } -ParameterFilter { $InputObject.DefaultRootPath -eq $expectedDefaultRoot -and $InputObject.DefaultSourceBranch -eq $defaultSourceBranch } -Verifiable
 			$config = Set-GitWorktreeDefaults -DefaultRoot $expectedDefaultRoot
 			Should -InvokeVerifiable
 			$config.DefaultRootPath | Should -Be $expectedDefaultRoot
 			$config.DefaultSourceBranch | Should -Be $defaultSourceBranch
-			Should -Invoke Out-File -Times 1 -ParameterFilter { $FilePath -eq $expectedFile -and $Encoding -eq "utf8BOM" }
+			Should -Invoke Out-File -Times 1 -ParameterFilter { $FilePath -eq $expectedFile -and $Encoding -eq "utf8BOM" -and $InputObject -eq $newMockedContent }
 		}
 
 		It "should only update DefaultBranch if that is set" {
@@ -77,11 +80,12 @@ Describe "Set-GitWorktreeDefaults" {
 			Mock Test-Path { $true } -ParameterFilter { $Path -eq $expectedFile } -Verifiable
 			Mock Get-Content { $mockedContent } -ParameterFilter { $Path -eq $expectedFile } -Verifiable
 			Mock ConvertFrom-Json { $defaultConfiguration } -ParameterFilter { $InputObject -eq $mockedContent } -Verifiable
+			Mock ConvertTo-Json { $newMockedContent } -ParameterFilter { $InputObject.DefaultRootPath -eq $defaultRootPath -and $InputObject.DefaultSourceBranch -eq $expectedBranch } -Verifiable
 			$config = Set-GitWorktreeDefaults -DefaultBranch $expectedBranch
 			Should -InvokeVerifiable
 			$config.DefaultRootPath | Should -Be $defaultRootPath
 			$config.DefaultSourceBranch | Should -Be $expectedBranch
-			Should -Invoke Out-File -Times 1 -ParameterFilter { $FilePath -eq $expectedFile -and $Encoding -eq "utf8BOM" }
+			Should -Invoke Out-File -Times 1 -ParameterFilter { $FilePath -eq $expectedFile -and $Encoding -eq "utf8BOM" -and $InputObject -eq $newMockedContent }
 		}
 
 		It "should fail if DefaultRoot does not exist" {
