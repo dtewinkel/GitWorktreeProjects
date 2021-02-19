@@ -11,13 +11,18 @@
 
 	process
 	{
+		if(-not $DefaultRoot -and -not $DefaultBranch)
+		{
+			throw "At least either -DefaultRoot or -DefaultBranch must be specified!"
+		}
+
 		$globalConfig = GetGlobalConfig
 
 		if ($DefaultRoot)
 		{
 				if (-not (Test-Path -Path $DefaultRoot))
 				{
-						throw "DefaultRooth '${DefaultRoot}' must exist!"
+						throw "DefaultRoot '${DefaultRoot}' must exist!"
 				}
 				$globalConfig.DefaultRootPath = $DefaultRoot
 		}

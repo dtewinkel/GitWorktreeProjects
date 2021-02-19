@@ -33,7 +33,7 @@ $configuration = [PesterConfiguration]@{
 		}
 }
 
-$null = mkdir $testOutputFolder -Force
+$null = New-Item -ItemType directory -Path $testOutputFolder -Force
 
 Push-Location $testFolder
 

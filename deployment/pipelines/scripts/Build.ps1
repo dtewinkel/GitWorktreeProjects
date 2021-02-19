@@ -36,7 +36,7 @@ try
 {
 	if(-not (Test-Path $repositoryPath))
 	{
-		$null = mkdir $repositoryPath
+		$null = New-Item -ItemType directory -Path $repositoryPath
 	}
 
 	$repo = Get-PSRepository -Name $repositoryName -ErrorAction SilentlyContinue
@@ -50,7 +50,7 @@ try
 	$modulePath = Join-Path $moduleRootPath $moduleName
 	if(-not (Test-Path $moduleRootPath))
 	{
-		$null = mkdir $moduleRootPath
+		$null = New-Item -ItemType directory -Path $moduleRootPath
 	}
 
 	if(Test-Path $modulePath)

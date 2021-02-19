@@ -1,7 +1,14 @@
 class GlobalConfig
 {
-	[string] $DefaultRootPath = $env:HOME
+	static [string] $DefaultRootPathFromHome
+	
+	[string] $DefaultRootPath = $DefaultRootPathFromHome
 	[string] $DefaultSourceBranch = 'main'
+
+	GlobalConfig()
+	{
+		$this.DefaultRootPath = $env:UserProfile
+	}
 
 	static [GlobalConfig] FromJsonFile([string] $jsonPath)
 	{

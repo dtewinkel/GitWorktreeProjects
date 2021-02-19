@@ -3,6 +3,8 @@ Get-ChildItem (Join-Path $PSScriptRoot Config *.ps1) | ForEach-Object FullName |
 Get-ChildItem (Join-Path $PSScriptRoot ArgumentCompleters *.ps1) | ForEach-Object FullName | Resolve-Path | Import-Module
 Get-ChildItem (Join-Path $PSScriptRoot *.ps1) | ForEach-Object FullName | Resolve-Path | Import-Module
 
+[GlobalConfig]::DefaultRootPathFromHome = $HOME
+
 $moduleData = Import-PowerShellDataFile (Join-Path $PSScriptRoot GitWorktreeProjects.psd1)
 
 $moduleData.FunctionsToExport | ForEach-Object { Export-ModuleMember -Function $PSItem }

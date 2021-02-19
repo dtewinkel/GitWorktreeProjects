@@ -60,7 +60,7 @@
 		$gitPath = Join-Path $projectPath .gitworktree
 		if(-not (Test-Path $projectPath))
 		{
-			$null = mkdir $projectPath
+			$null = New-Item -ItemType directory -Path $projectPath
 		}
 		$null = Set-Location $projectPath
 		git clone $Repository $gitPath

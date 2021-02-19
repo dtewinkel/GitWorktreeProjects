@@ -4,4 +4,4 @@ if(Test-Path $env:GitWorktreeConfigPath)
 {
 	Remove-Item -Recurse -Force $env:GitWorktreeConfigPath
 }
-mkdir $env:GitWorktreeConfigPath
+New-Item -ItemType directory -Path $env:GitWorktreeConfigPath

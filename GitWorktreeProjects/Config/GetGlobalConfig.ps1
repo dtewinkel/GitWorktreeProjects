@@ -12,9 +12,9 @@ function GetGlobalConfig
 		{
 			$config = [GlobalConfig]::FromJsonFile($configFile)
 		}
-		else
+		if(-not $config)
 		{
-			Write-Warning "Creating default configuration."
+			Write-Warning "Using default configuration."
 			$config = [GlobalConfig]::new()
 		}
 		$config
