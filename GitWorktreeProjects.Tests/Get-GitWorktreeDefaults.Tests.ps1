@@ -1,59 +1,53 @@
 BeforeAll {
 	Push-Location
 	. $PSScriptRoot/Helpers/LoadModule.ps1
-
-	$defaultRootPath = 'c:\myExcelentProjects'
-	$defaultSourceBranch = 'greatest'
-	$defaultConfiguration = @{
-		DefaultRootPath = $defaultRootPath
-		DefaultSourceBranch = $defaultSourceBranch
-	}
+	. $PSScriptRoot/Helpers/BackupGitWorktreeConfigPath.ps1
 }
 
 Describe "Get-GitWorktreeDefaults" {
 
-	Context "With <_> configuration" -ForEach 'Custom', 'Default' {
+	Context "With <_> configuration" -ForEach 'Default', 'Custom' {
 
-		BeforeEach {
-			. $PSScriptRoot/Helpers/SetGitWorktreeConfigPath.ps1
-			if($_ -eq 'Default')
-			{
-				Remove-Item env:GitWorktreeConfigPath
-				$expectedFile = Join-Path $Home '.gitworktree' configuration.json
-			}
-			else {
-				$expectedFile = Join-Path $env:GitWorktreeConfigPath configuration.json
-			}
-		}
+		It "should get default Configuration if the configuration file does not exist" {
 
-		It "should get default Configuration" {
-
-			Mock Test-Path { $false } -ParameterFilter { $Path -eq $expectedFile } -Verifiable
-			Mock Write-Warning {} -ParameterFilter { $Message -eq "Using Default configuration." } -Verifiable
+			. $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope $_ -Setup "Empty"
+			Mock Write-Warning {} -ParameterFilter { $Message -like "Global configuration file 'configuration.json' not found! Using default configuration." } -Verifiable
 			$config = Get-GitWorktreeDefaults
-			$config.DefaultRootPath | Should -Be $HOME
 			$config.DefaultSourceBranch | Should -Be 'main'
+			$config.DefaultRootPath | Should -Be $HOME
 			Should -InvokeVerifiable
 		}
 
 		It "should get existing Configuration" {
 
-			$mockedContent = "mock"
-			Mock Test-Path { $true } -ParameterFilter { $Path -eq $expectedFile } -Verifiable
-			Mock Get-Content { $mockedContent } -ParameterFilter { $Path -eq $expectedFile } -Verifiable
-			Mock ConvertFrom-Json { $defaultConfiguration } -ParameterFilter { $InputObject -eq $mockedContent } -Verifiable
+			. $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope $_ -Setup "NoProjects"
 			$config = Get-GitWorktreeDefaults
-			$config.DefaultRootPath | Should -Be $defaultRootPath
-			$config.DefaultSourceBranch | Should -Be $defaultSourceBranch
+			$config.DefaultRootPath | Should -Be '/projects/0/'
+			$config.DefaultSourceBranch | Should -Be 'main0'
 			Should -InvokeVerifiable
 		}
 
-		AfterEach {
-			. $PSScriptRoot/Helpers/ResetGitWorktreeConfigPath.ps1
+		It "should fail if config file has corrupt JSON" {
+
+			. $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope $_ -Setup "NoProjectsCorruptedJson"
+			{ Get-GitWorktreeDefaults } | Should -Throw "Could not convert file 'configuration.json' (*configuration.json)! Is it valid JSON?"
+		}
+
+		It "should fail if config file has wrong version" {
+
+			. $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope $_ -Setup "NoProjectsWrongVersion"
+			{ Get-GitWorktreeDefaults } | Should -Throw "Schema version '0' is not supported for file 'configuration.json' (*configuration.json)."
+		}
+
+		It "should fail if config file has no version" {
+
+			. $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope $_ -Setup "NoProjectsNoVersion"
+			{ Get-GitWorktreeDefaults } | Should -Throw "Schema version is not set for file 'configuration.json' (*configuration.json)."
 		}
 	}
 }
 
 AfterAll {
+	. $PSScriptRoot/Helpers/RestoreGitWorktreeConfigPath.ps1
 	Pop-Location
 }

@@ -1,6 +1,6 @@
-function GetProjectConfig
+function get-GetProjectConfig
 {
-	[OutputType([ProjectConfig])]
+	[OutputType([Project])]
 	[cmdletbinding()]
 	param(
 		[Parameter()]
@@ -12,12 +12,13 @@ function GetProjectConfig
 
 	process
 	{
-		$configFile = GetConfigFilePath -ChildPath "${Project}.project"
-		if (-not (Test-Path $configFile))
+		$fileName = "${Project}.project"
+		$projectFromFile = GetConfigFile -FileName $fileName
+		if (-not $projectFromFile)
 		{
-			throw "Project Config File '${configFile}' for project '${Project}' not found! Use New-GitWorktreeProject to create it."
+			throw "Project Config File '${fileName}' for project '${Project}' not found! Use New-GitWorktreeProject to create it."
 		}
-		$projectConfig = [ProjectConfig]::FromJsonFile($configFile)
+		$projectConfig = [Project]::FromProjectFile($projectFromFile)
 		$projectConfig.Worktrees = $projectConfig.Worktrees | Where-Object Name -like $WorktreeFilter
 		if($WorktreeFilter -eq '*' -or $projectConfig.Worktrees.Length -ne 0)
 		{

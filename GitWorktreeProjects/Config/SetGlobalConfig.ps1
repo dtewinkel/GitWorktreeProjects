@@ -6,10 +6,12 @@ function SetGlobalConfig
 		[GlobalConfig] $GlobalConfig
 	)
 
-	process
+	$configPath = GetConfigFilePath
+	if(-not (Test-Path $configPath))
 	{
-		$configFile = GetConfigFilePath -ChildPath "configuration.json"
-
-		$GlobalConfig | ConvertTo-Json | Out-File -FilePath $configFile -Encoding utf8BOM
+		New-Item -ItemType Directory -Path $configPath
 	}
+	$configFile = GetConfigFilePath -ChildPath "configuration.json"
+
+	$GlobalConfig.ToFile() | ConvertTo-Json | Out-File -FilePath $configFile -Encoding utf8BOM
 }

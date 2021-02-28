@@ -1,35 +1,47 @@
+class GlobalConfigFile
+{
+	[int] $SchemaVersion
+	[string] $DefaultRootPath
+	[string] $DefaultSourceBranch
+}
+
 class GlobalConfig
 {
-	static [string] $DefaultRootPathFromHome
-	
-	[string] $DefaultRootPath = $DefaultRootPathFromHome
+	[string] $DefaultRootPath
 	[string] $DefaultSourceBranch = 'main'
 
 	GlobalConfig()
 	{
-		$this.DefaultRootPath = $env:UserProfile
+		$rootPath = $env:UserProfile
+		if(-not $rootPath)
+		{
+			$rootPath = "${env:HOMEDRIVE}${env:HOMEPATH}"
+		}
+		if(-not $rootPath)
+		{
+			$rootPath = $env:HOME
+		}
+		if(-not $rootPath)
+		{
+			$rootPath = '/'
+		}
+		$this.DefaultRootPath = $rootPath
 	}
 
-	static [GlobalConfig] FromJsonFile([string] $jsonPath)
+	static [GlobalConfig] FromFile([GlobalConfigFile] $configFile)
 	{
-		if(-not (Test-Path $jsonPath))
-		{
-			return $null
-		}
-		$converted = Get-Content -Raw -Path $jsonPath | ConvertFrom-Json
-		if(-not $converted)
-		{
-			return $null
-		}
 		$globalConfig = [GlobalConfig]::new()
-		if($null -ne $converted.DefaultRootPath)
-		{
-			$globalConfig.DefaultRootPath = $converted.DefaultRootPath
-		}
-		if($null -ne $converted.DefaultSourceBranch)
-		{
-			$globalConfig.DefaultSourceBranch = $converted.DefaultSourceBranch
-		}
+		$globalConfig.DefaultRootPath = $configFile.DefaultRootPath
+		$globalConfig.DefaultSourceBranch = $configFile.DefaultSourceBranch
 		return $globalConfig
+	}
+
+	[GlobalConfigFile] ToFile()
+	{
+		$configFile = [GlobalConfigFile]::new()
+		$configFile.SchemaVersion = 1
+		$configFile.DefaultRootPath = $this.DefaultRootPath
+		$configFile.DefaultSourceBranch = $this.DefaultSourceBranch
+		return $configFile
 	}
 }

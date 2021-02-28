@@ -1,0 +1,19 @@
+﻿{
+  "SchemaVersion": 1,
+  "RootPath" = "/data/projects/MyFirstProject",
+  "GitPath": "/data/projects/MyFirstProject/gitPath",
+  "GitRepository": "https://notreally.github.com/gitworktreeproject/MyFirstProject.git",
+  "SourceBranch": "main",
+  "Worktrees": [
+    {
+      "Name": "main",
+      "InitialCommitish": "main",
+      "RelativePath": "main"
+    },
+    {
+      "Name": "worktree2",
+      "InitialCommitish": "tree",
+      "RelativePath": "anotherTree"
+    }
+  ]
+}

@@ -1,9 +1,7 @@
-﻿'WorkTreeConfig', 'WorkTree', 'GlobalConfig', 'ProjectConfig', 'Project' | ForEach-Object { Import-Module ( Resolve-Path (Join-Path $PSScriptRoot Types "${PSItem}.ps1" ) ) }
+﻿Get-ChildItem (Join-Path $PSScriptRoot Types *.ps1) | ForEach-Object FullName | Resolve-Path | Import-Module
 Get-ChildItem (Join-Path $PSScriptRoot Config *.ps1) | ForEach-Object FullName | Resolve-Path | Import-Module
 Get-ChildItem (Join-Path $PSScriptRoot ArgumentCompleters *.ps1) | ForEach-Object FullName | Resolve-Path | Import-Module
 Get-ChildItem (Join-Path $PSScriptRoot *.ps1) | ForEach-Object FullName | Resolve-Path | Import-Module
-
-[GlobalConfig]::DefaultRootPathFromHome = $HOME
 
 $moduleData = Import-PowerShellDataFile (Join-Path $PSScriptRoot GitWorktreeProjects.psd1)
 

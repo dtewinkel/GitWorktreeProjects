@@ -4,19 +4,15 @@ function GetGlobalConfig
 	[cmdletbinding()]
 	param()
 
-	process
-	{
-		$configFile = GetConfigFilePath -ChildPath "configuration.json"
+	$config = GetConfigFile -FileName "configuration.json"
 
-		if (Test-Path -Path $configFile)
-		{
-			$config = [GlobalConfig]::FromJsonFile($configFile)
-		}
-		if(-not $config)
-		{
-			Write-Warning "Using default configuration."
-			$config = [GlobalConfig]::new()
-		}
-		$config
+	if ($config)
+	{
+		[GlobalConfig]::FromFile($config)
+	}
+	if (-not $config)
+	{
+		Write-Warning "Global configuration file 'configuration.json' not found! Using default configuration."
+		[GlobalConfig]::new()
 	}
 }

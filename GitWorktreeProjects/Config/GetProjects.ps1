@@ -1,10 +1,10 @@
 function GetProjects
 {
-	[OutputType([ProjectConfig])]
+	[OutputType([string[]])]
 	[cmdletbinding()]
 	param(
 		[Parameter()]
-		[String] $Filter = ''
+		[String] $Filter = '*'
 	)
 
 	process

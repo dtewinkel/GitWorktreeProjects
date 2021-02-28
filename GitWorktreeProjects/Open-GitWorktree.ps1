@@ -20,7 +20,7 @@
 		$fullPath = Join-Path $config.RootPath $worktreeConfig.RelativePath
 		if (-not (Test-Path $fullPath))
 		{
-			throw "Path '${fullPath} for worktree '${Worktree}' in project '${Project}' not found!"
+			throw "Path '${fullPath}' for worktree '${Worktree}' in project '${Project}' not found!"
 		}
 		Set-Location $fullPath
 	}

@@ -1,6 +1,7 @@
 ﻿function Get-GitWorktree
 {
 	[cmdletbinding()]
+	[OutputType([WorktreeConfig[]])]
 	param(
 		[Parameter(Mandatory)]
 		[String] $Project,

@@ -1,6 +1,7 @@
 ﻿function Get-GitWorktreeProject
 {
 	[cmdletbinding()]
+	[OutputType([Project[]])]
 	param(
 		[Parameter()]
 		[String] $ProjectFilter = '*',
@@ -13,8 +14,7 @@
 	{
 		foreach($project in (GetProjects $ProjectFilter))
 		{
-			$projectConfig = GetProjectConfig -Project $project -WorktreeFilter $WorktreeFilter
-			[Project]::FromProjectConfig($project, $projectConfig)
+			GetProjectConfig -Project $project -WorktreeFilter $WorktreeFilter
 		}
 	}
 }

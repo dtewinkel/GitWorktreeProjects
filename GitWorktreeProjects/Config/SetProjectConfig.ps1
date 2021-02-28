@@ -12,6 +12,6 @@ function SetProjectConfig
 	process
 	{
 		$configFilePath = GetConfigFilePath -ChildPath "${Project}.project"
-		$ProjectConfig | ConvertTo-Json | Out-File $configFilePath -Encoding utf8BOM
+		$ProjectConfig.ToFile() | ConvertTo-Json | Out-File $configFilePath -Encoding utf8BOM
 	}
 }
