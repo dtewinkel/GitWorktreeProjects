@@ -35,6 +35,15 @@ Describe "Open-GitWorktree" {
 			} | Should -Throw "Path '$expectedPath' for worktree 'worktree2' in project 'MyFirstProject' not found!"
 		}
 
+		It "Should change to the right folder" {
+			$project = $testConfig.Projects.MyFirstProject.Project
+			$worktree = $project.Worktrees[0]
+			$expectedPath = Join-Path $project.RootPath $worktree.RelativePath
+			Mock Test-Path { $true } -ParameterFilter { $Path -eq $expectedPath }
+			Mock Set-Location {}
+			Open-GitWorktree -Project MyFirstProject -Worktree main
+			Should -Invoke Set-Location -Times 1 -ParameterFilter { $Path -eq $expectedPath }
+		}
 	}
 
 	Context "With <_> configuration" -ForEach 'Custom', 'Default' {
