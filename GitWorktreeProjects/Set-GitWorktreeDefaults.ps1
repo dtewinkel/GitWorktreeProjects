@@ -32,7 +32,5 @@
 		}
 
 		SetGlobalConfig -GlobalConfig $globalConfig
-
-		$globalConfig
 	}
 }

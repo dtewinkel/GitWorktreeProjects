@@ -19,13 +19,16 @@ Describe "Set-GitWorktreeDefaults" {
 			$expectedBranch = "testing-1"
 			Mock Test-Path { $true } -ParameterFilter { $Path -eq $expectedDefaultRoot } -Verifiable
 			Mock Write-Warning {} -ParameterFilter { $Message -like "Global configuration file 'configuration.json' not found! Using default configuration." } -Verifiable
+			Mock ConvertTo-Json { $newMockedContent } -Verifiable -ParameterFilter {
+				$inputObject.DefaultRootPath -eq $expectedDefaultRoot `
+				-and $inputObject.DefaultSourceBranch -eq $expectedBranch `
+				-and $inputObject.SchemaVersion -eq 1
+			}
 
-			$config = Set-GitWorktreeDefaults -DefaultRoot $expectedDefaultRoot -DefaultBranch $expectedBranch
-			
-			$config.DefaultRootPath | Should -Be $expectedDefaultRoot
-			$config.DefaultSourceBranch | Should -Be $expectedBranch
+			Set-GitWorktreeDefaults -DefaultRoot $expectedDefaultRoot -DefaultBranch $expectedBranch
+
 			Should -InvokeVerifiable
-			Should -Invoke Out-File -Times 1 -ParameterFilter { $FilePath -eq $expectedFile -and $Encoding -eq "utf8BOM" }
+			Should -Invoke Out-File -Times 1 -ParameterFilter { $FilePath -eq $expectedFile -and $Encoding -eq "utf8BOM" -and $inputObject -eq $newMockedContent }
 		}
 
 		It "should fail if config file has corrupt JSON" {
@@ -66,33 +69,47 @@ Describe "Set-GitWorktreeDefaults" {
 			$expectedDefaultRoot = "${TestDrive}"
 			$expectedBranch = "testing-1"
 			Mock Test-Path { $true } -ParameterFilter { $Path -eq $expectedDefaultRoot } -Verifiable
-			$config = Set-GitWorktreeDefaults -DefaultRoot $expectedDefaultRoot -DefaultBranch $expectedBranch
+			Mock ConvertTo-Json { $newMockedContent } -Verifiable -ParameterFilter {
+				$InputObject.DefaultRootPath -eq $expectedDefaultRoot `
+				-and $InputObject.DefaultSourceBranch -eq $expectedBranch `
+				-and $InputObject.SchemaVersion -eq 1
+			}
+
+			Set-GitWorktreeDefaults -DefaultRoot $expectedDefaultRoot -DefaultBranch $expectedBranch
+
 			Should -InvokeVerifiable
-			$config.DefaultRootPath | Should -Be $expectedDefaultRoot
-			$config.DefaultSourceBranch | Should -Be $expectedBranch
-			Should -Invoke Out-File -Times 1 -ParameterFilter { $FilePath -eq $expectedFile -and $Encoding -eq "utf8BOM" }
+			Should -Invoke Out-File -Times 1 -ParameterFilter { $FilePath -eq $expectedFile -and $Encoding -eq "utf8BOM" -and $inputObject -eq $newMockedContent }
 		}
 
 		It "should only update DefaultRoot if that is set" {
 
 			$expectedDefaultRoot = "${TestDrive}"
 			Mock Test-Path { $true } -ParameterFilter { $Path -eq $expectedDefaultRoot } -Verifiable
-			Mock ConvertTo-Json { $newMockedContent } -ParameterFilter { $InputObject.DefaultRootPath -eq $expectedDefaultRoot -and $InputObject.DefaultSourceBranch -eq $testConfig.GlobalConfig.DefaultSourceBranch } -Verifiable
-			$config = Set-GitWorktreeDefaults -DefaultRoot $expectedDefaultRoot
+			Mock ConvertTo-Json { $newMockedContent } -Verifiable -ParameterFilter {
+				$InputObject.DefaultRootPath -eq $expectedDefaultRoot `
+				-and $InputObject.DefaultSourceBranch -eq $testConfig.GlobalConfig.DefaultSourceBranch `
+				-and $InputObject.SchemaVersion -eq 1
+			}
+
+			Set-GitWorktreeDefaults -DefaultRoot $expectedDefaultRoot
+
 			Should -InvokeVerifiable
-			$config.DefaultRootPath | Should -Be $expectedDefaultRoot
-			$config.DefaultSourceBranch | Should -Be $testConfig.GlobalConfig.DefaultSourceBranch
 			Should -Invoke Out-File -Times 1 -ParameterFilter { $FilePath -eq $expectedFile -and $Encoding -eq "utf8BOM" -and $InputObject -eq $newMockedContent }
 		}
 
 		It "should only update DefaultBranch if that is set" {
 
 			$expectedBranch = "testing-1"
-			Mock ConvertTo-Json { $newMockedContent } -ParameterFilter { $InputObject.DefaultRootPath -eq $testConfig.GlobalConfig.DefaultRootPath -and $InputObject.DefaultSourceBranch -eq $expectedBranch } -Verifiable
-			$config = Set-GitWorktreeDefaults -DefaultBranch $expectedBranch
+
+			Mock ConvertTo-Json { $newMockedContent } -Verifiable -ParameterFilter {
+				$InputObject.DefaultRootPath -eq $testConfig.GlobalConfig.DefaultRootPath `
+				-and $InputObject.DefaultSourceBranch -eq $expectedBranch `
+				-and $InputObject.SchemaVersion -eq 1
+			}
+
+			Set-GitWorktreeDefaults -DefaultBranch $expectedBranch
+
 			Should -InvokeVerifiable
-			$config.DefaultRootPath | Should -Be $testConfig.GlobalConfig.DefaultRootPath
-			$config.DefaultSourceBranch | Should -Be $expectedBranch
 			Should -Invoke Out-File -Times 1 -ParameterFilter { $FilePath -eq $expectedFile -and $Encoding -eq "utf8BOM" -and $InputObject -eq $newMockedContent }
 		}
 

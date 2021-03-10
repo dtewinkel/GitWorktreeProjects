@@ -9,7 +9,7 @@ function SetGlobalConfig
 	$configPath = GetConfigFilePath
 	if(-not (Test-Path $configPath))
 	{
-		New-Item -ItemType Directory -Path $configPath
+		$null = New-Item -ItemType Directory -Path $configPath
 	}
 	$configFile = GetConfigFilePath -ChildPath "configuration.json"
 
