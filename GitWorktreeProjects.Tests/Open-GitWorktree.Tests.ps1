@@ -6,7 +6,7 @@ BeforeAll {
 
 Describe "Open-GitWorktree" {
 
-	Context "With <_> configuration" -ForEach 'Custom', 'Default' {
+	Context "With <_> configuration" -Foreach 'Custom', 'Default' {
 
 		BeforeAll {
 			$testConfig = . $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope $_ -Setup "OneProject"
@@ -29,24 +29,57 @@ Describe "Open-GitWorktree" {
 			$worktree = $project.Worktrees[1]
 			$expectedPath = Join-Path $project.RootPath $worktree.RelativePath
 
-			Mock Test-Path { $false } -ParameterFilter { $Path -eq $expectedPath }
+			Mock Test-Path { $false } -ParameterFilter { $Path -eq $expectedPath } -Verifiable
+
 			{
 				Open-GitWorktree -Project MyFirstProject -Worktree worktree2
 			} | Should -Throw "Path '$expectedPath' for worktree 'worktree2' in project 'MyFirstProject' not found!"
+
+			Should -InvokeVerifiable
 		}
 
-		It "Should change to the right folder" {
+		It "Should change to the right folder for a specific project" {
 			$project = $testConfig.Projects.MyFirstProject.Project
 			$worktree = $project.Worktrees[0]
 			$expectedPath = Join-Path $project.RootPath $worktree.RelativePath
-			Mock Test-Path { $true } -ParameterFilter { $Path -eq $expectedPath }
-			Mock Set-Location {}
+			Mock Test-Path { $true } -ParameterFilter { $Path -eq $expectedPath } -Verifiable
+			Mock Set-Location {} -ParameterFilter { $Path -eq $expectedPath } -Verifiable
+
 			Open-GitWorktree -Project MyFirstProject -Worktree main
-			Should -Invoke Set-Location -Times 1 -ParameterFilter { $Path -eq $expectedPath }
+
+			Should -InvokeVerifiable
+		}
+
+		It "Should change to the right folder for the current project" {
+			$project = $testConfig.Projects.MyFirstProject.Project
+			$worktree = $project.Worktrees[0]
+			$expectedPath = Join-Path $project.RootPath $worktree.RelativePath
+			Mock Get-Location { @{ Path = $project.RootPath } } -Verifiable
+			Mock Test-Path { $true } -ParameterFilter { $Path -eq $expectedPath } -Verifiable
+			Mock Set-Location {} -ParameterFilter { $Path -eq $expectedPath } -Verifiable
+
+			Open-GitWorktree -Project . -Worktree main
+
+			Should -InvokeVerifiable
+		}
+
+		It "Should fail if outside a project for the current project" {
+			$project = $testConfig.Projects.MyFirstProject.Project
+			$worktree = $project.Worktrees[0]
+			$expectedPath = Join-Path $project.RootPath $worktree.RelativePath
+			Mock Get-Location { @{ Path = "dummy" } } -Verifiable
+			Mock Set-Location {}
+
+			{
+				Open-GitWorktree -Project . -Worktree any
+			} | Should -Throw "Could not determine the Project in the current directory."
+
+			Should -InvokeVerifiable
+			Should -Invoke Set-Location {} -Times 0
 		}
 	}
 
-	Context "With <_> configuration" -ForEach 'Custom', 'Default' {
+	Context "With <_> configuration" -Foreach 'Custom', 'Default' {
 
 		BeforeAll {
 			$testConfig = . $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope $_ -Setup "ErrorProjects"

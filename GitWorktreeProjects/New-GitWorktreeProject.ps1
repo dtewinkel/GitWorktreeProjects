@@ -31,7 +31,7 @@
 	process
 	{
 		$projectConfig = GetProjectConfig -Project $Project -ErrorAction SilentlyContinue
-		if($projectConfig)
+		if($projectConfig -and -not $Force.IsPresent)
 		{
 			throw "Project '${Project}' already exists"
 		}
@@ -62,12 +62,15 @@
 		{
 			$null = New-Item -ItemType directory -Path $projectPath
 		}
-		$null = Set-Location $projectPath
+		# Make sure get the proper canonical path.
+		$projectPath = (Get-Item $projectPath).FullName
+		Set-Location $projectPath
 		git clone $Repository $gitPath
 		Set-Location $gitPath
 		git checkout -b bare $SourceBranch
 
-		$projectConfig = [ProjectConfig]::new()
+		$projectConfig = [Project]::new()
+		$projectConfig.Name = $Project
 		$projectConfig.RootPath = $projectPath
 		$projectConfig.SourceBranch = $SourceBranch
 		$projectConfig.GitPath = $gitPath

@@ -14,7 +14,7 @@
 
 	process
 	{
-		$config = GetProjectConfig -Project $Project
+		$config = GetProjectConfig -Project $Project -FailOnMissing
 		$worktree = $config.worktrees | Where-Object Name -EQ $Worktree
 		if (-not $worktree)
 		{

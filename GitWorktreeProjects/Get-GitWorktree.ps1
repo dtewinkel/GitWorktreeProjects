@@ -1,7 +1,7 @@
 ﻿function Get-GitWorktree
 {
 	[cmdletbinding()]
-	[OutputType([WorktreeConfig[]])]
+	[OutputType([Worktree[]])]
 	param(
 		[Parameter(Mandatory)]
 		[String] $Project,
@@ -12,9 +12,7 @@
 
 	process
 	{
-		$projectConfig = GetProjectConfig -Project $Project
-
-		$projectConfig.Worktrees | Where-Object Name -Like $WorktreeFilter
+		(GetProjectConfig -Project $Project -WorktreeFilter $WorktreeFilter -FailOnMissing).Worktrees
 	}
 }
 

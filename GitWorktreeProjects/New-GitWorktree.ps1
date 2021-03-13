@@ -34,7 +34,7 @@
 
 	process
 	{
-		$projectConfig = GetProjectConfig -Project $Project
+		$projectConfig = GetProjectConfig -Project $Project -FailOnMissing
 
 		if (-not $Commitish)
 		{
@@ -53,40 +53,45 @@
 			$Path = $Name
 		}
 
-		$branchInfo = $projectConfig.Worktrees | Where-Object Name -EQ $Name
-		if ($branchInfo)
+		$worktree = $projectConfig.Worktrees | Where-Object Name -EQ $Name
+		if ($worktree)
 		{
-			throw "Branch with name '${Name}' already exists!"
+			throw "Worktree with name '${Name}' already exists!"
 		}
 
 		Set-Location -Path $projectConfig.GitPath
-		$branchPath = Join-Path $projectConfig.RootPath $Path
-		if (Test-Path $branchPath)
+		$worktreePath = Join-Path $projectConfig.RootPath $Path
+		if (Test-Path $worktreePath)
 		{
-			throw "Path '${branchPath}' already exists!"
+			throw "Worktree path '${worktreePath}' already exists!"
 		}
 
 		if ($NewBranch)
 		{
-			git worktree add -b $NewBranch $branchPath $Commitish
+			$exitingBranch = git branch -l $NewBranch
+			if($exitingBranch)
+			{
+				throw "Branch '${NewBranch}' already exists!"
+			}
+			git worktree add -b $NewBranch $worktreePath $Commitish
 		}
 		else
 		{
-			git worktree add $branchPath $Commitish
+			git worktree add $worktreePath $Commitish
 		}
 		if($LastExitCode -ne 0)
 		{
 			throw "Git failed with exit code ${LastExitCode}."
 		}
-		if (Test-Path $branchPath)
+		if (Test-Path $worktreePath)
 		{
-			Set-Location $branchPath
-			$branchInfo = [BranchInfo]::new()
-			$branchInfo.Name = $Name
-			$branchInfo.InitialCommitish = $Commitish
-			$branchInfo.RelativePath = $Path
-			$projectConfig.Worktrees = $projectConfig.Worktrees + @($branchInfo)
-			SetProjectConfig -Project $Project -Config $projectConfig
+			Set-Location $worktreePath
+			$worktree = [Worktree]::new()
+			$worktree.Name = $Name
+			$worktree.InitialCommitish = $Commitish
+			$worktree.RelativePath = $Path
+			$projectConfig.Worktrees = $projectConfig.Worktrees + @($worktree)
+			SetProjectConfig -Project $Project -ProjectConfig $projectConfig
 		}
 		else
 		{

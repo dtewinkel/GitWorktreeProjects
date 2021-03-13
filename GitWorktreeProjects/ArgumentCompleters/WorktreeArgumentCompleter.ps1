@@ -1,17 +1,13 @@
 ﻿function WorktreeArgumentCompleter($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
 {
 	$Project = $fakeBoundParameters.Project
+	if($Project -eq '.')
+	{
+		$Project = GetCurrentProject
+	}
 	if ($Project)
 	{
-		$configFile = GetConfigFilePath -ChildPath "${Project}.project"
-		if (Test-Path $configFile)
-		{
-			((Get-Content $configFile | ConvertFrom-Json).Worktrees | Where-Object Name -Like "${wordToComplete}*").Name
-		}
-		else
-		{
-			""
-		}
+		GetProjectConfig -Project $Project -WorktreeFilter "${wordToComplete}*" | Select-Object -ExpandProperty Worktrees |  ForEach-Object Name
 	}
 	else
 	{

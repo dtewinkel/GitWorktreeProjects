@@ -12,11 +12,20 @@
 
 	process
 	{
-		foreach($project in (GetProjects $ProjectFilter))
+		if ($ProjectFilter -eq '.')
 		{
-			GetProjectConfig -Project $project -WorktreeFilter $WorktreeFilter
+			GetProjectConfig -Project $ProjectFilter -WorktreeFilter $WorktreeFilter -FailOnMissing
 		}
-	}
+		else
+		{
+
+			foreach ($project in (GetProjects $ProjectFilter))
+			{
+				GetProjectConfig -Project $project -WorktreeFilter $WorktreeFilter -FailOnMissing
+			}
+
+		}
+ }
 }
 
 Register-ArgumentCompleter -CommandName Get-GitWorktreeProject -ParameterName Filter -ScriptBlock ${function:ProjectArgumentCompleter}

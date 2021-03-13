@@ -91,6 +91,7 @@ Get-ChildItem (Join-Path $sourcePath '*.project') | ForEach-Object {
 		Mock Test-Path { $true } -ParameterFilter { $Path -eq $projectFile }
 		Mock Get-Content { $mockedContent } -ParameterFilter { $Path -eq $projectFile }
 	}
+	Mock Get-Item { @{ FullName = $projectConfig.RootPath } } -ParameterFilter { $Path -eq $projectConfig.RootPath }
 	$project = @{
 		Name              = $sourceItem.BaseName
 		Project           = $projectConfig

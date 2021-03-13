@@ -31,6 +31,29 @@ Describe "Set-GitWorktreeDefaults" {
 			Should -Invoke Out-File -Times 1 -ParameterFilter { $FilePath -eq $expectedFile -and $Encoding -eq "utf8BOM" -and $inputObject -eq $newMockedContent }
 		}
 
+
+		It "should create the config if the config directory doesn't exist" {
+
+			$testConfig = . $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope $_ -Setup Empty
+			$expectedFile = $testConfig.globalConfigFile
+			$expectedDefaultRoot = "${TestDrive}"
+			$expectedBranch = "testing-1"
+			Mock Test-Path { $false } -ParameterFilter { $Path -eq $testConfig.configRoot } -Verifiable
+			Mock New-Item { "" } -ParameterFilter { $Path -eq $testConfig.configRoot -and $ItemType -eq "Directory" } -Verifiable
+			Mock Test-Path { $true } -ParameterFilter { $Path -eq $expectedDefaultRoot } -Verifiable
+			Mock Write-Warning {} -ParameterFilter { $Message -like "Global configuration file 'configuration.json' not found! Using default configuration." } -Verifiable
+			Mock ConvertTo-Json { $newMockedContent } -Verifiable -ParameterFilter {
+				$inputObject.DefaultRootPath -eq $expectedDefaultRoot `
+				-and $inputObject.DefaultSourceBranch -eq $expectedBranch `
+				-and $inputObject.SchemaVersion -eq 1
+			}
+
+			Set-GitWorktreeDefaults -DefaultRoot $expectedDefaultRoot -DefaultBranch $expectedBranch
+
+			Should -InvokeVerifiable
+			Should -Invoke Out-File -Times 1 -ParameterFilter { $FilePath -eq $expectedFile -and $Encoding -eq "utf8BOM" -and $inputObject -eq $newMockedContent }
+		}
+
 		It "should fail if config file has corrupt JSON" {
 
 			. $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope $_ -Setup "NoProjectsCorruptedJson"

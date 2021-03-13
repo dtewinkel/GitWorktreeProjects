@@ -1,5 +1,6 @@
 ﻿{
   "SchemaVersion": 1,
+  "Name": "MyFirstProject",
   "RootPath": "/data/projects/MyFirstProject",
   "GitPath": "/data/projects/MyFirstProject/gitPath",
   "GitRepository": "https://notreally.github.com/gitworktreeproject/MyFirstProject.git",

@@ -6,12 +6,15 @@ function SetProjectConfig
 		[String] $Project,
 
 		[Parameter()]
-		[ProjectConfig] $ProjectConfig
+		[Project] $ProjectConfig
 	)
 
-	process
+	$configPath = GetConfigFilePath
+	if(-not (Test-Path $configPath))
 	{
-		$configFilePath = GetConfigFilePath -ChildPath "${Project}.project"
-		$ProjectConfig.ToFile() | ConvertTo-Json | Out-File $configFilePath -Encoding utf8BOM
+		$null = New-Item -ItemType Directory -Path $configPath
 	}
+	$configFile = GetConfigFilePath -ChildPath "${Project}.project"
+
+	$ProjectConfig.ToFile() | ConvertTo-Json | Out-File -FilePath $configFile -Encoding utf8BOM
 }
