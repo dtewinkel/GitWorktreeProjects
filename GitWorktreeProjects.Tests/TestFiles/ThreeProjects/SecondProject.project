@@ -1,0 +1,16 @@
+﻿{
+  "SchemaVersion": 1,
+  "Name": "SecondProject",
+  "RootPath": "/data/projects/SecondProject",
+  "GitPath": "/data/projects/SecondProject/.bare",
+  "GitRepository": "https://example.com/gitworktreeproject/SecondProject.git",
+  "SourceBranch": "main",
+  "Worktrees": [
+    {
+      "Name": "main",
+      "InitialCommitish": "main",
+      "RelativePath": "main",
+      "NewBranch": null
+    }
+  ]
+}

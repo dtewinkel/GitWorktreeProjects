@@ -11,12 +11,8 @@
 
 	process
 	{
-		$config = GetProjectConfig -Project $Project -FailOnMissing
-		$worktreeConfig = $config.Worktrees | Where-Object Name -EQ $Worktree
-		if (-not $worktreeConfig)
-		{
-			throw "Worktree '${Worktree}' for project '${Project}' not found!"
-		}
+		$config = GetProjectConfig -Project $Project -WorktreeFilter $Worktree -WorktreeExactMatch -FailOnMissing
+		$worktreeConfig = $config.Worktrees[0]
 		$fullPath = Join-Path $config.RootPath $worktreeConfig.RelativePath
 		if (-not (Test-Path $fullPath))
 		{

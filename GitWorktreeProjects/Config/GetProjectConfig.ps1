@@ -11,6 +11,9 @@ function GetProjectConfig
 		[String] $WorktreeFilter = '*',
 
 		[Parameter()]
+		[Switch] $WorktreeExactMatch,
+
+		[Parameter()]
 		[Switch] $FailOnMissing
 	)
 
@@ -37,7 +40,18 @@ function GetProjectConfig
 		return $null
 	}
 	$projectConfig = [Project]::FromProjectFile($projectFromFile)
-	$projectConfig.Worktrees = $projectConfig.Worktrees | Where-Object Name -Like $WorktreeFilter
+	if ($WorktreeExactMatch.IsPresent)
+	{
+		$projectConfig.Worktrees = $projectConfig.Worktrees | Where-Object Name -ceq $WorktreeFilter
+		if ((-not $projectConfig.Worktrees -or $projectConfig.Worktrees.Length -ne 1) -and $FailOnMissing.IsPresent)
+		{
+			throw "Worktree '$WorktreeFilter' for project '${Project}' not found! Use New-GitWorktree to create it."
+		}
+	}
+	else
+	{
+		$projectConfig.Worktrees = $projectConfig.Worktrees | Where-Object Name -like $WorktreeFilter
+	}
 	if ($WorktreeFilter -eq '*' -or $projectConfig.Worktrees.Length -ne 0)
 	{
 		$projectConfig

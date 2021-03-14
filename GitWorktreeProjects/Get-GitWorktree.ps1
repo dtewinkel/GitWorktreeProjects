@@ -17,6 +17,6 @@
 }
 
 Register-ArgumentCompleter -CommandName Get-GitWorktree -ParameterName Project -ScriptBlock ${function:ProjectArgumentCompleter}
-Register-ArgumentCompleter -CommandName Get-GitWorktree -ParameterName Fileter -ScriptBlock ${function:WorktreeArgumentCompleter}
+Register-ArgumentCompleter -CommandName Get-GitWorktree -ParameterName WorktreeFilter -ScriptBlock ${function:WorktreeArgumentCompleter}
 
 New-Alias -Name ggw Get-GitWorktree

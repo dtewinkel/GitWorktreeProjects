@@ -3,6 +3,7 @@ class Worktree
 	[string] $Name
 	[string] $InitialCommitish
 	[string] $RelativePath
+	[string] $NewBranch
 }
 
 class ProjectFile

@@ -9,12 +9,14 @@
     {
       "Name": "main",
       "InitialCommitish": "main",
-      "RelativePath": "main"
+      "RelativePath": "main",
+      "NewBranch": ""
     },
     {
       "Name": "worktree2",
       "InitialCommitish": "tree",
-      "RelativePath": "anotherTree"
+      "RelativePath": "anotherTree",
+      "NewBranch": ""
     }
   ]
 }

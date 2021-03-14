@@ -21,7 +21,7 @@ Describe "Open-GitWorktree" {
 		It "should fail if the Worktree does not exist" {
 			{
 				Open-GitWorktree -Project MyFirstProject -Worktree None
-			} | Should -Throw "Worktree 'None' for project 'MyFirstProject' not found!"
+			} | Should -Throw "Worktree 'None' for project 'MyFirstProject' not found! Use New-GitWorktree to create it."
 		}
 
 		It "should fail if the Worktree path does not exist" {

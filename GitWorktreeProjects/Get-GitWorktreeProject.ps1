@@ -28,6 +28,6 @@
  }
 }
 
-Register-ArgumentCompleter -CommandName Get-GitWorktreeProject -ParameterName Filter -ScriptBlock ${function:ProjectArgumentCompleter}
+Register-ArgumentCompleter -CommandName Get-GitWorktreeProject -ParameterName ProjectFilter -ScriptBlock ${function:ProjectArgumentCompleter}
 
 New-Alias -Name ggwp Get-GitWorktreeProject

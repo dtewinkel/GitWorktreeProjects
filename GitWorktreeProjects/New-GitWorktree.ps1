@@ -35,6 +35,7 @@
 	process
 	{
 		$projectConfig = GetProjectConfig -Project $Project -FailOnMissing
+		$projectName = $projectConfig.Name
 
 		if (-not $Commitish)
 		{
@@ -90,8 +91,9 @@
 			$worktree.Name = $Name
 			$worktree.InitialCommitish = $Commitish
 			$worktree.RelativePath = $Path
+			$worktree.NewBranch = $NewBranch
 			$projectConfig.Worktrees = $projectConfig.Worktrees + @($worktree)
-			SetProjectConfig -Project $Project -ProjectConfig $projectConfig
+			SetProjectConfig -Project $projectName -ProjectConfig $projectConfig
 		}
 		else
 		{
