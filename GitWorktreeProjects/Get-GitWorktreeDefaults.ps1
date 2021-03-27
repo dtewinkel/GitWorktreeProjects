@@ -3,8 +3,5 @@
 	[cmdletbinding()]
 	param()
 
-	process
-	{
-		GetGlobalConfig
-	}
+	GetGlobalConfig
 }

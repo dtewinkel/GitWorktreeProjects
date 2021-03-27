@@ -1,9 +1,16 @@
+class Tool
+{
+	[string] $Name
+	[string[]] $Parameters = [string[]]@()
+}
+
 class Worktree
 {
 	[string] $Name
 	[string] $InitialCommitish
 	[string] $RelativePath
 	[string] $NewBranch
+	[Tool[]] $Tools = [Tool[]]@()
 }
 
 class ProjectFile
@@ -15,6 +22,7 @@ class ProjectFile
 	[string] $GitRepository
 	[string] $SourceBranch
 	[Worktree[]] $Worktrees = [Worktree[]]@()
+	[Tool[]] $Tools = [Tool[]]@()
 }
 
 class Project
@@ -25,6 +33,7 @@ class Project
 	[string] $GitRepository
 	[string] $SourceBranch
 	[Worktree[]] $Worktrees = [Worktree[]]@()
+	[Tool[]] $Tools = [Tool[]]@()
 
 	static [Project] FromProjectFile([ProjectFile] $projectConfig)
 	{

@@ -18,87 +18,81 @@
 		[String] $Path
 	)
 
-	begin
+	$git = Get-Command git
+	if (-not $git)
 	{
-		$git = Get-Command git
-		if (-not $git)
-		{
-			throw "git not found!"
-		}
-
-		if (-not $Commitish -and -not $Path -and -not $Name -and -not $NewBranch)
-		{
-			throw "At lease one of -Commitish, -Path, -NewBranch, and -Name must be given."
-		}
+		throw "git not found!"
 	}
 
-	process
+	if (-not $Commitish -and -not $Path -and -not $Name -and -not $NewBranch)
 	{
-		$projectConfig = GetProjectConfig -Project $Project -FailOnMissing
-		$projectName = $projectConfig.Name
+		throw "At lease one of -Commitish, -Path, -NewBranch, and -Name must be given."
+	}
 
-		if (-not $Commitish)
-		{
-			$Commitish = $projectConfig.SourceBranch
-		}
-		if (-not $Name -and $NewBranch)
-		{
-			$Name = $NewBranch
-		}
-		if (-not $Name)
-		{
-			$Name = $Commitish
-		}
-		if (-not $Path)
-		{
-			$Path = $Name
-		}
+	$projectConfig = GetProjectConfig -Project $Project -FailOnMissing
+	$projectName = $projectConfig.Name
 
-		$worktree = $projectConfig.Worktrees | Where-Object Name -EQ $Name
-		if ($worktree)
-		{
-			throw "Worktree with name '${Name}' already exists!"
-		}
+	if (-not $Commitish)
+	{
+		$Commitish = $projectConfig.SourceBranch
+	}
+	if (-not $Name -and $NewBranch)
+	{
+		$Name = $NewBranch
+	}
+	if (-not $Name)
+	{
+		$Name = $Commitish
+	}
+	if (-not $Path)
+	{
+		$Path = $Name
+	}
 
-		Set-Location -Path $projectConfig.GitPath
-		$worktreePath = Join-Path $projectConfig.RootPath $Path
-		if (Test-Path $worktreePath)
-		{
-			throw "Worktree path '${worktreePath}' already exists!"
-		}
+	$worktree = $projectConfig.Worktrees | Where-Object Name -EQ $Name
+	if ($worktree)
+	{
+		throw "Worktree with name '${Name}' already exists!"
+	}
 
-		if ($NewBranch)
+	Set-Location -Path $projectConfig.GitPath
+	$worktreePath = Join-Path $projectConfig.RootPath $Path
+	if (Test-Path $worktreePath)
+	{
+		throw "Worktree path '${worktreePath}' already exists!"
+	}
+
+	if ($NewBranch)
+	{
+		$exitingBranch = git branch -l $NewBranch
+		if ($exitingBranch)
 		{
-			$exitingBranch = git branch -l $NewBranch
-			if($exitingBranch)
-			{
-				throw "Branch '${NewBranch}' already exists!"
-			}
-			git worktree add -b $NewBranch $worktreePath $Commitish
+			throw "Branch '${NewBranch}' already exists!"
 		}
-		else
-		{
-			git worktree add $worktreePath $Commitish
-		}
-		if($LastExitCode -ne 0)
-		{
-			throw "Git failed with exit code ${LastExitCode}."
-		}
-		if (Test-Path $worktreePath)
-		{
-			Set-Location $worktreePath
-			$worktree = [Worktree]::new()
-			$worktree.Name = $Name
-			$worktree.InitialCommitish = $Commitish
-			$worktree.RelativePath = $Path
-			$worktree.NewBranch = $NewBranch
-			$projectConfig.Worktrees = $projectConfig.Worktrees + @($worktree)
-			SetProjectConfig -Project $projectName -ProjectConfig $projectConfig
-		}
-		else
-		{
-			throw "Failed to create folder '${branchPath}'. Worktree not created"
-		}
+		git worktree add -b $NewBranch $worktreePath $Commitish
+	}
+	else
+	{
+		git worktree add $worktreePath $Commitish
+	}
+	if ($LastExitCode -ne 0)
+	{
+		throw "Git failed with exit code ${LastExitCode}."
+	}
+	if (Test-Path $worktreePath)
+	{
+		Set-Location $worktreePath
+		$worktree = [Worktree]::new()
+		$worktree.Name = $Name
+		$worktree.InitialCommitish = $Commitish
+		$worktree.RelativePath = $Path
+		$worktree.NewBranch = $NewBranch
+		$projectConfig.Worktrees = $projectConfig.Worktrees + @($worktree)
+		SetProjectConfig -Project $projectName -ProjectConfig $projectConfig
+	}
+	else
+	{
+		throw "Failed to create folder '${branchPath}'. Worktree not created"
 	}
 }
 

@@ -10,10 +10,7 @@
 		[String] $WorktreeFilter = '*'
 	)
 
-	process
-	{
-		(GetProjectConfig -Project $Project -WorktreeFilter $WorktreeFilter -FailOnMissing).Worktrees
-	}
+	(GetProjectConfig -Project $Project -WorktreeFilter $WorktreeFilter -FailOnMissing).Worktrees
 }
 
 Register-ArgumentCompleter -CommandName Get-GitWorktree -ParameterName Project -ScriptBlock ${function:ProjectArgumentCompleter}

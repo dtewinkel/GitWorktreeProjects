@@ -12,60 +12,57 @@
 		[Switch] $Force
 	)
 
-	process
+	$config = GetProjectConfig -Project $Project -FailOnMissing
+	$worktreeConfig = $config.worktrees | Where-Object Name -CEQ $Worktree
+	if (-not $worktreeConfig)
 	{
-		$config = GetProjectConfig -Project $Project -FailOnMissing
-		$worktreeConfig = $config.worktrees | Where-Object Name -CEQ $Worktree
-		if (-not $worktreeConfig)
+		throw "Worktree '${Worktree}' not found in project '$($config.Name)' configuration!"
+	}
+	$worktreePath = (Get-Item (Join-Path $config.RootPath $worktreeConfig.RelativePath)).FullName
+	if (-not (Test-Path $worktreePath) -and -not $Force.IsPresent)
+	{
+		throw "Worktree path '${worktreePath} not found"
+	}
+	$gitPath = $config.GitPath
+	if (-not (Test-Path $gitPath))
+	{
+		throw "Path '${gitPath} not found"
+	}
+	try
+	{
+		$currentLocation = Get-Location
+		if ($worktreePath -ceq $currentLocation)
 		{
-			throw "Worktree '${Worktree}' not found in project '$($config.Name)' configuration!"
+			Set-Location $config.RootPath
 		}
-		$worktreePath = (Get-Item (Join-Path $config.RootPath $worktreeConfig.RelativePath)).FullName
-		if (-not (Test-Path $worktreePath) -and -not $Force.IsPresent)
+		Push-Location $gitPath
+		$forceParameter = @()
+		if ($Force.IsPresent)
 		{
-			throw "Worktree path '${worktreePath} not found"
+			$forceParameter = @('--force')
 		}
-		$gitPath = $config.GitPath
-		if (-not (Test-Path $gitPath))
+		git worktree remove @forceParameter $worktreeConfig.RelativePath
+		if ($LastExitCode -ne 0 -and -not $Force.IsPresent)
 		{
-			throw "Path '${gitPath} not found"
+			throw "Git failed with exit code ${LastExitCode}."
 		}
-		try
+		if (Test-Path $worktreePath)
 		{
-			$currentLocation = Get-Location
-			if ($worktreePath -ceq $currentLocation)
-			{
-				Set-Location $config.RootPath
-			}
-			Push-Location $gitPath
-			$forceParameter = @()
-			if ($Force.IsPresent)
-			{
-				$forceParameter = @('--force')
-			}
-			git worktree remove @forceParameter $worktreeConfig.RelativePath
-			if ($LastExitCode -ne 0 -and -not $Force.IsPresent)
-			{
-				throw "Git failed with exit code ${LastExitCode}."
-			}
-			if (Test-Path $worktreePath)
-			{
-				throw "Failed to remove folder '${worktreePath}'."
-			}
-			if ($config.Worktrees.Length -eq 1)
-			{
-				$config.Worktrees = $null
-			}
-			else
-			{
-				$config.Worktrees = $config.Worktrees | Where-Object Name -CNE $Worktree
-			}
-			SetProjectConfig -Project $config.Name -ProjectConfig $config
+			throw "Failed to remove folder '${worktreePath}'."
 		}
-		finally
+		if ($config.Worktrees.Length -eq 1)
 		{
-			Pop-Location
+			$config.Worktrees = $null
 		}
+		else
+		{
+			$config.Worktrees = $config.Worktrees | Where-Object Name -CNE $Worktree
+		}
+		SetProjectConfig -Project $config.Name -ProjectConfig $config
+	}
+	finally
+	{
+		Pop-Location
 	}
 }
 

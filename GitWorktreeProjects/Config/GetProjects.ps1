@@ -7,9 +7,6 @@ function GetProjects
 		[String] $Filter = '*'
 	)
 
-	process
-	{
-		$path = GetConfigFilePath -ChildPath *.project
-		(Get-ChildItem $path -File).BaseName | Where-Object { $PSItem -like $Filter }
-	}
+	$path = GetConfigFilePath -ChildPath *.project
+	(Get-ChildItem $path -File).BaseName | Where-Object { $PSItem -like $Filter }
 }
