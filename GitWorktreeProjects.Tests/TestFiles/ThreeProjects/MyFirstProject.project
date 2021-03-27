@@ -10,7 +10,13 @@
       "Name": "main",
       "InitialCommitish": "main",
       "RelativePath": "main",
-      "NewBranch": null
+      "NewBranch": ""
+    },
+    {
+      "Name": "worktree2",
+      "InitialCommitish": "tree",
+      "RelativePath": "anotherTree",
+      "NewBranch": ""
     }
   ]
 }

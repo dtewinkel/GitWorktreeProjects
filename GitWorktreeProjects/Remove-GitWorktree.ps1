@@ -20,7 +20,7 @@
 		{
 			throw "Worktree '${Worktree}' not found in project '$($config.Name)' configuration!"
 		}
-		$worktreePath = Join-Path $config.RootPath $worktreeConfig.RelativePath
+		$worktreePath = (Get-Item (Join-Path $config.RootPath $worktreeConfig.RelativePath)).FullName
 		if (-not (Test-Path $worktreePath) -and -not $Force.IsPresent)
 		{
 			throw "Worktree path '${worktreePath} not found"
@@ -32,6 +32,11 @@
 		}
 		try
 		{
+			$currentLocation = Get-Location
+			if ($worktreePath -ceq $currentLocation)
+			{
+				Set-Location $config.RootPath
+			}
 			Push-Location $gitPath
 			$forceParameter = @()
 			if ($Force.IsPresent)

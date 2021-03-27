@@ -29,6 +29,7 @@ function GetProjectConfig
 			return $null
 		}
 	}
+
 	$fileName = "${Project}.project"
 	$projectFromFile = GetConfigFile -FileName $fileName
 	if (-not $projectFromFile)

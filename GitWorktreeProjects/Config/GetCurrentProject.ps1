@@ -6,6 +6,9 @@ function GetCurrentProject
 					$fileName = "${PsItem}.project"
 					GetConfigFile -FileName $fileName
 				} |
-				Where-Object { $currentPath.StartsWith((Get-Item $_.RootPath).FullName) } |
+				Where-Object {
+					$destPath = (Get-Item $_.RootPath).FullName
+					$destPath -and $currentPath.StartsWith($destPath)
+				} |
 				Select-Object -First 1 -ExpandProperty Name
 }

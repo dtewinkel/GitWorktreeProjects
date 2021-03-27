@@ -7,23 +7,46 @@ Describe "Get-GitWorktreeProject" {
 	Context "With <_> configuration" -ForEach 'Custom', 'Default' {
 
 		BeforeEach {
-			$config = . $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope $_ -Setup "OneProject"
+			$testConfig = . $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope $_ -Setup "ThreeProjects"
 		}
 
-		It "should get project information from the right location" {
+		It "should get project information for a specific project" {
+			$ProjectName = "SecondProject"
 
-			$result = Get-GitWorktreeProject MyFirstProject
-			
-			. $PSScriptRoot/Helpers/CompareProject.ps1 -Actual $result -Expected $config.Projects.MyFirstProject.Project
-		}
+			$result = Get-GitWorktreeProject -ProjectFilter $ProjectName
 
-		It "Should return information about all projects if called without parameters" {
-			$result = Get-GitWorktreeProject MyFirstProject
-
-			. $PSScriptRoot/Helpers/CompareProject.ps1 -Actual $result -Expected $config.Projects.MyFirstProject.Project
+			. $PSScriptRoot/Helpers/CompareProject.ps1 -Actual $result -Expected $testConfig.Projects.${ProjectName}.Project
 		}
 
 		It "Should return information about all projects if called without parameters" {
+
+			$result = Get-GitWorktreeProject
+
+			. $PSScriptRoot/Helpers/CompareProject.ps1 -Actual $result -Expected $testConfig.Projects.Values.Project -ExpectedType "Project[]"
+		}
+
+		It "Should return information about the current project" {
+
+			$ProjectName = "SecondProject"
+
+			$project = $testConfig.Projects.${ProjectName}.Project
+			Mock Get-Location { @{ Path = $project.RootPath } } -Verifiable
+
+			$result = Get-GitWorktreeProject -ProjectFilter .
+
+			Should -InvokeVerifiable
+			. $PSScriptRoot/Helpers/CompareProject.ps1 -Actual $result -Expected $project
+		}
+
+		It "Should fail if outside a project for the current project" {
+
+			Mock Get-Location { @{ Path = "dummy" } } -Verifiable
+
+			{
+				Get-GitWorktreeProject -ProjectFilter .
+			} | Should -Throw "Could not determine the Project in the current directory."
+
+			Should -InvokeVerifiable
 		}
 	}
 }

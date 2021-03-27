@@ -9,12 +9,12 @@
     {
       "Name": "main",
       "InitialCommitish": "main",
-      "NewBranch": null,
+      "NewBranch": "",
       "RelativePath": "main"
     },
     {
       "Name": "demo",
-      "NewBranch": null,
+      "NewBranch": "",
       "InitialCommitish": "main",
       "RelativePath": "demo"
     },

@@ -18,7 +18,6 @@ switch ($Scope)
 {
 	"Default"
 	{
-		$mockFiles = $true
 		if ($env:GitWorktreeConfigPath)
 		{
 			$null = Remove-Item env:GitWorktreeConfigPath
@@ -29,17 +28,9 @@ switch ($Scope)
 
 	"Custom"
 	{
-		$mockFiles = $false
 		$configRoot = Join-Path $TestDrive .gitworktree
 		$configFile = Join-Path $configRoot configuration.json
 		$env:GitWorktreeConfigPath = $configRoot
-
-		if (Test-Path $configRoot)
-		{
-			$null = Remove-Item $configRoot -Recurse -Force
-		}
-		$null = New-Item -ItemType Directory $configRoot
-		$null = Copy-Item (Join-Path $sourcePath *) $configRoot -Recurse -Force
 	}
 
 	default
@@ -50,10 +41,8 @@ switch ($Scope)
 
 $configSourceFile = Join-Path $sourcePath configuration.json
 $exists = Test-Path $configSourceFile
-if ($mockFiles)
-{
-	Mock Test-Path { $exists } -ParameterFilter { $Path -eq $configFile }
-}
+Mock Test-Path { $exists } -ParameterFilter { $Path -eq $configFile }
+
 if ($exists)
 {
 	$mockedContent = Get-Content $configSourceFile -Raw
@@ -65,17 +54,14 @@ if ($exists)
 	{
 		$globalConfig = $null
 	}
-	if ($mockFiles)
-	{
-		Mock Get-Content { $mockedContent } -ParameterFilter { $Path -eq $configFile }
-	}
+	Mock Get-Content { $mockedContent } -ParameterFilter { $Path -eq $configFile }
 }
 
+$projectFiles = Get-ChildItem (Join-Path $sourcePath '*.project') | Sort-Object Name
 $projects = @()
-
-Get-ChildItem (Join-Path $sourcePath '*.project') | ForEach-Object {
-
-	$sourceItem = $_
+foreach($sourceItem in $projectFiles)
+{
+	$name = $sourceItem.BaseName
 	$projectFile = Join-Path $configRoot $sourceItem.Name
 	$mockedContent = Get-Content $sourceItem -Raw
 	try
@@ -86,19 +72,30 @@ Get-ChildItem (Join-Path $sourcePath '*.project') | ForEach-Object {
 	{
 		$projectConfig = $null
 	}
-	if ($mockFiles)
-	{
-		Mock Test-Path { $true } -ParameterFilter { $Path -eq $projectFile }
-		Mock Get-Content { $mockedContent } -ParameterFilter { $Path -eq $projectFile }
-	}
-	Mock Get-Item { @{ FullName = $projectConfig.RootPath } } -ParameterFilter { $Path -eq $projectConfig.RootPath }
 	$project = @{
-		Name              = $sourceItem.BaseName
+		Name              = $name
 		Project           = $projectConfig
+		ProjectRaw        = $mockedContent
 		ProjectConfigFile = $projectFile
 		FileInfo          = [System.IO.FileInfo]$projectFile
 	}
 	$projects += $project
+	$parameterFilterScriptBlock = [Scriptblock]::Create("`$Path -eq '${projectFile}'")
+	Mock Test-Path { $true } -ParameterFilter $parameterFilterScriptBlock
+	$resultScriptBlock = [Scriptblock]::Create("'${mockedContent}'")
+	Mock Get-Content $resultScriptBlock -ParameterFilter $parameterFilterScriptBlock
+	$rootPath = $projectConfig.RootPath
+	$parameterFilterScriptBlock = [Scriptblock]::Create("`$Path -eq '${rootPath}'")
+	$resultScriptBlock = [Scriptblock]::Create("@{ FullName = '$($projectConfig.RootPath)' }")
+	Mock Get-Item $resultScriptBlock -ParameterFilter $parameterFilterScriptBlock
+	foreach($worktreeItem in $projectConfig.Worktrees)
+	{
+		$worktreePath = Join-Path $rootPath $worktreeItem.RelativePath
+		$parameterFilterScriptBlock = [Scriptblock]::Create("`$Path -eq '${worktreePath}'")
+		Mock Test-Path { $true } -ParameterFilter $parameterFilterScriptBlock
+		$parameterFilterScriptBlock = [Scriptblock]::Create("`$Path -eq '${worktreePath}'")
+		Mock Set-Location {  } -ParameterFilter $parameterFilterScriptBlock
+	}
 }
 
 [PSCustomObject]@{

@@ -11,12 +11,13 @@
 
 	process
 	{
-		$config = GetProjectConfig -Project $Project -WorktreeFilter $Worktree -WorktreeExactMatch -FailOnMissing
-		$worktreeConfig = $config.Worktrees[0]
-		$fullPath = Join-Path $config.RootPath $worktreeConfig.RelativePath
+		$projectConfig = GetProjectConfig -Project $Project -WorktreeFilter $Worktree -WorktreeExactMatch -FailOnMissing
+		$worktreeConfig = $projectConfig.Worktrees[0]
+		$fullPath = Join-Path $projectConfig.RootPath $worktreeConfig.RelativePath
 		if (-not (Test-Path $fullPath))
 		{
-			throw "Path '${fullPath}' for worktree '${Worktree}' in project '${Project}' not found!"
+			$projectName = $projectConfig.Name
+			throw "Path '${fullPath}' for worktree '${Worktree}' in project '${projectName}' not found!"
 		}
 		Set-Location $fullPath
 	}
