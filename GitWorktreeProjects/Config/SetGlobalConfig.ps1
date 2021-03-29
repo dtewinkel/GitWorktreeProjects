@@ -13,5 +13,5 @@ function SetGlobalConfig
 	}
 	$configFile = GetConfigFilePath -ChildPath "configuration.json"
 
-	$GlobalConfig.ToFile() | ConvertTo-Json | Out-File -FilePath $configFile -Encoding utf8BOM
+	$GlobalConfig.ToFile() | ConvertTo-Json -Depth 5 | Out-File -FilePath $configFile -Encoding utf8BOM
 }

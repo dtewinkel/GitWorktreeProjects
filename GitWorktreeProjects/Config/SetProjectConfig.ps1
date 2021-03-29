@@ -16,5 +16,5 @@ function SetProjectConfig
 	}
 	$configFile = GetConfigFilePath -ChildPath "${Project}.project"
 
-	$ProjectConfig.ToFile() | ConvertTo-Json | Out-File -FilePath $configFile -Encoding utf8BOM
+	$ProjectConfig.ToFile() | ConvertTo-Json -Depth 5 | Out-File -FilePath $configFile -Encoding utf8BOM
 }
