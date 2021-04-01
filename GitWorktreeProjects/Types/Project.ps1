@@ -44,6 +44,7 @@ class Project
 		$project.GitRepository = $projectConfig.GitRepository
 		$project.SourceBranch = $projectConfig.SourceBranch
 		$project.Worktrees = $projectConfig.Worktrees
+		$project.Tools = $projectConfig.Tools
 
 		return $project
 	}
@@ -58,6 +59,8 @@ class Project
 		$projectFile.GitRepository = $this.GitRepository
 		$projectFile.SourceBranch = $this.SourceBranch
 		$projectFile.Worktrees = $this.Worktrees
+		$projectFile.Tools = $this.Tools
+
 		return $projectFile
 	}
 }
