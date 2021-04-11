@@ -7,8 +7,33 @@ Main purpose is to provide a set of CmdLets to make working with git working tre
 - Create a new working tree, either from an existing commit-ish, or from a new branch.
 - Opening and switching between working trees.
 - Clean-up working trees when done.
+- Automatically open tools that are always required when opening a working tree.
 
-This module is written to match my personal way of working.
+## To Do
+
+This project is still highly in development and not completely production ready. I use it at a daily base. But thing need to be done to make it better still.
+
+### Finish Pester unit tests
+
+- Unit tests for `Get-GitWorktreeProject`.
+- Unit tests for `Get-GitWorktree`.
+- Unit tests for `New-GitWorktreeProject`.
+- Unit tests for `New-GitWorktree`.
+- Unit tests for `Open-GitWorktree`.
+- Unit tests for tab expansion in all CmdLets that support it.
+
+### Complete basic functionality
+
+- Finish `Remove-GitWorktree`.
+- Add `Remove-GitWorktreeProject`.
+
+### Finish tools functionality
+
+- Copy tools from defaults config in `New-GitWorkTreeProject`.
+- Copy tools from GitWorktree project config in `New-GitWorkTree`.
+- Add CmdLet or CmdLets to add and remove tools for GitWorktree Projects and working trees.
+- Unit test tools.
+- Add ways to add more tools. Document the process.
 
 ## Assumptions
 
