@@ -72,7 +72,7 @@ Describe "Open-GitWorktree" {
 			} | Should -Throw "Could not determine the Project in the current directory."
 
 			Should -InvokeVerifiable
-			Should -Invoke Set-Location {} -Times 0
+			Should -Not -Invoke Set-Location
 		}
 	}
 

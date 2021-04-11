@@ -7,6 +7,6 @@ function GetProjects
 		[String] $Filter = '*'
 	)
 
-	$path = GetConfigFilePath -ChildPath *.project
-	(Get-ChildItem $path -File).BaseName | Where-Object { $PSItem -like $Filter }
+	$configPath = GetConfigFilePath -ChildPath *.project
+	(Get-ChildItem $configPath -File).BaseName | Where-Object { $PSItem -like $Filter } | Sort-Object
 }

@@ -1,16 +1,24 @@
 ﻿function WorktreeArgumentCompleter($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
 {
-	$Project = $fakeBoundParameters.Project
-	if($Project -eq '.')
+	$project = $fakeBoundParameters.Project
+	if ($project -eq '.')
 	{
-		$Project = GetCurrentProject
+		$project = GetCurrentProject
 	}
-	if ($Project)
+	$projects = @(GetProjects $project)
+	if ($projects.Length -ne 1 -or $projects[0] -ne $project)
 	{
-		GetProjectConfig -Project $Project -WorktreeFilter "${wordToComplete}*" | Select-Object -ExpandProperty Worktrees |  ForEach-Object Name
+		return $null
 	}
-	else
+	$worktrees = GetProjectConfig -Project $projects[0] -WorktreeFilter "${wordToComplete}*" | Select-Object -ExpandProperty Worktrees
+	if (-not $worktrees -or $worktrees.Length -eq 0)
 	{
-		""
+		return $null
+	}
+	foreach ($worktree in $worktrees)
+	{
+		$name = $worktree.Name
+		$description = "Worktree ${name} in $($worktree.RelativePath)"
+		[System.Management.Automation.CompletionResult]::new($name, $name, "ParameterValue", $description)
 	}
 }

@@ -12,7 +12,20 @@ function GetCurrentProject
 		} |
 		Where-Object {
 			$destPath = (Get-Item $_.RootPath).FullName
-			$destPath -and $currentPath.StartsWith($destPath)
+			if($destPath)
+			{
+				$relPath = [System.IO.Path]::GetRelativePath($destPath, $currentPath)
+				if([System.IO.Path]::IsPathRooted($relPath))
+				{
+					return $false
+				}
+				if($relPath -eq '.')
+				{
+					return $true
+				}
+				return $currentPath -eq (Join-Path $destPath $relPath)
+			}
+			return $false
 		} |
 		Select-Object -First 1 -ExpandProperty Name
 }

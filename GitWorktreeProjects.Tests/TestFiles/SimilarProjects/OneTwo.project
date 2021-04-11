@@ -1,0 +1,22 @@
+﻿{
+  "SchemaVersion": 1,
+  "Name": "OneTwo",
+  "RootPath": "/data/projects/OneTwo",
+  "GitPath": "/data/projects/OneTwo/.bare",
+  "GitRepository": "https://example.com/gitworktreeproject/OneTwo.git",
+  "SourceBranch": "main",
+  "Worktrees": [
+    {
+      "Name": "main",
+      "InitialCommitish": "main",
+      "RelativePath": "main",
+      "NewBranch": ""
+    },
+    {
+      "Name": "OneTwo",
+      "InitialCommitish": "main",
+      "RelativePath": "OneTwo",
+      "NewBranch": "OneTwo"
+    }
+  ]
+}

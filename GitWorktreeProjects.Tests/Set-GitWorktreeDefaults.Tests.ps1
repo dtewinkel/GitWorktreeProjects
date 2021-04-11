@@ -1,13 +1,20 @@
-BeforeAll {
-	Push-Location
-	Mock Out-File -RemoveParameterType "Encoding"
-	. $PSScriptRoot/Helpers/LoadModule.ps1
-	. $PSScriptRoot/Helpers/BackupGitWorktreeConfigPath.ps1
-
-	$newMockedContent = "{new}"
-}
-
 Describe "Set-GitWorktreeDefaults" {
+	BeforeAll {
+		Push-Location
+		Mock Out-File -RemoveParameterType "Encoding"
+		. $PSScriptRoot/Helpers/LoadModule.ps1
+		. $PSScriptRoot/Helpers/LoadTypes.ps1
+		. $PSScriptRoot/Helpers/BackupGitWorktreeConfigPath.ps1
+
+		$newMockedContent = "{new}"
+	}
+
+	It "should have the right parameters" {
+		$command = Get-Command Set-GitWorktreeDefaults
+		$command | Should -HaveParameter DefaultRoot
+		$command | Should -HaveParameter DefaultBranch
+		$command | Should -HaveParameter DefaultTools
+	}
 
 	Context "With <_> configuration" -ForEach 'Custom', 'Default' {
 
@@ -82,9 +89,10 @@ Describe "Set-GitWorktreeDefaults" {
 
 	Context "With <_> configuration" -ForEach 'Custom', 'Default' {
 
-		BeforeAll {
+		BeforeEach {
 			$testConfig = . $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope $_ -Setup NoProjects
 			$expectedFile = $testConfig.globalConfigFile
+			$expectedConfig = $testConfig.GlobalConfig
 		}
 
 		It "should update the config if it exists" {
@@ -92,27 +100,22 @@ Describe "Set-GitWorktreeDefaults" {
 			$expectedDefaultRoot = "${TestDrive}"
 			$expectedBranch = "testing-1"
 			Mock Test-Path { $true } -ParameterFilter { $Path -eq $expectedDefaultRoot } -Verifiable
-			Mock ConvertTo-Json { $newMockedContent } -Verifiable -ParameterFilter {
-				$InputObject.DefaultRootPath -eq $expectedDefaultRoot `
-				-and $InputObject.DefaultSourceBranch -eq $expectedBranch `
-				-and $InputObject.SchemaVersion -eq 1
-			}
+			$expectedConfig.DefaultRootPath = $expectedDefaultRoot
+			$expectedConfig.DefaultSourceBranch = $expectedBranch
+			Mock ConvertTo-Json { $newMockedContent } -Verifiable -ParameterFilter { . $PSScriptRoot/Helpers/CompareObject.ps1 $InputObject $expectedConfig GlobalConfigFile -AsBoolean }
 
 			Set-GitWorktreeDefaults -DefaultRoot $expectedDefaultRoot -DefaultBranch $expectedBranch
 
 			Should -InvokeVerifiable
-			Should -Invoke Out-File -Times 1 -ParameterFilter { $FilePath -eq $expectedFile -and $Encoding -eq "utf8BOM" -and $inputObject -eq $newMockedContent }
+			Should -Invoke Out-File -Times 1 -ParameterFilter { $FilePath -eq $expectedFile -and $Encoding -eq "utf8BOM" -and $InputObject -eq $newMockedContent }
 		}
 
 		It "should only update DefaultRoot if that is set" {
 
 			$expectedDefaultRoot = "${TestDrive}"
 			Mock Test-Path { $true } -ParameterFilter { $Path -eq $expectedDefaultRoot } -Verifiable
-			Mock ConvertTo-Json { $newMockedContent } -Verifiable -ParameterFilter {
-				$InputObject.DefaultRootPath -eq $expectedDefaultRoot `
-				-and $InputObject.DefaultSourceBranch -eq $testConfig.GlobalConfig.DefaultSourceBranch `
-				-and $InputObject.SchemaVersion -eq 1
-			}
+			$expectedConfig.DefaultRootPath = $expectedDefaultRoot
+			Mock ConvertTo-Json { $newMockedContent } -Verifiable -ParameterFilter { . $PSScriptRoot/Helpers/CompareObject.ps1 $InputObject $expectedConfig GlobalConfigFile -AsBoolean }
 
 			Set-GitWorktreeDefaults -DefaultRoot $expectedDefaultRoot
 
@@ -122,15 +125,24 @@ Describe "Set-GitWorktreeDefaults" {
 
 		It "should only update DefaultBranch if that is set" {
 
-			$expectedBranch = "testing-1"
+			$expectedBranch = "testing-123"
 
-			Mock ConvertTo-Json { $newMockedContent } -Verifiable -ParameterFilter {
-				$InputObject.DefaultRootPath -eq $testConfig.GlobalConfig.DefaultRootPath `
-				-and $InputObject.DefaultSourceBranch -eq $expectedBranch `
-				-and $InputObject.SchemaVersion -eq 1
-			}
+			$expectedConfig.DefaultSourceBranch = $expectedBranch
+			Mock ConvertTo-Json { $newMockedContent } -Verifiable -ParameterFilter { & $PSScriptRoot/Helpers/CompareObject.ps1 $InputObject $expectedConfig GlobalConfigFile -AsBoolean }
 
 			Set-GitWorktreeDefaults -DefaultBranch $expectedBranch
+
+			Should -InvokeVerifiable
+			Should -Invoke Out-File -Times 1 -ParameterFilter { $FilePath -eq $expectedFile -and $Encoding -eq "utf8BOM" -and $InputObject -eq $newMockedContent }
+		}
+
+		It "should only update DefaultTools if that is set" {
+
+			$expectedTools = "new-tool1", "anothertool"
+			$expectedConfig.DefaultTools = $expectedTools
+			Mock ConvertTo-Json { $newMockedContent } -Verifiable -ParameterFilter { & $PSScriptRoot/Helpers/CompareObject.ps1 $InputObject $expectedConfig GlobalConfigFile -AsBoolean }
+
+			Set-GitWorktreeDefaults -DefaultTools $expectedTools
 
 			Should -InvokeVerifiable
 			Should -Invoke Out-File -Times 1 -ParameterFilter { $FilePath -eq $expectedFile -and $Encoding -eq "utf8BOM" -and $InputObject -eq $newMockedContent }
@@ -153,12 +165,12 @@ Describe "Set-GitWorktreeDefaults" {
 	Context "With any configuration" {
 		It "should fail with no parameters" {
 
-			{ Set-GitWorktreeDefaults } | Should -Throw "At least either -DefaultRoot or -DefaultBranch must be specified!"
+			{ Set-GitWorktreeDefaults } | Should -Throw "At least either -DefaultRoot, -DefaultBranch, or -DefaultTools must be specified!"
 		}
 	}
-}
 
-AfterAll {
-	. $PSScriptRoot/Helpers/RestoreGitWorktreeConfigPath.ps1
-	Pop-Location
+	AfterAll {
+		. $PSScriptRoot/Helpers/RestoreGitWorktreeConfigPath.ps1
+		Pop-Location
+	}
 }

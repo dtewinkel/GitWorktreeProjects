@@ -1,10 +1,10 @@
-BeforeAll {
-	Push-Location
-	. $PSScriptRoot/Helpers/LoadModule.ps1
-	. $PSScriptRoot/Helpers/BackupGitWorktreeConfigPath.ps1
-}
-
 Describe "Get-GitWorktreeDefaults" {
+
+	BeforeAll {
+		Push-Location
+		. $PSScriptRoot/Helpers/LoadModule.ps1
+		. $PSScriptRoot/Helpers/BackupGitWorktreeConfigPath.ps1
+	}
 
 	Context "With <_> configuration" -ForEach 'Default', 'Custom' {
 
@@ -15,6 +15,8 @@ Describe "Get-GitWorktreeDefaults" {
 			$config = Get-GitWorktreeDefaults
 			$config.DefaultSourceBranch | Should -Be 'main'
 			$config.DefaultRootPath | Should -Be $HOME
+			$config.DefaultTools.Length | Should -Be 1
+			$config.DefaultTools[0] | Should -Be "WindowTitle"
 			Should -InvokeVerifiable
 		}
 
@@ -45,9 +47,9 @@ Describe "Get-GitWorktreeDefaults" {
 			{ Get-GitWorktreeDefaults } | Should -Throw "Schema version is not set for file 'configuration.json' (*configuration.json)."
 		}
 	}
-}
 
-AfterAll {
-	. $PSScriptRoot/Helpers/RestoreGitWorktreeConfigPath.ps1
-	Pop-Location
+	AfterAll {
+		. $PSScriptRoot/Helpers/RestoreGitWorktreeConfigPath.ps1
+		Pop-Location
+	}
 }
