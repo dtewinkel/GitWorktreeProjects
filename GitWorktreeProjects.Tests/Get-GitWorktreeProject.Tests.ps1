@@ -9,70 +9,30 @@ Describe "Get-GitWorktreeProject" {
 
 	It "should have the right parameters" {
 		$command = Get-Command Get-GitWorktreeProject
+		
 		$command | Should -HaveParameter WorktreeFilter
 		$command | Should -HaveParameter ProjectFilter
 	}
 
-	Context "with tab expansion for ProjectFilter " -Foreach '', '-ProjectFilter ' {
+	Context "with tab expansion" {
 
-		It "should expand ProjectFilter to nothing when no projects" {
-			. $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup NoProjects
-			$cmd = "Get-GitWorktreeProject ${_}"
-			{ TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length } | Should -Throw
-		}
-
-		It "should expand ProjectFilter to nothing with 3 projects" {
+		It "for ProjectFilter" {
 			. $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup ThreeProjects
 			$cmd = "Get-GitWorktreeProject ${_}"
+
 			$result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
+
 			$result.CompletionMatches | Should -HaveCount 3
 			$result.CompletionMatches[0].CompletionText | Should -Be "AnotherProject"
-			$result.CompletionMatches[1].CompletionText | Should -Be "MyFirstProject"
-			$result.CompletionMatches[2].CompletionText | Should -Be "SecondProject"
 		}
-
-		It "should expand ProjectFilter to nothing with 3 projects" {
+		It "for WorktreeFilter" {
 			. $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup ThreeProjects
-			$cmd = "Get-GitWorktreeProject ${_}Se"
+			$cmd = "Get-GitWorktreeProject -ProjectFilter AnotherProject -WorktreeFilter *"
+
 			$result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
-			$result.CompletionMatches | Should -HaveCount 1
-			$result.CompletionMatches[0].CompletionText | Should -Be "SecondProject"
-		}
-	}
 
-	Context "with tab expansion for WorktreeFilter " {
-
-		It "should expand WorktreeFilter to nothing when no projects" {
-			. $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup NoProjects
-			$cmd = "Get-GitWorktreeProject -WorktreeFilter *"
-			{ TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length } | Should -Throw
-		}
-	}
-
-	Context "with tab expansion for WorktreeFilter" {
-
-		It "should expand WorktreeFilter to nothing when no projects" {
-			. $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup NoProjects
-			$cmd = "Get-GitWorktreeProject -ProjectFilter * -WorktreeFilter "
-			{ TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length } | Should -Throw
-		}
-
-		It "should expand ProjectFilter to nothing with 3 projects" {
-			. $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup ThreeProjects
-			$cmd = "Get-GitWorktreeProject "
-			$result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
 			$result.CompletionMatches | Should -HaveCount 3
-			$result.CompletionMatches[0].CompletionText | Should -Be "AnotherProject"
-			$result.CompletionMatches[1].CompletionText | Should -Be "MyFirstProject"
-			$result.CompletionMatches[2].CompletionText | Should -Be "SecondProject"
-		}
-
-		It "should expand ProjectFilter to nothing with 3 projects" {
-			. $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup ThreeProjects
-			$cmd = "Get-GitWorktreeProject Se"
-			$result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
-			$result.CompletionMatches | Should -HaveCount 1
-			$result.CompletionMatches[0].CompletionText | Should -Be "SecondProject"
+			$result.CompletionMatches[0].CompletionText | Should -Be "main"
 		}
 	}
 
@@ -89,7 +49,7 @@ Describe "Get-GitWorktreeProject" {
 		. $PSScriptRoot/Helpers/AssertObject.ps1 -Actual $result -Expected $testConfig.Projects.${ProjectName}.Project -ExpectedType "Project"
 	}
 
-	Context "With <_> configuration" -Foreach 'Custom', 'Default' {
+	Context "With <_> configuration" -ForEach 'Custom', 'Default' {
 
 		BeforeEach {
 			$testConfig = . $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope $_ -Setup "ThreeProjects"
@@ -128,7 +88,7 @@ Describe "Get-GitWorktreeProject" {
 	It "Should fail for path <_> outside a project for the current project" -ForEach @(
 		"/root/"
 		"C:\Windows\"
-	 ) {
+	) {
 
 		. $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup ThreeProjects
 		Mock Get-Location { @{ Path = $_ } } -Verifiable

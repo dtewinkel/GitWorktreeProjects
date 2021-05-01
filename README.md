@@ -15,6 +15,8 @@ This project is still highly in development and not completely production ready.
 
 ### Finish Pester unit tests
 
+- Unit tests for `WorktreeArgumentCompleter`.
+- Unit tests for `WorktreeFilterArgumentCompleter`.
 - Unit tests for `Get-GitWorktreeProject`.
 - Unit tests for `Get-GitWorktree`.
 - Unit tests for `New-GitWorktreeProject`.
