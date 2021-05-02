@@ -10,7 +10,7 @@ function GetConfigFilePath
 	$configFilePath = $env:GitWorktreeConfigPath
 	if (-not $configFilePath)
 	{
-		$configPath = $env:UserProfile
+		$configPath = $env:USERPROFILE
 		if (-not $configPath)
 		{
 			$configPath = "${env:HOMEDRIVE}${env:HOMEPATH}"
@@ -27,10 +27,7 @@ function GetConfigFilePath
 	}
 	if ($ChildPath)
 	{
-		Join-Path -Path $configFilePath -ChildPath $ChildPath
+		return Join-Path -Path $configFilePath -ChildPath $ChildPath
 	}
-	else
-	{
-		$configFilePath
-	}
+	return $configFilePath
 }

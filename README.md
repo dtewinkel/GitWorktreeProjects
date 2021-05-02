@@ -18,7 +18,6 @@ This project is still highly in development and not completely production ready.
 Create unit tests for:
 
 - Unit tests for `GetConfigFile`.
-- Unit tests for `GetConfigFilePath`.
 - Unit tests for `GetCurrentProject`.
 - Unit tests for `GetGlobalConfig`.
 - Unit tests for `GetProjectConfig`.
