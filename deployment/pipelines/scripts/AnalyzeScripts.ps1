@@ -10,6 +10,6 @@ $modulesFolder = Join-Path $RootPath Modules
 $moduleFolder = Join-Path $modulesFolder GitWorktreeProjects
 $testFolder = Join-Path $RootPath GitWorktreeProjects.Tests
 
-Invoke-ScriptAnalyzer (Join-Path -Path $moduleFolder -ChildPath *.ps1) -ExcludeRule PSReviewUnusedParameter, PSUseShouldProcessForStateChangingFunctions
+Invoke-ScriptAnalyzer (Join-Path -Path $moduleFolder -ChildPath *.ps1) -ExcludeRule PSUseShouldProcessForStateChangingFunctions
 Invoke-ScriptAnalyzer $testFolder -Severity Error
 

@@ -1,5 +1,7 @@
 ﻿function ProjectArgumentCompleter($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
 {
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', '')]
+
 	$projects = GetProjects "${wordToComplete}*"
 	if (-not $projects -or $projects.Length -eq 0)
 	{

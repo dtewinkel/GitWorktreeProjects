@@ -1,5 +1,6 @@
 ﻿function WorktreeFilterArgumentCompleter($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
 {
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', '')]
 
 	$projectFilter = $fakeBoundParameters.ProjectFilter
 	if ($projectFilter -eq '.')
