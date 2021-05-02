@@ -2,9 +2,9 @@ Describe "ProjectArgumentCompleter" {
 
 	BeforeAll {
 		Push-Location
-		. $PSScriptRoot/Helpers/LoadAllModuleFiles.ps1
-		. $PSScriptRoot/Helpers/LoadModule.ps1
-		. $PSScriptRoot/Helpers/BackupGitWorktreeConfigPath.ps1
+		. $PSScriptRoot/../Helpers/LoadAllModuleFiles.ps1
+		. $PSScriptRoot/../Helpers/LoadModule.ps1
+		. $PSScriptRoot/../Helpers/BackupGitWorktreeConfigPath.ps1
 	}
 
 	It "should have the right parameters" {
@@ -13,13 +13,13 @@ Describe "ProjectArgumentCompleter" {
 	}
 
 	It "should expand to nothing when no projects" {
-		. $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup NoProjects
+		. $PSScriptRoot/../Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup NoProjects
 		$result = ProjectArgumentCompleter -wordToComplete ""
 		$result | Should -BeNullOrEmpty
 	}
 
 	It "should expand ProjectFilter to nothing with 3 projects" {
-		. $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup ThreeProjects
+		. $PSScriptRoot/../Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup ThreeProjects
 
 		$result = ProjectArgumentCompleter -wordToComplete ""
 		$result | Should -HaveCount 3
@@ -38,7 +38,7 @@ Describe "ProjectArgumentCompleter" {
 	}
 
 	It "should expand ProjectFilter to nothing with 3 projects" {
-		. $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup ThreeProjects
+		. $PSScriptRoot/../Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup ThreeProjects
 		$result = ProjectArgumentCompleter -wordToComplete "Se"
 		$result | Should -HaveCount 1
 		$result[0].CompletionText | Should -Be "SecondProject"
@@ -48,7 +48,7 @@ Describe "ProjectArgumentCompleter" {
 	}
 
 	AfterAll {
-		. $PSScriptRoot/Helpers/RestoreGitWorktreeConfigPath.ps1
+		. $PSScriptRoot/../Helpers/RestoreGitWorktreeConfigPath.ps1
 		Pop-Location
 	}
 }

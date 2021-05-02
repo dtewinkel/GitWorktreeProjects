@@ -2,9 +2,9 @@ Describe "WorktreeArgumentCompleter" {
 
 	BeforeAll {
 		Push-Location
-		. $PSScriptRoot/Helpers/LoadAllModuleFiles.ps1
-		. $PSScriptRoot/Helpers/LoadModule.ps1
-		. $PSScriptRoot/Helpers/BackupGitWorktreeConfigPath.ps1
+		. $PSScriptRoot/../Helpers/LoadAllModuleFiles.ps1
+		. $PSScriptRoot/../Helpers/LoadModule.ps1
+		. $PSScriptRoot/../Helpers/BackupGitWorktreeConfigPath.ps1
 	}
 
 	It "should have the right parameters" {
@@ -14,25 +14,25 @@ Describe "WorktreeArgumentCompleter" {
 	}
 
 	It "should expand to nothing when project not found" {
-		. $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup NoProjects
+		. $PSScriptRoot/../Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup NoProjects
 		$result = WorktreeArgumentCompleter -fakeBoundParameters @{ Project = "NonExistingProject" } -wordToComplete ""
 		$result | Should -BeNullOrEmpty
 	}
 
 	It "should expand to nothing when too many projects found" {
-		. $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup ThreeProjects
+		. $PSScriptRoot/../Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup ThreeProjects
 		$result = WorktreeArgumentCompleter -fakeBoundParameters @{ Project = "*" } -wordToComplete ""
 		$result | Should -BeNullOrEmpty
 	}
 
 	It "should expand to nothing when project has no worktrees" {
-		. $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup EmptyProject
+		. $PSScriptRoot/../Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup EmptyProject
 		$result = WorktreeArgumentCompleter -fakeBoundParameters @{ Project = "MyFirstProject" } -wordToComplete ""
 		$result | Should -BeNullOrEmpty
 	}
 
 	It "should expand to the worktrees of the current project" {
-		$testConfig = . $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup OneProject
+		$testConfig = . $PSScriptRoot/../Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup OneProject
 		$ProjectName = "MyFirstProject"
 
 		$rootPath = $testConfig.Projects.${ProjectName}.Project.RootPath
@@ -52,7 +52,7 @@ Describe "WorktreeArgumentCompleter" {
 	}
 
 	It "should expand ProjectFilter to nothing with 3 projects" {
-		. $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup ThreeProjects
+		. $PSScriptRoot/../Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup ThreeProjects
 
 		$result = WorktreeArgumentCompleter -fakeBoundParameters @{ Project = "MyFirstProject" } -wordToComplete ""
 		$result | Should -HaveCount 2
@@ -67,7 +67,7 @@ Describe "WorktreeArgumentCompleter" {
 	}
 
 	It "should expand ProjectFilter to nothing with 3 projects" {
-		. $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup ThreeProjects
+		. $PSScriptRoot/../Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup ThreeProjects
 		$result = WorktreeArgumentCompleter -fakeBoundParameters @{ Project = "MyFirstProject" } -wordToComplete "ma"
 		$result | Should -HaveCount 1
 		$result[0].CompletionText | Should -Be "main"
@@ -77,7 +77,7 @@ Describe "WorktreeArgumentCompleter" {
 	}
 
 	AfterAll {
-		. $PSScriptRoot/Helpers/RestoreGitWorktreeConfigPath.ps1
+		. $PSScriptRoot/../Helpers/RestoreGitWorktreeConfigPath.ps1
 		Pop-Location
 	}
 }

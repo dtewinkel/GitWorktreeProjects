@@ -15,13 +15,33 @@ This project is still highly in development and not completely production ready.
 
 ### Finish Pester unit tests
 
-- Unit tests for `WorktreeFilterArgumentCompleter`.
-- Unit tests for `Get-GitWorktreeProject`.
-- Unit tests for `Get-GitWorktree`.
-- Unit tests for `New-GitWorktreeProject`.
-- Unit tests for `New-GitWorktree`.
-- Unit tests for `Open-GitWorktree`.
-- Unit tests for tab expansion in all CmdLets that support it.
+Create unit tests for:
+
+- Unit tests for `GetConfigFile`.
+- Unit tests for `GetConfigFilePath`.
+- Unit tests for `GetCurrentProject`.
+- Unit tests for `GetGlobalConfig`.
+- Unit tests for `GetProjectConfig`.
+- Unit tests for `GetProjects`.
+- Unit tests for `SetGlobalConfig`.
+- Unit tests for `SetProjectConfig`.
+
+Rework unit tests for:
+
+- Rework unit tests for `Get-GitWorktreeDefaults`.
+- Rework unit tests for `Set-GitWorktreeDefaults`.
+- Tab expansion in all CmdLets that support it.
+
+Complete unit tests for:
+
+- `Get-GitWorktreeProject`.
+- `Open-GitWorktree`.
+
+Create unit tests for:
+
+- `Get-GitWorktree`.
+- `New-GitWorktreeProject`.
+- `New-GitWorktree`.
 
 ### Complete basic functionality
 

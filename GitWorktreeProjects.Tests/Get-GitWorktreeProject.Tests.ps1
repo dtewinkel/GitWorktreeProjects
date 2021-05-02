@@ -9,14 +9,14 @@ Describe "Get-GitWorktreeProject" {
 
 	It "should have the right parameters" {
 		$command = Get-Command Get-GitWorktreeProject
-		
+
 		$command | Should -HaveParameter WorktreeFilter
 		$command | Should -HaveParameter ProjectFilter
 	}
 
 	Context "with tab expansion" {
 
-		It "for ProjectFilter" {
+		It "should expand for ProjectFilter" {
 			. $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup ThreeProjects
 			$cmd = "Get-GitWorktreeProject ${_}"
 
@@ -25,7 +25,7 @@ Describe "Get-GitWorktreeProject" {
 			$result.CompletionMatches | Should -HaveCount 3
 			$result.CompletionMatches[0].CompletionText | Should -Be "AnotherProject"
 		}
-		It "for WorktreeFilter" {
+		It "should expand for WorktreeFilter should work" {
 			. $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup ThreeProjects
 			$cmd = "Get-GitWorktreeProject -ProjectFilter AnotherProject -WorktreeFilter *"
 
@@ -105,4 +105,3 @@ Describe "Get-GitWorktreeProject" {
 		Pop-Location
 	}
 }
-
