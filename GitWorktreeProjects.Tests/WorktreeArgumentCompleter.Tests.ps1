@@ -19,6 +19,12 @@ Describe "WorktreeArgumentCompleter" {
 		$result | Should -BeNullOrEmpty
 	}
 
+	It "should expand to nothing when too many projects found" {
+		. $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup ThreeProjects
+		$result = WorktreeArgumentCompleter -fakeBoundParameters @{ Project = "*" } -wordToComplete ""
+		$result | Should -BeNullOrEmpty
+	}
+
 	It "should expand to nothing when project has no worktrees" {
 		. $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup EmptyProject
 		$result = WorktreeArgumentCompleter -fakeBoundParameters @{ Project = "MyFirstProject" } -wordToComplete ""

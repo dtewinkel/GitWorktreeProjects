@@ -57,7 +57,7 @@ Describe "Open-GitWorktree" {
 			Mock Get-Location { @{ Path = $project.RootPath } } -Verifiable
 			Mock Set-Location {} -ParameterFilter { $Path -eq $expectedPath } -Verifiable
 
-			Open-GitWorktree -Project . -Worktree main
+			Open-GitWorktree -Project . -Worktree master
 
 			Should -InvokeVerifiable
 		}

@@ -7,9 +7,9 @@
   "SourceBranch": "main",
   "Worktrees": [
     {
-      "Name": "main",
-      "InitialCommitish": "main",
-      "RelativePath": "main",
+      "Name": "master",
+      "InitialCommitish": "master",
+      "RelativePath": "master",
       "NewBranch": ""
     }
   ]
