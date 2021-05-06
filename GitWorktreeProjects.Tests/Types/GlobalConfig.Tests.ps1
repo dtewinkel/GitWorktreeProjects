@@ -29,6 +29,16 @@ $GlobalConfig_combinations = @(
 			Expected              = "/path/to/HOME"
 		}
 	}
+	@{
+		Value = @{
+			VarName               = 'fall-back'
+			USERPROFILE           = $null
+			HOMEDRIVE             = $null
+			HOMEPATH              = $null
+			HOME                  = $null
+			Expected              = "/"
+		}
+	}
 )
 
 Describe "GlobalConfig" {
