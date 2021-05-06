@@ -6,11 +6,7 @@ Describe "GetConfigFile" {
 		$configfile = 'my.project'
 		$configfilePath = 'path/to/config/my.project'
 
-		Push-Location
 		. $PSScriptRoot/../Helpers/LoadAllModuleFiles.ps1
-		. $PSScriptRoot/../Helpers/BackupGitWorktreeConfigPath.ps1
-
-		Mock GetConfigFilePath { $configPath }
 	}
 
 	It "should throw if path cannot be determined" {
@@ -90,10 +86,5 @@ Describe "GetConfigFile" {
 		{ GetConfigFile $configfile } | Should -Throw "Schema version is not set for file '${configfile}' (${configFilePath})."
 
 		Should -InvokeVerifiable
-	}
-
-	AfterAll {
-		. $PSScriptRoot/../Helpers/RestoreGitWorktreeConfigPath.ps1
-		Pop-Location
 	}
 }

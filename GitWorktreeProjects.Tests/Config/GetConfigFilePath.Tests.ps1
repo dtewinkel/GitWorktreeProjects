@@ -1,5 +1,6 @@
-$combinations = @(
-	@{ Value = @{
+$GetConfigFilePath_combinations = @(
+	@{
+		Value = @{
 			VarName               = 'GitWorktreeConfigPath'
 			GitWorktreeConfigPath = "/path/to/GitWorktreeConfigPath"
 			USERPROFILE           = "/path/to/USERPROFILE"
@@ -9,7 +10,8 @@ $combinations = @(
 			Expected              = "/path/to/GitWorktreeConfigPath"
 		}
 	}
-	@{ Value = @{
+	@{
+		Value = @{
 			VarName               = 'USERPROFILE'
 			GitWorktreeConfigPath = $null
 			USERPROFILE           = "/path/to/USERPROFILE"
@@ -19,7 +21,8 @@ $combinations = @(
 			Expected              = "/path/to/USERPROFILE/.gitworktree"
 		}
 	}
-	@{ Value = @{
+	@{
+		Value = @{
 			VarName               = 'HOMEDRIVE/HOMEPATH'
 			GitWorktreeConfigPath = $null
 			USERPROFILE           = $null
@@ -29,7 +32,8 @@ $combinations = @(
 			Expected              = "/HOMEDRIVE/path/to/HOMEPATH/.gitworktree"
 		}
 	}
-	@{ Value = @{
+	@{
+		Value = @{
 			VarName               = 'HOME'
 			GitWorktreeConfigPath = $null
 			USERPROFILE           = $null
@@ -44,7 +48,7 @@ $combinations = @(
 Describe "GetConfigFilePath" {
 
 	BeforeAll {
-		Push-Location
+
 		. $PSScriptRoot/../Helpers/LoadAllModuleFiles.ps1
 		. $PSScriptRoot/../Helpers/BackupGitWorktreeConfigPath.ps1
 	}
@@ -55,7 +59,7 @@ Describe "GetConfigFilePath" {
 		{ GetConfigFilePath } | Should -Throw "Cannot determine location of GitWorktreeProject configuration files."
 	}
 
-	It "should use the environment variable <Value.VarName>" -ForEach $combinations {
+	It "should use the environment variable <Value.VarName>" -ForEach $GetConfigFilePath_combinations {
 
 		. $PSScriptRoot/../Helpers/SetGitWorktreeConfigPath.ps1 $_.Value
 		$config = GetConfigFilePath
@@ -64,7 +68,7 @@ Describe "GetConfigFilePath" {
 		$config | Should -Be ($_.Value.Expected -replace '/', $config[0])
 	}
 
-	It "should use the environment variable <Value.VarName> and add ChildPath" -ForEach $combinations {
+	It "should use the environment variable <Value.VarName> and add ChildPath" -ForEach $GetConfigFilePath_combinations {
 
 		$childPath = '*.ps1'
 		. $PSScriptRoot/../Helpers/SetGitWorktreeConfigPath.ps1 $_.Value
@@ -77,6 +81,5 @@ Describe "GetConfigFilePath" {
 
 	AfterAll {
 		. $PSScriptRoot/../Helpers/RestoreGitWorktreeConfigPath.ps1
-		Pop-Location
 	}
 }
