@@ -1,48 +1,45 @@
-BeforeDiscovery {
-
-	$combinations = @(
-		@{ Value = @{
-				VarName               = 'GitWorktreeConfigPath'
-				GitWorktreeConfigPath = "/path/to/GitWorktreeConfigPath"
-				USERPROFILE           = "/path/to/USERPROFILE"
-				HOMEDRIVE                  = "/HOMEDRIVE"
-				HOMEPATH                  = "/path/to/HOMEPATH"
-				HOME                  = "/path/to/HOME"
-				Expected              = "/path/to/GitWorktreeConfigPath"
-			}
+$combinations = @(
+	@{ Value = @{
+			VarName               = 'GitWorktreeConfigPath'
+			GitWorktreeConfigPath = "/path/to/GitWorktreeConfigPath"
+			USERPROFILE           = "/path/to/USERPROFILE"
+			HOMEDRIVE             = "/HOMEDRIVE"
+			HOMEPATH              = "/path/to/HOMEPATH"
+			HOME                  = "/path/to/HOME"
+			Expected              = "/path/to/GitWorktreeConfigPath"
 		}
-		@{ Value = @{
-				VarName               = 'HOME'
-				GitWorktreeConfigPath = $null
-				USERPROFILE           = "/path/to/USERPROFILE"
-				HOMEDRIVE                  = "/HOMEDRIVE"
-				HOMEPATH                  = "/path/to/HOMEPATH"
-				HOME                  = "/path/to/HOME"
-				Expected              = "/path/to/USERPROFILE/.gitworktree"
-			}
+	}
+	@{ Value = @{
+			VarName               = 'USERPROFILE'
+			GitWorktreeConfigPath = $null
+			USERPROFILE           = "/path/to/USERPROFILE"
+			HOMEDRIVE             = "/HOMEDRIVE"
+			HOMEPATH              = "/path/to/HOMEPATH"
+			HOME                  = "/path/to/HOME"
+			Expected              = "/path/to/USERPROFILE/.gitworktree"
 		}
-		@{ Value = @{
-			VarName               = 'HOME'
+	}
+	@{ Value = @{
+			VarName               = 'HOMEDRIVE/HOMEPATH'
 			GitWorktreeConfigPath = $null
 			USERPROFILE           = $null
-			HOMEDRIVE                  = "/HOMEDRIVE"
-			HOMEPATH                  = "/path/to/HOMEPATH"
+			HOMEDRIVE             = "/HOMEDRIVE"
+			HOMEPATH              = "/path/to/HOMEPATH"
 			HOME                  = "/path/to/HOME"
 			Expected              = "/HOMEDRIVE/path/to/HOMEPATH/.gitworktree"
 		}
 	}
 	@{ Value = @{
-				VarName               = 'HOME'
-				GitWorktreeConfigPath = $null
-				USERPROFILE           = $null
-				HOMEDRIVE                  = $null
-				HOMEPATH                  = $null
-					HOME                  = "/path/to/HOME"
-				Expected              = "/path/to/HOME/.gitworktree"
-			}
+			VarName               = 'HOME'
+			GitWorktreeConfigPath = $null
+			USERPROFILE           = $null
+			HOMEDRIVE             = $null
+			HOMEPATH              = $null
+			HOME                  = "/path/to/HOME"
+			Expected              = "/path/to/HOME/.gitworktree"
 		}
-	)
-}
+	}
+)
 
 Describe "GetConfigFilePath" {
 
