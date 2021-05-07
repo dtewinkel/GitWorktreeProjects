@@ -25,7 +25,6 @@ Create unit tests for:
 
 Rework unit tests for:
 
-- Rework unit tests for `Get-GitWorktreeDefaults`.
 - Rework unit tests for `Set-GitWorktreeDefaults`.
 - Tab expansion in all CmdLets that support it.
 
