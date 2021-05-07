@@ -1,15 +1,21 @@
 ﻿[CmdletBinding()]
 param (
-	[Parameter(Mandatory)]
-	$Values
+	[Parameter()]
+	$Values = @{
+			GitWorktreeConfigPath = $null
+			USERPROFILE           = $null
+			HOMEDRIVE             = $null
+			HOMEPATH              = $null
+			HOME                  = $null
+	}
 )
 
 function SetEnvVar($varName, $value)
 {
 	$envVarName = "Env:${varName}"
-	if($value)
+	if ($value)
 	{
-		if(Test-Path $envVarName)
+		if (Test-Path $envVarName)
 		{
 			Set-Item $envVarName $value
 		}
@@ -20,7 +26,7 @@ function SetEnvVar($varName, $value)
 	}
 	else
 	{
-		if(Test-Path $envVarName)
+		if (Test-Path $envVarName)
 		{
 			Remove-Item $envVarName
 		}

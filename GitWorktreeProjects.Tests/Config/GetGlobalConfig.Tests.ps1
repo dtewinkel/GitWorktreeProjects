@@ -2,20 +2,9 @@ Describe "GetGlobalConfig" {
 
 	BeforeAll {
 
-		$defaultEnv = @{
-			Value = @{
-				VarName     = 'fall-back'
-				USERPROFILE = $null
-				HOMEDRIVE   = $null
-				HOMEPATH    = $null
-				HOME        = $null
-				Expected    = "/"
-			}
-		}
-
 		. $PSScriptRoot/../Helpers/BackupGitWorktreeConfigPath.ps1
 		. $PSScriptRoot/../Helpers/LoadAllModuleFiles.ps1
-		. $PSScriptRoot/../Helpers/SetGitWorktreeConfigPath.ps1 $defaultEnv
+		. $PSScriptRoot/../Helpers/SetGitWorktreeConfigPath.ps1
 	}
 
 	It "should throw if GetConfigFile throws" {
