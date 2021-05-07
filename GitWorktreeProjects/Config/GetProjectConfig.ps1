@@ -40,7 +40,7 @@ function GetProjectConfig
 		}
 		return $null
 	}
-	$projectConfig = [Project]::FromProjectFile($projectFromFile)
+	$projectConfig = [Project]::FromFile($projectFromFile)
 	if ($WorktreeExactMatch.IsPresent)
 	{
 		$projectConfig.Worktrees = $projectConfig.Worktrees | Where-Object Name -ceq $WorktreeFilter

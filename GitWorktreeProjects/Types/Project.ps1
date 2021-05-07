@@ -35,7 +35,7 @@ class Project
 	[Worktree[]] $Worktrees = [Worktree[]]@()
 	[Tool[]] $Tools = [Tool[]]@()
 
-	static [Project] FromProjectFile([ProjectFile] $projectConfig)
+	static [Project] FromFile([ProjectFile] $projectConfig)
 	{
 		$project = [Project]::new()
 		$project.Name = $projectConfig.Name
