@@ -8,11 +8,9 @@ function GetGlobalConfig
 
 	if ($config)
 	{
-		[GlobalConfig]::FromFile($config)
+		return [GlobalConfig]::FromFile($config)
 	}
-	if (-not $config)
-	{
-		Write-Warning "Global configuration file 'configuration.json' not found! Using default configuration."
-		[GlobalConfig]::new()
-	}
+
+	Write-Warning "Global configuration file 'configuration.json' not found! Using default configuration."
+	return [GlobalConfig]::new()
 }
