@@ -17,11 +17,11 @@ This project is still highly in development and not completely production ready.
 
 Create unit tests for:
 
-- Unit tests for `GetCurrentProject`.
 - Unit tests for `GetGlobalConfig`.
+- Unit tests for `SetGlobalConfig`.
+- Unit tests for `GetCurrentProject`.
 - Unit tests for `GetProjectConfig`.
 - Unit tests for `GetProjects`.
-- Unit tests for `SetGlobalConfig`.
 - Unit tests for `SetProjectConfig`.
 
 Rework unit tests for:
