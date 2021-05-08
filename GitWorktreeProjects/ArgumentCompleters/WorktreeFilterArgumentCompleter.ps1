@@ -19,13 +19,13 @@
 		return $null
 	}
 
-	$result = foreach ($project in $projects)
+	$result = foreach ($projectName in $projects)
 	{
-		$worktrees = GetProjectConfig -Project $project -WorktreeFilter "${wordToComplete}*" | Select-Object -ExpandProperty Worktrees
-		foreach ($worktree in $worktrees)
+		$project = GetProjectConfig -Project $projectName -WorktreeFilter "${wordToComplete}*"
+		foreach ($worktree in $project.Worktrees)
 		{
 			$name = $worktree.Name
-			$description = "Worktree ${name} for project ${project}"
+			$description = "Worktree ${name} for project $($project.Name)"
 			[System.Management.Automation.CompletionResult]::new($name, $name, "ParameterValue", $description)
 		}
 	}

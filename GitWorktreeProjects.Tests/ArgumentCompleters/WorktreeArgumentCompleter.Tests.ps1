@@ -1,83 +1,80 @@
 Describe "WorktreeArgumentCompleter" {
 
 	BeforeAll {
-		Push-Location
+
 		. $PSScriptRoot/../Helpers/LoadAllModuleFiles.ps1
-		. $PSScriptRoot/../Helpers/LoadModule.ps1
-		. $PSScriptRoot/../Helpers/BackupGitWorktreeConfigPath.ps1
 	}
 
 	It "should have the right parameters" {
+
 		$command = Get-Command WorktreeArgumentCompleter
 		$command | Should -HaveParameter wordToComplete
 		$command | Should -HaveParameter fakeBoundParameters
 	}
 
 	It "should expand to nothing when project not found" {
-		. $PSScriptRoot/../Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup NoProjects
+
+		Mock GetProjects { @() } -ParameterFilter { $Filter -eq 'NonExistingProject' } -Verifiable
+
 		$result = WorktreeArgumentCompleter -fakeBoundParameters @{ Project = "NonExistingProject" } -wordToComplete ""
+
+		Should -InvokeVerifiable
 		$result | Should -BeNullOrEmpty
 	}
 
 	It "should expand to nothing when too many projects found" {
-		. $PSScriptRoot/../Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup ThreeProjects
+
+		Mock GetProjects { @("1", "2") } -ParameterFilter { $Filter -eq '*' } -Verifiable
+
 		$result = WorktreeArgumentCompleter -fakeBoundParameters @{ Project = "*" } -wordToComplete ""
+
+		Should -InvokeVerifiable
 		$result | Should -BeNullOrEmpty
 	}
 
 	It "should expand to nothing when project has no worktrees" {
-		. $PSScriptRoot/../Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup EmptyProject
-		$result = WorktreeArgumentCompleter -fakeBoundParameters @{ Project = "MyFirstProject" } -wordToComplete ""
+
+		$emptyProject = @{
+			Worktrees = @()
+		}
+		Mock GetProjects { @("P1") } -ParameterFilter { $Filter -eq 'P1' } -Verifiable
+		Mock GetProjectConfig { $emptyProject } -ParameterFilter { $Project -eq 'P1' -and $WorktreeFilter -eq '*' } -Verifiable
+
+		$result = WorktreeArgumentCompleter -fakeBoundParameters @{ Project = "P1" } -wordToComplete ""
+
+		Should -InvokeVerifiable
 		$result | Should -BeNullOrEmpty
 	}
 
 	It "should expand to the worktrees of the current project" {
-		$testConfig = . $PSScriptRoot/../Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup OneProject
-		$ProjectName = "MyFirstProject"
 
-		$rootPath = $testConfig.Projects.${ProjectName}.Project.RootPath
-		Mock Get-Location { @{ Path = $rootPath } } -Verifiable
+		$projectWithWorktrees = @{
+			Worktrees = @(
+				@{
+					Name = "W1"
+					RelativePath = '/w1/path'
+				},
+				@{
+					Name = "Worktree"
+					RelativePath = '/w2'
+				}
+			)
+		}
+		Mock GetCurrentProject { @("P1") } -Verifiable
+		Mock GetProjects { @("P1") } -ParameterFilter { $Filter -eq 'P1' } -Verifiable
+		Mock GetProjectConfig { $projectWithWorktrees } -ParameterFilter { $Project -eq 'P1' -and $WorktreeFilter -eq 'W*' } -Verifiable
 
-		$result = WorktreeArgumentCompleter -fakeBoundParameters @{ Project = '.' } -wordToComplete ""
+		$result = WorktreeArgumentCompleter -fakeBoundParameters @{ Project = '.' } -wordToComplete "W"
+
 		Should -InvokeVerifiable
 		$result | Should -HaveCount 2
-		$result[0].CompletionText | Should -Be "main"
-		$result[0].ListItemText | Should -Be "main"
+		$result[0].CompletionText | Should -Be "W1"
+		$result[0].ListItemText | Should -Be "W1"
 		$result[0].ResultType | Should -Be "ParameterValue"
-		$result[0].ToolTip | Should -BeLike "Worktree main in main"
-		$result[1].CompletionText | Should -Be "worktree2"
-		$result[1].ListItemText | Should -Be "worktree2"
+		$result[0].ToolTip | Should -BeLike "Worktree W1 in /w1/path"
+		$result[1].CompletionText | Should -Be "Worktree"
+		$result[1].ListItemText | Should -Be "Worktree"
 		$result[1].ResultType | Should -Be "ParameterValue"
-		$result[1].ToolTip | Should -BeLike "Worktree worktree2 in worktree2"
-	}
-
-	It "should expand ProjectFilter to nothing with 3 projects" {
-		. $PSScriptRoot/../Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup ThreeProjects
-
-		$result = WorktreeArgumentCompleter -fakeBoundParameters @{ Project = "MyFirstProject" } -wordToComplete ""
-		$result | Should -HaveCount 2
-		$result[0].CompletionText | Should -Be "main"
-		$result[0].ListItemText | Should -Be "main"
-		$result[0].ResultType | Should -Be "ParameterValue"
-		$result[0].ToolTip | Should -BeLike "Worktree main in main"
-		$result[1].CompletionText | Should -Be "worktree2"
-		$result[1].ListItemText | Should -Be "worktree2"
-		$result[1].ResultType | Should -Be "ParameterValue"
-		$result[1].ToolTip | Should -BeLike "Worktree worktree2 in anotherTree"
-	}
-
-	It "should expand ProjectFilter to nothing with 3 projects" {
-		. $PSScriptRoot/../Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup ThreeProjects
-		$result = WorktreeArgumentCompleter -fakeBoundParameters @{ Project = "MyFirstProject" } -wordToComplete "ma"
-		$result | Should -HaveCount 1
-		$result[0].CompletionText | Should -Be "main"
-		$result[0].ListItemText | Should -Be "main"
-		$result[0].ResultType | Should -Be "ParameterValue"
-		$result[0].ToolTip | Should -BeLike "Worktree main in main"
-	}
-
-	AfterAll {
-		. $PSScriptRoot/../Helpers/RestoreGitWorktreeConfigPath.ps1
-		Pop-Location
+		$result[1].ToolTip | Should -BeLike "Worktree Worktree in /w2"
 	}
 }
