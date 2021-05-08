@@ -2,17 +2,23 @@ Describe "Get-GitWorktreeDefaults" {
 
 	BeforeAll {
 
-		. $PSScriptRoot/Helpers/LoadAllModuleFiles.ps1
 		. $PSScriptRoot/Helpers/LoadModule.ps1
+		. $PSScriptRoot/Helpers/LoadAllModuleFiles.ps1
 	}
 
-		It "should use GetGlobalConfig ad pass on the results" {
+		It "should use GetGlobalConfig and pass on the results" {
 
-			Mock GetGlobalConfig { @{ DefaultRootPath = '/yes' } } -Verifiable
+			[GlobalConfig]$configFromFile = @{
+				DefaultRootPath     = '/root'
+				DefaultSourceBranch = 'origin'
+				DefaultTools        = @( '1', 'a')
+			}
+			Mock GetGlobalConfig { $configFromFile } -Verifiable
 
 			$config = Get-GitWorktreeDefaults
 
-			$config.DefaultRootPath | Should -Be '/yes'
+			$config.DefaultRootPath | Should -Be '/root'
+			$config.DefaultSourceBranch | Should -Be 'origin'
 			Should -InvokeVerifiable
 		}
 }
