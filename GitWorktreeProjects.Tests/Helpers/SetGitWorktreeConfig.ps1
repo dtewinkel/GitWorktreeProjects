@@ -41,7 +41,7 @@ switch ($Scope)
 
 $configSourceFile = Join-Path $sourcePath configuration.json
 $exists = Test-Path $configSourceFile
-Mock Test-Path { $exists } -ParameterFilter { $Path -eq $configFile }
+Mock Test-Path { $exists } -ParameterFilter { $Path -eq $configFile } -ModuleName GitWorktreeProjects
 
 if ($exists)
 {
@@ -54,7 +54,7 @@ if ($exists)
 	{
 		$globalConfig = $null
 	}
-	Mock Get-Content { $mockedContent } -ParameterFilter { $Path -eq $configFile }
+	Mock Get-Content { $mockedContent } -ParameterFilter { $Path -eq $configFile } -ModuleName GitWorktreeProjects
 }
 
 $projectFiles = Get-ChildItem (Join-Path $sourcePath '*.project') | Sort-Object Name
@@ -81,20 +81,20 @@ foreach($sourceItem in $projectFiles)
 	}
 	$projects += $project
 	$parameterFilterScriptBlock = [Scriptblock]::Create("`$Path -eq '${projectFile}'")
-	Mock Test-Path { $true } -ParameterFilter $parameterFilterScriptBlock
+	Mock Test-Path { $true } -ParameterFilter $parameterFilterScriptBlock -ModuleName GitWorktreeProjects
 	$resultScriptBlock = [Scriptblock]::Create("'${mockedContent}'")
-	Mock Get-Content $resultScriptBlock -ParameterFilter $parameterFilterScriptBlock
+	Mock Get-Content $resultScriptBlock -ParameterFilter $parameterFilterScriptBlock -ModuleName GitWorktreeProjects
 	$rootPath = $projectConfig.RootPath
 	$parameterFilterScriptBlock = [Scriptblock]::Create("`$Path -eq '${rootPath}'")
 	$resultScriptBlock = [Scriptblock]::Create("@{ FullName = '$($projectConfig.RootPath)' }")
-	Mock Get-Item $resultScriptBlock -ParameterFilter $parameterFilterScriptBlock
+	Mock Get-Item $resultScriptBlock -ParameterFilter $parameterFilterScriptBlock -ModuleName GitWorktreeProjects
 	foreach($worktreeItem in $projectConfig.Worktrees)
 	{
 		$worktreePath = Join-Path $rootPath $worktreeItem.RelativePath
 		$parameterFilterScriptBlock = [Scriptblock]::Create("`$Path -eq '${worktreePath}'")
-		Mock Test-Path { $true } -ParameterFilter $parameterFilterScriptBlock
+		Mock Test-Path { $true } -ParameterFilter $parameterFilterScriptBlock -ModuleName GitWorktreeProjects
 		$parameterFilterScriptBlock = [Scriptblock]::Create("`$Path -eq '${worktreePath}'")
-		Mock Set-Location {  } -ParameterFilter $parameterFilterScriptBlock
+		Mock Set-Location {  } -ParameterFilter $parameterFilterScriptBlock -ModuleName GitWorktreeProjects
 	}
 }
 
@@ -107,4 +107,4 @@ foreach($sourceItem in $projectFiles)
 	Projects         = $projects | ForEach-Object { @{ $_.Name = $_ } }
 }
 
-Mock Get-ChildItem { $projects.FileInfo } -ParameterFilter { $Path -eq (Join-Path $configRoot '*.project') }
+Mock Get-ChildItem { $projects.FileInfo } -ParameterFilter { $Path -eq (Join-Path $configRoot '*.project') } -ModuleName GitWorktreeProjects

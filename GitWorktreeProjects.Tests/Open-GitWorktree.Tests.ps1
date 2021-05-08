@@ -1,10 +1,10 @@
-BeforeAll {
-	Push-Location
-	. $PSScriptRoot/Helpers/LoadModule.ps1
-	. $PSScriptRoot/Helpers/BackupGitWorktreeConfigPath.ps1
-}
-
 Describe "Open-GitWorktree" {
+
+	BeforeAll {
+		Push-Location
+			. $PSScriptRoot/Helpers/LoadModule.ps1
+			. $PSScriptRoot/Helpers/BackupGitWorktreeConfigPath.ps1
+	}
 
 	Context "With <_> configuration" -Foreach 'Custom', 'Default' {
 
@@ -29,7 +29,7 @@ Describe "Open-GitWorktree" {
 			$worktree = $project.Worktrees[1]
 			$expectedPath = Join-Path $project.RootPath $worktree.RelativePath
 
-			Mock Test-Path { $false } -ParameterFilter { $Path -eq $expectedPath } -Verifiable
+			Mock Test-Path { $false } -ParameterFilter { $Path -eq $expectedPath } -Verifiable -ModuleName GitWorktreeProjects
 
 			{
 				Open-GitWorktree -Project MyFirstProject -Worktree worktree2
@@ -42,7 +42,7 @@ Describe "Open-GitWorktree" {
 			$project = $testConfig.Projects.MyFirstProject.Project
 			$worktree = $project.Worktrees[0]
 			$expectedPath = Join-Path $project.RootPath $worktree.RelativePath
-			Mock Set-Location {} -ParameterFilter { $Path -eq $expectedPath } -Verifiable
+			Mock Set-Location {} -ParameterFilter { $Path -eq $expectedPath } -Verifiable -ModuleName GitWorktreeProjects
 
 			Open-GitWorktree -Project MyFirstProject -Worktree main
 
@@ -54,8 +54,8 @@ Describe "Open-GitWorktree" {
 			$worktree = $project.Worktrees[0]
 			$expectedPath = Join-Path $project.RootPath $worktree.RelativePath
 
-			Mock Get-Location { @{ Path = $project.RootPath } } -Verifiable
-			Mock Set-Location {} -ParameterFilter { $Path -eq $expectedPath } -Verifiable
+			Mock Get-Location { @{ Path = $project.RootPath } } -Verifiable -ModuleName GitWorktreeProjects
+			Mock Set-Location {} -ParameterFilter { $Path -eq $expectedPath } -Verifiable -ModuleName GitWorktreeProjects
 
 			Open-GitWorktree -Project . -Worktree master
 
@@ -64,15 +64,15 @@ Describe "Open-GitWorktree" {
 
 		It "Should fail if outside a project for the current project" {
 
-			Mock Get-Location { @{ Path = "dummy" } } -Verifiable
-			Mock Set-Location {}
+			Mock Get-Location { @{ Path = "dummy" } } -Verifiable -ModuleName GitWorktreeProjects
+			Mock Set-Location {} -ModuleName GitWorktreeProjects
 
 			{
 				Open-GitWorktree -Project . -Worktree any
 			} | Should -Throw "Could not determine the Project in the current directory."
 
 			Should -InvokeVerifiable
-			Should -Not -Invoke Set-Location
+			Should -Not -Invoke Set-Location -ModuleName GitWorktreeProjects
 		}
 	}
 

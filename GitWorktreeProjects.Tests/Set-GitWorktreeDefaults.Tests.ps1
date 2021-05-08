@@ -1,8 +1,7 @@
 Describe "Set-GitWorktreeDefaults" {
-	BeforeAll {
 
+	BeforeAll {
 		. $PSScriptRoot/Helpers/LoadModule.ps1
-		. $PSScriptRoot/Helpers/LoadAllModuleFiles.ps1
 	}
 
 	BeforeEach {
@@ -13,14 +12,14 @@ Describe "Set-GitWorktreeDefaults" {
 			DefaultTools        = @( '1', 'a')
 		}
 
-		Mock GetGlobalConfig { $defaultConfig } -Verifiable
-		Mock SetGlobalConfig {}
-
 		$expectedConfig = @{
 			DefaultRootPath     = '/root'
 			DefaultSourceBranch = 'origin'
 			DefaultTools        = @( '1', 'a')
 		}
+
+		Mock GetGlobalConfig { $defaultConfig } -Verifiable -ModuleName GitWorktreeProjects
+		Mock SetGlobalConfig {} -ModuleName GitWorktreeProjects
 	}
 
 	It "should have the right parameters" {
@@ -41,8 +40,7 @@ Describe "Set-GitWorktreeDefaults" {
 		$expectedDefaultRoot = "/new/root/path"
 		$expectedConfig.DefaultRootPath = $expectedDefaultRoot
 
-		Mock Test-Path { $false } -Verifiable -ParameterFilter { $Path -eq $expectedDefaultRoot }
-		Mock SetGlobalConfig {}
+		Mock Test-Path { $false } -Verifiable -ParameterFilter { $Path -eq $expectedDefaultRoot } -ModuleName GitWorktreeProjects
 
 		{ Set-GitWorktreeDefaults -DefaultRoot $expectedDefaultRoot } | Should -Throw "DefaultRoot '${expectedDefaultRoot}' must exist!"
 
@@ -54,8 +52,7 @@ Describe "Set-GitWorktreeDefaults" {
 		$expectedDefaultRoot = "/new/root/path"
 		$expectedConfig.DefaultRootPath = $expectedDefaultRoot
 
-		Mock Test-Path { $true } -Verifiable -ParameterFilter { $Path -eq $expectedDefaultRoot }
-		Mock SetGlobalConfig {}
+		Mock Test-Path { $true } -Verifiable -ParameterFilter { $Path -eq $expectedDefaultRoot } -ModuleName GitWorktreeProjects
 
 		Set-GitWorktreeDefaults -DefaultRoot $expectedDefaultRoot
 
@@ -67,12 +64,10 @@ Describe "Set-GitWorktreeDefaults" {
 		$expectedBranch = "testing-123"
 		$expectedConfig.DefaultSourceBranch = $expectedBranch
 
-		Mock SetGlobalConfig {}
-
 		Set-GitWorktreeDefaults -DefaultBranch $expectedBranch
 
 		Should -InvokeVerifiable
-		Should -Invoke SetGlobalConfig -ParameterFilter { & $PSScriptRoot/Helpers/CompareObject.ps1 $GlobalConfig $expectedConfig GlobalConfig -AsBoolean } -Times 1
+		Should -Invoke SetGlobalConfig -ParameterFilter { & $PSScriptRoot/Helpers/CompareObject.ps1 $GlobalConfig $expectedConfig GlobalConfig -AsBoolean } -ModuleName GitWorktreeProjects
 	}
 
 	It "should only update DefaultTools if that is set" {
@@ -83,7 +78,7 @@ Describe "Set-GitWorktreeDefaults" {
 		Set-GitWorktreeDefaults -DefaultTools $expectedTools
 
 		Should -InvokeVerifiable
-		Should -Invoke SetGlobalConfig -ParameterFilter { & $PSScriptRoot/Helpers/CompareObject.ps1 $GlobalConfig $expectedConfig GlobalConfig -AsBoolean } -Times 1
+		Should -Invoke SetGlobalConfig -ParameterFilter { & $PSScriptRoot/Helpers/CompareObject.ps1 $GlobalConfig $expectedConfig GlobalConfig -AsBoolean } -ModuleName GitWorktreeProjects
 	}
 
 	It "should update all if all are set" {
@@ -95,11 +90,11 @@ Describe "Set-GitWorktreeDefaults" {
 		$expectedConfig.DefaultSourceBranch = $expectedBranch
 		$expectedConfig.DefaultTools = $expectedTools
 
-		Mock Test-Path { $true } -Verifiable -ParameterFilter { $Path -eq $expectedDefaultRoot }
+		Mock Test-Path { $true } -Verifiable -ParameterFilter { $Path -eq $expectedDefaultRoot } -ModuleName GitWorktreeProjects
 
 		Set-GitWorktreeDefaults -DefaultRoot $expectedDefaultRoot -DefaultBranch $expectedBranch -DefaultTools $expectedTools
 
 		Should -InvokeVerifiable
-		Should -Invoke SetGlobalConfig -ParameterFilter { & $PSScriptRoot/Helpers/CompareObject.ps1 $GlobalConfig $expectedConfig GlobalConfig -AsBoolean } -Times 1
+		Should -Invoke SetGlobalConfig -ParameterFilter { & $PSScriptRoot/Helpers/CompareObject.ps1 $GlobalConfig $expectedConfig GlobalConfig -AsBoolean } -ModuleName GitWorktreeProjects
 	}
 }

@@ -5,5 +5,4 @@ if(-not ($env:PSModulePath.Contains($modulePath)))
 }
 
 Remove-Module GitWorktreeProjects -Force -ErrorAction SilentlyContinue
-
 Import-Module GitWorktreeProjects -Force

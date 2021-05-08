@@ -71,9 +71,9 @@ function CompareItem($Actual,	$Expected, $ExpectedType)
 	{
 		{ $PSItem -in ("Project", "ProjectFile", "Tool", "Worktree", "GlobalConfig", "GlobalConfigFile") }
 		{
-			if ($Actual -isnot $ExpectedType)
+			if ($Actual.GetType().ToString() -ne $ExpectedType)
 			{
-				return $Actual, $ExpectedType, "BeOfType"
+				return $Actual.GetType().ToString(), $ExpectedType, "Be", "types should match"
 			}
 			return CompareComplexItem $Actual $Expected $ExpectedType
 		}

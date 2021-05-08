@@ -42,7 +42,7 @@ Describe "Get-GitWorktreeProject" {
 		$ProjectName = "OneTwo"
 
 		$project = $testConfig.Projects.${ProjectName}.Project
-		Mock Get-Location { @{ Path = $project.RootPath } } -Verifiable
+		Mock Get-Location { @{ Path = $project.RootPath } } -Verifiable -ModuleName GitWorktreeProjects
 
 		$result = Get-GitWorktreeProject -ProjectFilter .
 
@@ -75,7 +75,7 @@ Describe "Get-GitWorktreeProject" {
 			$ProjectName = "SecondProject"
 
 			$project = $testConfig.Projects.${ProjectName}.Project
-			Mock Get-Location { @{ Path = $project.RootPath } } -Verifiable
+			Mock Get-Location { @{ Path = $project.RootPath } } -Verifiable -ModuleName GitWorktreeProjects
 
 			$result = Get-GitWorktreeProject -ProjectFilter .
 
@@ -91,7 +91,7 @@ Describe "Get-GitWorktreeProject" {
 	) {
 
 		. $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup ThreeProjects
-		Mock Get-Location { @{ Path = $_ } } -Verifiable
+		Mock Get-Location { @{ Path = $_ } } -Verifiable -ModuleName GitWorktreeProjects
 
 		{
 			Get-GitWorktreeProject -ProjectFilter .
