@@ -1,6 +1,5 @@
 function GetGlobalConfig
 {
-	[OutputType([GlobalConfig])]
 	[cmdletbinding()]
 	param()
 

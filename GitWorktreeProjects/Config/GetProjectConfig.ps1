@@ -1,7 +1,5 @@
 function GetProjectConfig
 {
-	[OutputType([Project])]
-	[OutputType([Void])]
 	[cmdletbinding()]
 	param(
 		[Parameter(Mandatory)]
