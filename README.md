@@ -19,7 +19,6 @@ Create unit tests for:
 
 - Unit tests for `GetCurrentProject`.
 - Unit tests for `GetProjectConfig`.
-- Unit tests for `GetProjects`.
 - Unit tests for `SetProjectConfig`.
 
 Rework unit tests for:
