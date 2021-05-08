@@ -4,8 +4,7 @@
 	[OutputType([Worktree[]])]
 	param(
 		[Parameter()]
-		[String] $Project = '.cccccctlrbnngihrkffvbnjifintjbgldvdueubfilvd
-		',
+		[String] $Project = '.',
 
 		[Parameter()]
 		[String] $WorktreeFilter = '*'
