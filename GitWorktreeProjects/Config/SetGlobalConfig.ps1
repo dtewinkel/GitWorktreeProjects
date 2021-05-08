@@ -2,7 +2,7 @@ function SetGlobalConfig
 {
 	[cmdletbinding()]
 	param(
-		[Parameter()]
+		[Parameter(Mandatory)]
 		[GlobalConfig] $GlobalConfig
 	)
 

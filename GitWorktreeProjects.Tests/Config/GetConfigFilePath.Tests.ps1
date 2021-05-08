@@ -53,6 +53,11 @@ Describe "GetConfigFilePath" {
 		. $PSScriptRoot/../Helpers/BackupGitWorktreeConfigPath.ps1
 	}
 
+	It "should have the right parameters" {
+		$command = Get-Command GetConfigFilePath
+		$command | Should -HaveParameter ChildPath
+	}
+
 	It "should throw if path cannot be determined" {
 
 		. $PSScriptRoot/../Helpers/SetGitWorktreeConfigPath.ps1 -Values @{}

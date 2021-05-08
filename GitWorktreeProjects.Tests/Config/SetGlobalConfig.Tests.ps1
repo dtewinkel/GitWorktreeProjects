@@ -19,6 +19,11 @@ Describe "SetGlobalConfig" {
 		Mock GetConfigFilePath { $configFile } -ParameterFilter { $ChildPath -eq 'configuration.json' } -Verifiable
 	}
 
+	It "should have the right parameters" {
+		$command = Get-Command SetGlobalConfig
+		$command | Should -HaveParameter GlobalConfig -Mandatory
+	}
+
 	It "Should create the global config directory if it does not exist" {
 
 		Mock Test-Path { $false } -ParameterFilter { $Path -eq $configFilePath } -Verifiable

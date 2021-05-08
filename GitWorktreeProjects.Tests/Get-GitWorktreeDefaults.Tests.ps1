@@ -1,6 +1,7 @@
 Describe "Get-GitWorktreeDefaults" {
 
 	BeforeAll {
+
 		. $PSScriptRoot/Helpers/LoadAllModuleFiles.ps1
 		. $PSScriptRoot/Helpers/LoadModule.ps1
 	}

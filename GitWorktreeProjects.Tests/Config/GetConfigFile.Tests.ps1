@@ -26,6 +26,12 @@ Describe "GetConfigFile" {
 		$config | Should -BeNullOrEmpty
 	}
 
+	It "should have the right parameters" {
+		$command = Get-Command GetConfigFile
+		$command | Should -HaveParameter FileName -Mandatory
+		$command | Should -HaveParameter SchemaVersion
+	}
+
 	It "return the content of the config file if all is well" {
 
 		$text = "With some data"
