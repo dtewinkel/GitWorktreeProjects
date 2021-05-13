@@ -4,28 +4,29 @@ function GetCurrentProject
 	[cmdletbinding()]
 	param()
 
-	$currentPath = (Get-Location).Path
-	GetProjects |
-		ForEach-Object {
-			$fileName = "${PsItem}.project"
-			GetConfigFile -FileName $fileName
-		} |
-		Where-Object {
-			$destPath = (Get-Item $_.RootPath).FullName
-			if($destPath)
-			{
-				$relPath = [System.IO.Path]::GetRelativePath($destPath, $currentPath)
-				if([System.IO.Path]::IsPathRooted($relPath))
-				{
-					return $false
-				}
-				if($relPath -eq '.')
-				{
-					return $true
-				}
-				return $currentPath -eq (Join-Path $destPath $relPath)
-			}
+	function IsChildPathOf($CurrentPath, $RootPath)
+	{
+		$destPath = (Get-Item -Path $RootPath).FullName
+		$relPath = [System.IO.Path]::GetRelativePath($destPath, $CurrentPath)
+		if ([System.IO.Path]::IsPathRooted($relPath))
+		{
 			return $false
-		} |
-		Select-Object -First 1 -ExpandProperty Name
+		}
+		if ($relPath -eq '.')
+		{
+			return $true
+		}
+		return $CurrentPath -eq (Join-Path $destPath $relPath)
+	}
+
+	$currentPath = (Get-Location).Path
+	foreach ($projectName in GetProjects )
+	{
+		$fileName = "${projectName}.project"
+		$config = GetConfigFile -FileName $fileName
+		if (IsChildPathOf $currentPath $config.RootPath)
+		{
+			return $config.Name
+		}
+	}
 }
