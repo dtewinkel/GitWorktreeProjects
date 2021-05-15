@@ -1,54 +1,53 @@
 Describe "GlobalConfig" {
 
 	BeforeAll {
-		$combinations = @(
-			@{
-				Value = @{
-					VarName               = 'USERPROFILE'
-					USERPROFILE           = "/path/to/USERPROFILE"
-					HOMEDRIVE             = "/HOMEDRIVE"
-					HOMEPATH              = "/path/to/HOMEPATH"
-					HOME                  = "/path/to/HOME"
-					Expected              = "/path/to/USERPROFILE"
-				}
-			}
-			@{
-				Value = @{
-					VarName               = 'HOMEDRIVE/HOMEPATH'
-					USERPROFILE           = $null
-					HOMEDRIVE             = "/HOMEDRIVE"
-					HOMEPATH              = "/path/to/HOMEPATH"
-					HOME                  = "/path/to/HOME"
-					Expected              = "/HOMEDRIVE/path/to/HOMEPATH"
-				}
-			}
-			@{
-				Value = @{
-					VarName               = 'HOME'
-					USERPROFILE           = $null
-					HOMEDRIVE             = $null
-					HOMEPATH              = $null
-					HOME                  = "/path/to/HOME"
-					Expected              = "/path/to/HOME"
-				}
-			}
-			@{
-				Value = @{
-					VarName               = 'fall-back'
-					USERPROFILE           = $null
-					HOMEDRIVE             = $null
-					HOMEPATH              = $null
-					HOME                  = $null
-					Expected              = "/"
-				}
-			}
-		)
 
 		. $PSScriptRoot/../Helpers/BackupGitWorktreeConfigPath.ps1
 		. $PSScriptRoot/../Helpers/LoadAllModuleFiles.ps1
 	}
 
-	It "Creates a new instance with sensible defaults" -ForEach $combinations {
+	It "Creates a new instance with sensible defaults" -ForEach @(
+		@{
+			Value = @{
+				VarName               = 'USERPROFILE'
+				USERPROFILE           = "/path/to/USERPROFILE"
+				HOMEDRIVE             = "/HOMEDRIVE"
+				HOMEPATH              = "/path/to/HOMEPATH"
+				HOME                  = "/path/to/HOME"
+				Expected              = "/path/to/USERPROFILE"
+			}
+		}
+		@{
+			Value = @{
+				VarName               = 'HOMEDRIVE/HOMEPATH'
+				USERPROFILE           = $null
+				HOMEDRIVE             = "/HOMEDRIVE"
+				HOMEPATH              = "/path/to/HOMEPATH"
+				HOME                  = "/path/to/HOME"
+				Expected              = "/HOMEDRIVE/path/to/HOMEPATH"
+			}
+		}
+		@{
+			Value = @{
+				VarName               = 'HOME'
+				USERPROFILE           = $null
+				HOMEDRIVE             = $null
+				HOMEPATH              = $null
+				HOME                  = "/path/to/HOME"
+				Expected              = "/path/to/HOME"
+			}
+		}
+		@{
+			Value = @{
+				VarName               = 'fall-back'
+				USERPROFILE           = $null
+				HOMEDRIVE             = $null
+				HOMEPATH              = $null
+				HOME                  = $null
+				Expected              = "/"
+			}
+		}
+	) {
 
 		. $PSScriptRoot/../Helpers/SetGitWorktreeConfigPath.ps1 $_.Value
 
