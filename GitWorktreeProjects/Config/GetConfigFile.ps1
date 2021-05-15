@@ -16,14 +16,7 @@ function GetConfigFile
 		return $null
 	}
 	$content = Get-Content -Raw -Path $filePath
-	try
-	{
-		$converted = $content | ConvertFrom-Json -NoEnumerate -ErrorAction SilentlyContinue
-	}
-	catch
-	{
-		$converted = $null
-	}
+	$converted = $content | ConvertFrom-Json -NoEnumerate -ErrorAction SilentlyContinue
 	if (-not $converted)
 	{
 		throw "Could not convert file '${fileName}' (${filePath})! Is it valid JSON?"
