@@ -111,11 +111,11 @@
 			IconUri      = 'http://www.twia.nl/resources/twia.ico'
 
 			# ReleaseNotes of this module
-			ReleaseNotes = '
+			ReleaseNotes = @'
 1.0.0
 
 - Initial version of this module.
-'
+'@
 
 			# Prerelease string of this module
 			# Prerelease = ''
@@ -136,3 +136,4 @@
 	# Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
 	# DefaultCommandPrefix = ''
 }
+
