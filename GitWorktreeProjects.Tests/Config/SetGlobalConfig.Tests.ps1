@@ -1,3 +1,10 @@
+[CmdletBinding()]
+param (
+		[Parameter()]
+		[string]
+		$ModuleFolder
+)
+
 Describe "SetGlobalConfig" {
 
 	BeforeAll {
@@ -11,7 +18,7 @@ Describe "SetGlobalConfig" {
 		$configFilePath = '/config/path'
 		$configFile = '/config/file'
 
-		. $PSScriptRoot/../Helpers/LoadAllModuleFiles.ps1
+		. $PSScriptRoot/../Helpers/LoadAllModuleFiles.ps1 -ModuleFolder $ModuleFolder
 
 		Mock Out-File {} -RemoveParameterType "Encoding"
 		Mock New-Item { @{} }

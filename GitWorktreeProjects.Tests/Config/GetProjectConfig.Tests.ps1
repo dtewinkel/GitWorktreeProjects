@@ -5,7 +5,7 @@ param (
 		$ModuleFolder
 )
 
-Describe "GetGlobalConfig" {
+Describe "GetProjectConfig" {
 
 	BeforeAll {
 

@@ -1,107 +1,68 @@
+[CmdletBinding()]
+param (
+		[Parameter()]
+		[string]
+		$ModuleFolder
+)
+
 Describe "Get-GitWorktreeProject" {
 
 	BeforeAll {
 		Push-Location
-		. $PSScriptRoot/Helpers/LoadModule.ps1
-		. $PSScriptRoot/Helpers/LoadTypes.ps1
-		. $PSScriptRoot/Helpers/BackupGitWorktreeConfigPath.ps1
+		. $PSScriptRoot/Helpers/LoadModule.ps1 -ModuleFolder $ModuleFolder
 	}
 
 	It "should have the right parameters" {
 		$command = Get-Command Get-GitWorktreeProject
 
 		$command | Should -HaveParameter WorktreeFilter
+		. $PSScriptRoot/Helpers/HasArgumentCompleter.ps1 -CommandName Get-GitWorktreeProject -ParameterName WorktreeFilter | Should -BeTrue
+
 		$command | Should -HaveParameter ProjectFilter
+		. $PSScriptRoot/Helpers/HasArgumentCompleter.ps1 -CommandName Get-GitWorktreeProject -ParameterName ProjectFilter | Should -BeTrue
 	}
 
-	Context "with tab expansion" {
+	It "should get project information for a specific project" {
+		$ProjectName = "SecondProject"
+		$ExpectedProject = @{}
 
-		It "should expand for ProjectFilter" {
-			. $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup ThreeProjects
-			$cmd = "Get-GitWorktreeProject ${_}"
+		Mock GetProjects { @( $ProjectName ) } -ParameterFilter { $Filter -eq $ProjectName } -Verifiable -ModuleName GitWorktreeProjects
+		Mock GetProjectConfig { $ExpectedProject } -ParameterFilter { $Project -eq $ProjectName -and $WorkTreeFilter -eq '*' } -Verifiable -ModuleName GitWorktreeProjects
 
-			$result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
+		$result = Get-GitWorktreeProject -ProjectFilter $ProjectName
 
-			$result.CompletionMatches | Should -HaveCount 3
-			$result.CompletionMatches[0].CompletionText | Should -Be "AnotherProject"
-		}
-		It "should expand for WorktreeFilter should work" {
-			. $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup ThreeProjects
-			$cmd = "Get-GitWorktreeProject -ProjectFilter AnotherProject -WorktreeFilter *"
-
-			$result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
-
-			$result.CompletionMatches | Should -HaveCount 3
-			$result.CompletionMatches[0].CompletionText | Should -Be "main"
-		}
+		Should -InvokeVerifiable
+		$result | Should -Be $ExpectedProject
 	}
 
-	It "should get project information for the current project if project names start with the same text" {
+	It "Should return information about all projects if called without parameters" {
 
-		$testConfig = . $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup "SimilarProjects"
-		$ProjectName = "OneTwo"
+		$Project1Name = "FirstProject"
+		$Project2Name = "SecondProject"
+		$ExpectedProject1 = @{}
+		$ExpectedProject2 = @{}
 
-		$project = $testConfig.Projects.${ProjectName}.Project
-		Mock Get-Location { @{ Path = $project.RootPath } } -Verifiable -ModuleName GitWorktreeProjects
+		Mock GetProjects { @( $Project1Name, $Project2Name ) } -ParameterFilter { $Filter -eq '*' } -Verifiable -ModuleName GitWorktreeProjects
+		Mock GetProjectConfig { $ExpectedProject1 } -ParameterFilter { $Project -eq $Project1Name -and $WorkTreeFilter -eq '*' } -Verifiable -ModuleName GitWorktreeProjects
+		Mock GetProjectConfig { $ExpectedProject2 } -ParameterFilter { $Project -eq $Project2Name -and $WorkTreeFilter -eq '*' } -Verifiable -ModuleName GitWorktreeProjects
+
+		$result = Get-GitWorktreeProject
+
+		Should -InvokeVerifiable
+		$result | Should -Be @( $ExpectedProject1, $ExpectedProject2 )
+	}
+
+	It "Should return information about the current project" {
+
+		$ExpectedProject = @{}
+
+		Mock GetProjects {  } -ModuleName GitWorktreeProjects
+		Mock GetProjectConfig { $ExpectedProject } -ParameterFilter { $Project -eq '.' -and $WorkTreeFilter -eq '*' } -Verifiable -ModuleName GitWorktreeProjects
 
 		$result = Get-GitWorktreeProject -ProjectFilter .
 
-		. $PSScriptRoot/Helpers/AssertObject.ps1 -Actual $result -Expected $testConfig.Projects.${ProjectName}.Project -ExpectedType "Project"
-	}
-
-	Context "With <_> configuration" -ForEach 'Custom', 'Default' {
-
-		BeforeEach {
-			$testConfig = . $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope $_ -Setup "ThreeProjects"
-		}
-
-		It "should get project information for a specific project" {
-			$ProjectName = "SecondProject"
-
-			$result = Get-GitWorktreeProject -ProjectFilter $ProjectName
-
-			. $PSScriptRoot/Helpers/AssertObject.ps1 -Actual $result -Expected $testConfig.Projects.${ProjectName}.Project -ExpectedType "Project"
-		}
-
-		It "Should return information about all projects if called without parameters" {
-
-			$result = Get-GitWorktreeProject
-
-			. $PSScriptRoot/Helpers/AssertObject.ps1 -Actual $result -Expected $testConfig.Projects.Values.Project -ExpectedType "Project[]"
-		}
-
-		It "Should return information about the current project" {
-
-			$ProjectName = "SecondProject"
-
-			$project = $testConfig.Projects.${ProjectName}.Project
-			Mock Get-Location { @{ Path = $project.RootPath } } -Verifiable -ModuleName GitWorktreeProjects
-
-			$result = Get-GitWorktreeProject -ProjectFilter .
-
-			Should -InvokeVerifiable
-			. $PSScriptRoot/Helpers/AssertObject.ps1 -Actual $result -Expected $project -ExpectedType "Project"
-		}
-
-	}
-
-	It "Should fail for path <_> outside a project for the current project" -ForEach @(
-		"/root/"
-		"C:\Windows\"
-	) {
-
-		. $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope Custom -Setup ThreeProjects
-		Mock Get-Location { @{ Path = $_ } } -Verifiable -ModuleName GitWorktreeProjects
-
-		{
-			Get-GitWorktreeProject -ProjectFilter .
-		} | Should -Throw "Could not determine the Project in the current directory."
-
 		Should -InvokeVerifiable
-	}
-
-	AfterAll {
-		. $PSScriptRoot/Helpers/RestoreGitWorktreeConfigPath.ps1
-		Pop-Location
+		Should -Not -Invoke GetProjects -ModuleName GitWorktreeProjects
+		$result | Should -Be $ExpectedProject
 	}
 }

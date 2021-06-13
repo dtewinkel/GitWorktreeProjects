@@ -1,96 +1,265 @@
+[CmdletBinding()]
+param (
+	[Parameter()]
+	[string]
+	$ModuleFolder
+)
+
 Describe "Open-GitWorktree" {
 
 	BeforeAll {
 		Push-Location
-			. $PSScriptRoot/Helpers/LoadModule.ps1
-			. $PSScriptRoot/Helpers/BackupGitWorktreeConfigPath.ps1
+		. $PSScriptRoot/Helpers/LoadModule.ps1 -ModuleFolder $ModuleFolder
 	}
 
-	Context "With <_> configuration" -Foreach 'Custom', 'Default' {
+	It "should have the right parameters" {
+		$command = Get-Command Open-GitWorktree
 
-		BeforeAll {
-			$testConfig = . $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope $_ -Setup "ThreeProjects"
-		}
+		$command | Should -HaveParameter Project
+		. $PSScriptRoot/Helpers/HasArgumentCompleter.ps1 -CommandName Open-GitWorktree -ParameterName Project | Should -BeTrue
 
-		It "should fail if the Project does not exist" {
-			{
-				Open-GitWorktree -Project NonExisting -Worktree None
-			} | Should -Throw "Project config File '*Nonexisting.project' for project 'Nonexisting' not found!*"
-		}
+		$command | Should -HaveParameter Worktree -Mandatory
+		. $PSScriptRoot/Helpers/HasArgumentCompleter.ps1 -CommandName Open-GitWorktree -ParameterName Worktree | Should -BeTrue
 
-		It "should fail if the Worktree does not exist" {
-			{
-				Open-GitWorktree -Project MyFirstProject -Worktree None
-			} | Should -Throw "Worktree 'None' for project 'MyFirstProject' not found! Use New-GitWorktree to create it."
-		}
-
-		It "should fail if the Worktree path does not exist" {
-			$project = $testConfig.Projects.MyFirstProject.Project
-			$worktree = $project.Worktrees[1]
-			$expectedPath = Join-Path $project.RootPath $worktree.RelativePath
-
-			Mock Test-Path { $false } -ParameterFilter { $Path -eq $expectedPath } -Verifiable -ModuleName GitWorktreeProjects
-
-			{
-				Open-GitWorktree -Project MyFirstProject -Worktree worktree2
-			} | Should -Throw "Path '$expectedPath' for worktree 'worktree2' in project 'MyFirstProject' not found!"
-
-			Should -InvokeVerifiable
-		}
-
-		It "Should change to the right folder for a specific project" {
-			$project = $testConfig.Projects.MyFirstProject.Project
-			$worktree = $project.Worktrees[0]
-			$expectedPath = Join-Path $project.RootPath $worktree.RelativePath
-			Mock Set-Location {} -ParameterFilter { $Path -eq $expectedPath } -Verifiable -ModuleName GitWorktreeProjects
-
-			Open-GitWorktree -Project MyFirstProject -Worktree main
-
-			Should -InvokeVerifiable
-		}
-
-		It "Should change to the right folder for the current project" {
-			$project = $testConfig.Projects.SecondProject.Project
-			$worktree = $project.Worktrees[0]
-			$expectedPath = Join-Path $project.RootPath $worktree.RelativePath
-
-			Mock Get-Location { @{ Path = $project.RootPath } } -Verifiable -ModuleName GitWorktreeProjects
-			Mock Set-Location {} -ParameterFilter { $Path -eq $expectedPath } -Verifiable -ModuleName GitWorktreeProjects
-
-			Open-GitWorktree -Project . -Worktree master
-
-			Should -InvokeVerifiable
-		}
-
-		It "Should fail if outside a project for the current project" {
-
-			Mock Get-Location { @{ Path = "dummy" } } -Verifiable -ModuleName GitWorktreeProjects
-			Mock Set-Location {} -ModuleName GitWorktreeProjects
-
-			{
-				Open-GitWorktree -Project . -Worktree any
-			} | Should -Throw "Could not determine the Project in the current directory."
-
-			Should -InvokeVerifiable
-			Should -Not -Invoke Set-Location -ModuleName GitWorktreeProjects
-		}
+		$command | Should -HaveParameter NoTools
 	}
 
-	Context "With <_> configuration" -Foreach 'Custom', 'Default' {
+	It "should fail if it cannot get the project or worktree" {
+		{
+			$projectName = "NonExisting"
+			$worktreeName = "None"
 
-		BeforeAll {
-			$testConfig = . $PSScriptRoot/Helpers/SetGitWorktreeConfig.ps1 -Scope $_ -Setup "ErrorProjects"
-		}
+			Mock GetProjectConfig { Throw "oops..." } -ParameterFilter { $Project -eq $projectName -and $WorktreeFilter -eq $worktreeName -and $WorktreeExactMatch -and $FailOnMissing } -ModuleName GitWorktreeProjects -Verifiable
 
-		It "should fail if Project file has wrong version" {
-			{
-				Open-GitWorktree -Project WrongVersion -Worktree Test
-			} | Should -Throw "Schema version '0' is not supported for file 'WrongVersion.project' (*WrongVersion.project)."
-		}
+			Open-GitWorktree -Project $projectName -Worktree $worktreeName
+		} | Should -Throw "Oops..."
+
+		Should -InvokeVerifiable
 	}
-}
 
-AfterAll {
-	. $PSScriptRoot/Helpers/RestoreGitWorktreeConfigPath.ps1
-	Pop-Location
+	It "should fail if the Worktree path does not exist" {
+
+		$projectName = "TestProject"
+		$worktreeName = "myWorktree"
+		$projectPath = '/test/project'
+		$worktreePath = 'myWorktree'
+		$fullPath = "${projectPath}/${woktreePath}"
+
+		$projectConfig = @{
+			Name      = $projectName
+			RootPath  = $projectPath
+			Worktrees = @(
+				@{
+					RelativePath = $worktreePath
+				}
+			)
+		}
+
+		Mock GetProjectConfig { $projectConfig } -ParameterFilter { $Project -eq $projectName -and $WorktreeFilter -eq $worktreeName -and $WorktreeExactMatch -and $FailOnMissing } -ModuleName GitWorktreeProjects -Verifiable
+		Mock Join-Path { $fullPath } -ParameterFilter { $Path -eq $projectPath -and $ChildPath -eq $worktreePath } -Verifiable -ModuleName GitWorktreeProjects
+		Mock Test-Path { $false } -ParameterFilter { $Path -eq $fullPath } -Verifiable -ModuleName GitWorktreeProjects
+
+		{
+			Open-GitWorktree -Project $projectName -Worktree $worktreeName
+		} | Should -Throw "Path '${fullPath}' for worktree '${worktreeName}' in project '${projectName}' not found!"
+
+		Should -InvokeVerifiable
+	}
+
+	It "Should change to the right folder for a specific project" {
+
+		$projectName = "TestProject"
+		$worktreeName = "myWorktree"
+		$projectPath = '/test/project'
+		$worktreePath = 'myWorktree'
+		$fullPath = "${projectPath}/${woktreePath}"
+
+		$projectConfig = @{
+			Name      = $projectName
+			RootPath  = $projectPath
+			Worktrees = @(
+				@{
+					RelativePath = $worktreePath
+					Tools        = @()
+				}
+			)
+		}
+
+		Mock GetProjectConfig { $projectConfig } -ParameterFilter { $Project -eq $projectName -and $WorktreeFilter -eq $worktreeName -and $WorktreeExactMatch -and $FailOnMissing } -ModuleName GitWorktreeProjects -Verifiable
+		Mock Join-Path { $fullPath } -ParameterFilter { $Path -eq $projectPath -and $ChildPath -eq $worktreePath } -Verifiable -ModuleName GitWorktreeProjects
+		Mock Test-Path { $true } -ParameterFilter { $Path -eq $fullPath } -Verifiable -ModuleName GitWorktreeProjects
+		Mock Set-Location {} -ParameterFilter { $Path -eq $fullPath } -Verifiable -ModuleName GitWorktreeProjects
+
+		Open-GitWorktree -Project $projectName -Worktree $worktreeName
+
+		Should -InvokeVerifiable
+	}
+
+	It "Should change to the right folder for the current project" {
+
+		$projectName = "TestProject"
+		$worktreeName = "myWorktree"
+		$projectPath = '/test/project'
+		$worktreePath = 'myWorktree'
+		$fullPath = "${projectPath}/${woktreePath}"
+
+		$projectConfig = @{
+			Name      = $projectName
+			RootPath  = $projectPath
+			Worktrees = @(
+				@{
+					RelativePath = $worktreePath
+					Tools        = @()
+				}
+			)
+		}
+
+		Mock GetProjectConfig { $projectConfig } -ParameterFilter { $Project -eq '.' -and $WorktreeFilter -eq $worktreeName -and $WorktreeExactMatch -and $FailOnMissing } -ModuleName GitWorktreeProjects -Verifiable
+		Mock Join-Path { $fullPath } -ParameterFilter { $Path -eq $projectPath -and $ChildPath -eq $worktreePath } -Verifiable -ModuleName GitWorktreeProjects
+		Mock Test-Path { $true } -ParameterFilter { $Path -eq $fullPath } -Verifiable -ModuleName GitWorktreeProjects
+		Mock Set-Location {} -ParameterFilter { $Path -eq $fullPath } -Verifiable -ModuleName GitWorktreeProjects
+
+		Open-GitWorktree -Project . -Worktree $worktreeName
+
+		Should -InvokeVerifiable
+	}
+
+	It "Should fail if a tools for the worktree is not found" {
+
+		$projectName = "TestProject"
+		$worktreeName = "myWorktree"
+		$projectPath = '/test/project'
+		$worktreePath = 'myWorktree'
+		$tool1Name = "Tool1"
+		$fullPath = "${projectPath}/${woktreePath}"
+
+		$projectConfig = @{
+			Name      = $projectName
+			RootPath  = $projectPath
+			Worktrees = @(
+				@{
+					RelativePath = $worktreePath
+					Tools        = @(
+						@{
+							Name = $tool1Name
+						}
+					)
+				}
+			)
+		}
+
+		Mock GetProjectConfig { $projectConfig } -ParameterFilter { $Project -eq '.' -and $WorktreeFilter -eq $worktreeName -and $WorktreeExactMatch -and $FailOnMissing } -ModuleName GitWorktreeProjects -Verifiable
+		Mock Join-Path { $fullPath } -ParameterFilter { $Path -eq $projectPath -and $ChildPath -eq $worktreePath } -Verifiable -ModuleName GitWorktreeProjects
+		Mock Test-Path { $true } -ParameterFilter { $Path -eq $fullPath } -Verifiable -ModuleName GitWorktreeProjects
+		Mock Set-Location {} -ParameterFilter { $Path -eq $fullPath } -Verifiable -ModuleName GitWorktreeProjects
+		Mock Get-Item {} -ParameterFilter { $Path -eq "function:Invoke-Tool${tool1Name}" -and $ErrorAction -eq 'SilentlyContinue' } -Verifiable -ModuleName GitWorktreeProjects
+
+		{ Open-GitWorktree -Project . -Worktree $worktreeName } | Should -Throw "Tool '$tool1Name' not found. Is it installed and registerd?"
+
+		Should -InvokeVerifiable
+	}
+
+	It "Should execute the tools as defined for the worktree" {
+
+		$script:fn1ProjectConfig = $Null
+		$script:fn1Parameters = $null
+		$script:fn2ProjectConfig = $Null
+		$script:fn2Parameters = $null
+
+		function fn1($ProjectConfig, $Parameters)
+		{
+			$script:fn1ProjectConfig = $ProjectConfig
+			$script:fn1Parameters = $Parameters
+		}
+
+		function global:fn2($ProjectConfig, $Parameters)
+		{
+			$script:fn2ProjectConfig = $ProjectConfig
+			$script:fn2Parameters = $Parameters
+		}
+
+		$projectName = "TestProject"
+		$worktreeName = "myWorktree"
+		$projectPath = '/test/project'
+		$worktreePath = 'myWorktree'
+		$Tool1Name = "Tool1"
+		$Tool2Name = "AnotherTool"
+		$fullPath = "${projectPath}/${woktreePath}"
+
+		$projectConfig = @{
+			Name      = $projectName
+			RootPath  = $projectPath
+			Worktrees = @(
+				@{
+					RelativePath = $worktreePath
+					Tools        = @(
+						@{
+							Name = $Tool1Name
+						}
+						@{
+							Name       = $Tool2Name
+							Parameters = @( 'p1', 'p2' )
+						}
+					)
+				}
+			)
+		}
+
+		Mock GetProjectConfig { $projectConfig } -ParameterFilter { $Project -eq '.' -and $WorktreeFilter -eq $worktreeName -and $WorktreeExactMatch -and $FailOnMissing } -ModuleName GitWorktreeProjects -Verifiable
+		Mock Join-Path { $fullPath } -ParameterFilter { $Path -eq $projectPath -and $ChildPath -eq $worktreePath } -Verifiable -ModuleName GitWorktreeProjects
+		Mock Test-Path { $true } -ParameterFilter { $Path -eq $fullPath } -Verifiable -ModuleName GitWorktreeProjects
+		Mock Set-Location {} -ParameterFilter { $Path -eq $fullPath } -Verifiable -ModuleName GitWorktreeProjects
+		Mock Get-Item { $Function:fn1 } -ParameterFilter { $Path -eq "function:Invoke-Tool${tool1Name}" -and $ErrorAction -eq 'SilentlyContinue' } -Verifiable -ModuleName GitWorktreeProjects
+		Mock Get-Item { $Function:fn2 } -ParameterFilter { $Path -eq "function:Invoke-Tool${tool2Name}" -and $ErrorAction -eq 'SilentlyContinue' } -Verifiable -ModuleName GitWorktreeProjects
+
+		Open-GitWorktree -Project . -Worktree $worktreeName
+
+		$script:fn1ProjectConfig | Should -Be $ProjectConfig
+		$script:fn1Parameters | Should -BeNullOrEmpty
+		$script:fn2ProjectConfig | Should -Be $ProjectConfig
+		$script:fn2Parameters | Should -Be $projectConfig.Worktrees[0].Tools[1].Parameters
+
+		Should -InvokeVerifiable
+	}
+
+	It "Should not execute the tools as defined for the worktree if NoTools is given" {
+
+		$projectName = "TestProject"
+		$worktreeName = "myWorktree"
+		$projectPath = '/test/project'
+		$worktreePath = 'myWorktree'
+		$Tool1Name = "Tool1"
+		$Tool2Name = "AnotherTool"
+		$fullPath = "${projectPath}/${woktreePath}"
+
+		$projectConfig = @{
+			Name      = $projectName
+			RootPath  = $projectPath
+			Worktrees = @(
+				@{
+					RelativePath = $worktreePath
+					Tools        = @(
+						@{
+							Name = $Tool1Name
+						}
+						@{
+							Name       = $Tool2Name
+							Parameters = @( 'p1', 'p2' )
+						}
+					)
+				}
+			)
+		}
+
+		Mock GetProjectConfig { $projectConfig } -ParameterFilter { $Project -eq '.' -and $WorktreeFilter -eq $worktreeName -and $WorktreeExactMatch -and $FailOnMissing } -ModuleName GitWorktreeProjects -Verifiable
+		Mock Join-Path { $fullPath } -ParameterFilter { $Path -eq $projectPath -and $ChildPath -eq $worktreePath } -Verifiable -ModuleName GitWorktreeProjects
+		Mock Test-Path { $true } -ParameterFilter { $Path -eq $fullPath } -Verifiable -ModuleName GitWorktreeProjects
+		Mock Set-Location {} -ParameterFilter { $Path -eq $fullPath } -Verifiable -ModuleName GitWorktreeProjects
+		Mock Get-Item { } -ParameterFilter { $Path -like "function:Invoke-Tool*" -and $ErrorAction -eq 'SilentlyContinue' } -ModuleName GitWorktreeProjects
+
+		Open-GitWorktree -Project . -Worktree $worktreeName -NoTools
+
+		Should -InvokeVerifiable
+		Should -Not -Invoke Get-Item -ParameterFilter { $Path -like "function:Invoke-Tool*" -and $ErrorAction -eq 'SilentlyContinue' } -ModuleName GitWorktreeProjects
+	}
 }

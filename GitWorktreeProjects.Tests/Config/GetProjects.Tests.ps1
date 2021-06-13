@@ -1,3 +1,10 @@
+[CmdletBinding()]
+param (
+		[Parameter()]
+		[string]
+		$ModuleFolder
+)
+
 Describe "GetProjects" {
 
 	BeforeAll {
@@ -17,7 +24,7 @@ Describe "GetProjects" {
 			}
 		)
 
-		. $PSScriptRoot/../Helpers/LoadAllModuleFiles.ps1
+		. $PSScriptRoot/../Helpers/LoadAllModuleFiles.ps1 -ModuleFolder $ModuleFolder
 	}
 
 	It "should have the right parameters" {

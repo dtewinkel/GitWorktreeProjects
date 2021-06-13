@@ -1,8 +1,15 @@
+[CmdletBinding()]
+param (
+		[Parameter()]
+		[string]
+		$ModuleFolder
+)
+
 Describe "WorktreeFilterArgumentCompleter" {
 
 	BeforeAll {
 
-		. $PSScriptRoot/../Helpers/LoadAllModuleFiles.ps1
+		. $PSScriptRoot/../Helpers/LoadAllModuleFiles.ps1 -ModuleFolder $ModuleFolder
 	}
 
 	It "should have the right parameters" {

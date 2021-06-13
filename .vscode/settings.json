@@ -4,5 +4,14 @@
     "powershell.codeFormatting.pipelineIndentationStyle": "IncreaseIndentationForFirstPipeline",
     "powershell.codeFormatting.trimWhitespaceAroundPipe": true,
     "powershell.codeFormatting.useCorrectCasing": true,
-    "powershell.scriptAnalysis.enable": true
+    "powershell.scriptAnalysis.enable": true,
+
+    "powershell.pester.debugOutputVerbosity": "Normal",
+
+    // disable gutters to make breakpoints usable
+    "coverage-gutters.showGutterCoverage": false,
+    "coverage-gutters.showLineCoverage": true,
+		"coverage-gutters.coverageFileNames": [
+			"Coverage.Pester.xml"
+	]
 }

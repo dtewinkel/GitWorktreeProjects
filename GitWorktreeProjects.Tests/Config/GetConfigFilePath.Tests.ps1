@@ -1,47 +1,46 @@
+[CmdletBinding()]
+param (
+		[Parameter()]
+		[string]
+		$ModuleFolder
+)
+
 $getConfigFilePathCombinations = @(
 	@{
-		Value = @{
-			VarName               = 'GitWorktreeConfigPath'
-			GitWorktreeConfigPath = "/path/to/GitWorktreeConfigPath"
-			USERPROFILE           = "/path/to/USERPROFILE"
-			HOMEDRIVE             = "/HOMEDRIVE"
-			HOMEPATH              = "/path/to/HOMEPATH"
-			HOME                  = "/path/to/HOME"
-			Expected              = "/path/to/GitWorktreeConfigPath"
-		}
+		VarName                = 'GitWorktreeConfigPath'
+		_GitWorktreeConfigPath = "/path/to/GitWorktreeConfigPath"
+		_USERPROFILE           = "/path/to/USERPROFILE"
+		_HOMEDRIVE             = "/HOMEDRIVE"
+		_HOMEPATH              = "/path/to/HOMEPATH"
+		_HOME                  = "/path/to/HOME"
+		Expected               = "/path/to/GitWorktreeConfigPath"
 	}
 	@{
-		Value = @{
-			VarName               = 'USERPROFILE'
-			GitWorktreeConfigPath = $null
-			USERPROFILE           = "/path/to/USERPROFILE"
-			HOMEDRIVE             = "/HOMEDRIVE"
-			HOMEPATH              = "/path/to/HOMEPATH"
-			HOME                  = "/path/to/HOME"
-			Expected              = "/path/to/USERPROFILE/.gitworktree"
-		}
+		VarName                = 'USERPROFILE'
+		_GitWorktreeConfigPath = $null
+		_USERPROFILE           = "/path/to/USERPROFILE"
+		_HOMEDRIVE             = "/HOMEDRIVE"
+		_HOMEPATH              = "/path/to/HOMEPATH"
+		_HOME                  = "/path/to/HOME"
+		Expected               = "/path/to/USERPROFILE/.gitworktree"
 	}
 	@{
-		Value = @{
-			VarName               = 'HOMEDRIVE/HOMEPATH'
-			GitWorktreeConfigPath = $null
-			USERPROFILE           = $null
-			HOMEDRIVE             = "/HOMEDRIVE"
-			HOMEPATH              = "/path/to/HOMEPATH"
-			HOME                  = "/path/to/HOME"
-			Expected              = "/HOMEDRIVE/path/to/HOMEPATH/.gitworktree"
-		}
+		VarName                = 'HOMEDRIVE/HOMEPATH'
+		_GitWorktreeConfigPath = $null
+		_USERPROFILE           = $null
+		_HOMEDRIVE             = "/HOMEDRIVE"
+		_HOMEPATH              = "/path/to/HOMEPATH"
+		_HOME                  = "/path/to/HOME"
+		Expected               = "/HOMEDRIVE/path/to/HOMEPATH/.gitworktree"
 	}
 	@{
-		Value = @{
-			VarName               = 'HOME'
-			GitWorktreeConfigPath = $null
-			USERPROFILE           = $null
-			HOMEDRIVE             = $null
-			HOMEPATH              = $null
-			HOME                  = "/path/to/HOME"
-			Expected              = "/path/to/HOME/.gitworktree"
-		}
+		VarName                = 'HOME'
+		_GitWorktreeConfigPath = $null
+		_USERPROFILE           = $null
+		_HOMEDRIVE             = $null
+		_HOMEPATH              = $null
+		_HOME                  = "/path/to/HOME"
+		Expected               = "/path/to/HOME/.gitworktree"
 	}
 )
 
@@ -49,9 +48,14 @@ Describe "GetConfigFilePath" {
 
 	BeforeAll {
 
+		function MockEnvironmentVariable($name, $value)
+		{
+			$parameterFilterScriptBlock = [Scriptblock]::Create("`$Path -eq 'Env:${name}'")
+			$resultScriptBlock = [Scriptblock]::Create("@{ Value = '$value' }")
+			Mock Get-Item $resultScriptBlock -ParameterFilter $parameterFilterScriptBlock
+		}
 
-		. $PSScriptRoot/../Helpers/LoadAllModuleFiles.ps1
-		. $PSScriptRoot/../Helpers/BackupGitWorktreeConfigPath.ps1
+		. $PSScriptRoot/../Helpers/LoadAllModuleFiles.ps1 -ModuleFolder $ModuleFolder
 	}
 
 	It "should have the right parameters" {
@@ -61,31 +65,42 @@ Describe "GetConfigFilePath" {
 
 	It "should throw if path cannot be determined" {
 
-		. $PSScriptRoot/../Helpers/SetGitWorktreeConfigPath.ps1 -Values @{}
+		MockEnvironmentVariable 'GitWorktreeConfigPath' $null
+		MockEnvironmentVariable 'USERPROFILE' $null
+		MockEnvironmentVariable 'HOMEDRIVE' $null
+		MockEnvironmentVariable 'HOMEPATH' $null
+		MockEnvironmentVariable 'HOME' $null
+
 		{ GetConfigFilePath } | Should -Throw "Cannot determine location of GitWorktreeProject configuration files."
 	}
 
-	It "should use the environment variable <Value.VarName>" -ForEach $getConfigFilePathCombinations {
+	It "should use the environment variable <VarName>" -ForEach $getConfigFilePathCombinations {
 
-		. $PSScriptRoot/../Helpers/SetGitWorktreeConfigPath.ps1 $_.Value
+		MockEnvironmentVariable 'GitWorktreeConfigPath' $_GitWorktreeConfigPath
+		MockEnvironmentVariable 'USERPROFILE' $_USERPROFILE
+		MockEnvironmentVariable 'HOMEDRIVE' $_HOMEDRIVE
+		MockEnvironmentVariable 'HOMEPATH' $_HOMEPATH
+		MockEnvironmentVariable 'HOME' $_HOME
+
 		$config = GetConfigFilePath
 
 		# replace / with / or \, as returned by the OS.
-		$config | Should -Be ($_.Value.Expected -replace '/', $config[0])
+		$config | Should -Be ($Expected -replace '/', $config[0])
 	}
 
-	It "should use the environment variable <Value.VarName> and add ChildPath" -ForEach $getConfigFilePathCombinations {
+	It "should use the environment variable <VarName> and add ChildPath" -ForEach $getConfigFilePathCombinations {
 
+		MockEnvironmentVariable 'GitWorktreeConfigPath' $_GitWorktreeConfigPath
+		MockEnvironmentVariable 'USERPROFILE' $_USERPROFILE
+		MockEnvironmentVariable 'HOMEDRIVE' $_HOMEDRIVE
+		MockEnvironmentVariable 'HOMEPATH' $_HOMEPATH
+		MockEnvironmentVariable 'HOME' $_HOME
 		$childPath = '*.ps1'
-		. $PSScriptRoot/../Helpers/SetGitWorktreeConfigPath.ps1 $_.Value
+
 		$config = GetConfigFilePath -ChildPath $childPath
 
 		# replace / with / or \, as returned by the OS.
-		$expectedPath = Join-Path $_.Value.Expected $childPath
+		$expectedPath = Join-Path $Expected $childPath
 		$config | Should -Be $expectedPath
-	}
-
-	AfterAll {
-		. $PSScriptRoot/../Helpers/RestoreGitWorktreeConfigPath.ps1
 	}
 }

@@ -32,7 +32,8 @@
 			$toolFunction = Get-Item function:Invoke-Tool$toolName -ErrorAction SilentlyContinue
 			if (-not $toolFunction)
 			{
-				throw "Tool '$toolName' not found. Is it installed and registerd?"
+				$message = "Tool '${toolName}' not found. Is it installed and registerd?"
+				throw $message
 			}
 			& $toolFunction $projectConfig $tool.Parameters
 		}

@@ -1,9 +1,16 @@
+[CmdletBinding()]
+param (
+		[Parameter()]
+		[string]
+		$ModuleFolder
+)
+
 Describe "Get-GitWorktreeDefaults" {
 
 	BeforeAll {
-		. $PSScriptRoot/Helpers/LoadModule.ps1
+		. $PSScriptRoot/Helpers/LoadModule.ps1 -ModuleFolder $ModuleFolder
 	}
-	
+
 	It "should use GetGlobalConfig and pass on the results" {
 
 		$configFromFile = @{

@@ -1,7 +1,14 @@
+[CmdletBinding()]
+param (
+		[Parameter()]
+		[string]
+		$ModuleFolder
+)
+
 Describe "Set-GitWorktreeDefaults" {
 
 	BeforeAll {
-		. $PSScriptRoot/Helpers/LoadModule.ps1
+		. $PSScriptRoot/Helpers/LoadModule.ps1 -ModuleFolder $ModuleFolder
 	}
 
 	BeforeEach {

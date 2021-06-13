@@ -1,3 +1,10 @@
+[CmdletBinding()]
+param (
+		[Parameter()]
+		[string]
+		$ModuleFolder
+)
+
 Describe "Project" {
 
 	BeforeAll {
@@ -44,7 +51,7 @@ Describe "Project" {
 			}
 		)
 
-		. $PSScriptRoot/../Helpers/LoadAllModuleFiles.ps1
+		. $PSScriptRoot/../Helpers/LoadAllModuleFiles.ps1 -ModuleFolder $ModuleFolder
 	}
 
 	It "Can be converted from file contents" {

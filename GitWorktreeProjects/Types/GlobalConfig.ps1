@@ -6,6 +6,11 @@ class GlobalConfigFile
 	[string[]] $DefaultTools
 }
 
+function GetFromEnv($VarName)
+{
+	(Get-Item -Path "Env:${VarName}" -ErrorAction SilentlyContinue).Value
+}
+
 class GlobalConfig
 {
 	[string] $DefaultRootPath
@@ -14,14 +19,14 @@ class GlobalConfig
 
 	GlobalConfig()
 	{
-		$rootPath = $env:UserProfile
+		$rootPath = GetFromEnv 'USERPROFILE'
 		if(-not $rootPath)
 		{
-			$rootPath = "${env:HOMEDRIVE}${env:HOMEPATH}"
+			$rootPath = "$(GetFromEnv 'HOMEDRIVE')$(GetFromEnv 'HOMEPATH')"
 		}
 		if(-not $rootPath)
 		{
-			$rootPath = $env:HOME
+			$rootPath = GetFromEnv 'HOME'
 		}
 		if(-not $rootPath)
 		{

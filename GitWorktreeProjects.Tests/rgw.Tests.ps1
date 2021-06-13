@@ -1,7 +1,14 @@
-﻿Describe "rgw" {
+﻿[CmdletBinding()]
+param (
+		[Parameter()]
+		[string]
+		$ModuleFolder
+)
+
+Describe "rgw" {
 
 	BeforeAll {
-		. $PSScriptRoot/Helpers/LoadModule.ps1
+		. $PSScriptRoot/Helpers/LoadModule.ps1 -ModuleFolder $ModuleFolder
 	}
 
 	It "should be an alias of Remove-GitWorktree" {

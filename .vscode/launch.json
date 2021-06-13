@@ -10,6 +10,32 @@
             "request": "launch",
             "script": "deployment/pipelines/scripts/ConfigureBuildTest.ps1",
             "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "Run tests in current file with CC",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${workspaceFolder}/deployment/pipelines/scripts/Test.ps1",
+            "args": [
+                "-TestPath", "'${file}'",
+                "-OutputVerbosity", "${config:powershell.pester.debugOutputVerbosity}",
+                "-CoverageOutputFormat", "CoverageGutters",
+                "-ModuleFolder", "${workspaceFolder}/GitWorktreeProjects"
+            ],
+            "cwd": "${file}",
+        },
+        {
+            "name": "Run all tests with CC",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${workspaceFolder}/deployment/pipelines/scripts/Test.ps1",
+            "args": [
+                "-TestPath", "'${workspaceFolder}/GitWorktreeProjects.Tests'",
+                "-OutputVerbosity", "${config:powershell.pester.debugOutputVerbosity}",
+                "-CoverageOutputFormat", "CoverageGutters",
+                "-ModuleFolder", "${workspaceFolder}/GitWorktreeProjects"
+            ],
+            "cwd": "${workspaceFolder}/GitWorktreeProjects.Tests",
         }
     ]
 }

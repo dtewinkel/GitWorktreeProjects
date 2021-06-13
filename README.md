@@ -24,11 +24,6 @@ Rework unit tests for:
 
 - Tab expansion in all CmdLets that support it.
 
-Complete unit tests for:
-
-- `Get-GitWorktreeProject`.
-- `Open-GitWorktree`.
-
 Create unit tests for:
 
 - `Get-GitWorktree`.

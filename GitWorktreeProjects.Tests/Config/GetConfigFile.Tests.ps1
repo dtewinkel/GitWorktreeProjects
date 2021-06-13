@@ -1,3 +1,10 @@
+[CmdletBinding()]
+param (
+		[Parameter()]
+		[string]
+		$ModuleFolder
+)
+
 Describe "GetConfigFile" {
 
 	BeforeAll {
@@ -6,7 +13,7 @@ Describe "GetConfigFile" {
 		$configfile = 'my.project'
 		$configfilePath = 'path/to/config/my.project'
 
-		. $PSScriptRoot/../Helpers/LoadAllModuleFiles.ps1
+		. $PSScriptRoot/../Helpers/LoadAllModuleFiles.ps1 -ModuleFolder $ModuleFolder
 	}
 
 	It "should throw if path cannot be determined" {
