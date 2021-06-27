@@ -15,12 +15,8 @@ Describe "Open-GitWorktree" {
 	It "should have the right parameters" {
 		$command = Get-Command Open-GitWorktree
 
-		$command | Should -HaveParameter Project
-		. $PSScriptRoot/Helpers/HasArgumentCompleter.ps1 -CommandName Open-GitWorktree -ParameterName Project | Should -BeTrue
-
-		$command | Should -HaveParameter Worktree -Mandatory
-		. $PSScriptRoot/Helpers/HasArgumentCompleter.ps1 -CommandName Open-GitWorktree -ParameterName Worktree | Should -BeTrue
-
+		$command | Should -HaveParameter Project -HasArgumentCompleter
+		$command | Should -HaveParameter Worktree -Mandatory -HasArgumentCompleter
 		$command | Should -HaveParameter NoTools
 	}
 

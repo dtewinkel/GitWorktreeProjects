@@ -15,11 +15,8 @@ Describe "Get-GitWorktreeProject" {
 	It "should have the right parameters" {
 		$command = Get-Command Get-GitWorktreeProject
 
-		$command | Should -HaveParameter WorktreeFilter
-		. $PSScriptRoot/Helpers/HasArgumentCompleter.ps1 -CommandName Get-GitWorktreeProject -ParameterName WorktreeFilter | Should -BeTrue
-
-		$command | Should -HaveParameter ProjectFilter
-		. $PSScriptRoot/Helpers/HasArgumentCompleter.ps1 -CommandName Get-GitWorktreeProject -ParameterName ProjectFilter | Should -BeTrue
+		$command | Should -HaveParameter WorktreeFilter -HasArgumentCompleter
+		$command | Should -HaveParameter ProjectFilter -HasArgumentCompleter
 	}
 
 	It "should get project information for a specific project" {

@@ -7,7 +7,7 @@ param(
 $toolsPath = Join-Path $RootPath tools
 $reportGenerator = Join-Path $toolsPath reportgenerator.exe
 
-@("PSScriptAnalyzer", "Pester@5.2.2") | ForEach-Object {
+@("PSScriptAnalyzer", "Pester@5.3.0-alpha5") | ForEach-Object {
 	$moduleSpec = $_ -split '@'
 	switch ($moduleSpec.Length)
 	{
