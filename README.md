@@ -20,10 +20,6 @@ Create unit tests for:
 - Unit tests for `GetProjectConfig`.
 - Unit tests for `SetProjectConfig`.
 
-Rework unit tests for:
-
-- Tab expansion in all CmdLets that support it.
-
 Create unit tests for:
 
 - `Get-GitWorktree`.
