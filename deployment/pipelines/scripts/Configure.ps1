@@ -9,34 +9,41 @@ $reportGenerator = Join-Path $toolsPath reportgenerator.exe
 
 @("PSScriptAnalyzer", "Pester@5.3.0-alpha5") | ForEach-Object {
 	$moduleSpec = $_ -split '@'
+	$moduleName = $moduleSpec[0]
 	switch ($moduleSpec.Length)
 	{
 		1 {
 			$getParams = @{
-				Name = $moduleSpec[0]
+				Name = $moduleName
 			}
 			$installParams = @{
-				Name = $moduleSpec[0]
+				Name = $moduleName
 			}
 			$importParams = @{
-				Name = $moduleSpec[0]
+				Name = $moduleName
 			}
 		}
 
 		2 {
+			$fullVersion = $moduleSpec[1]
+			$versionSpec = $fullVersion -split '-'
+			$version = $versionSpec[0]
 			$getParams = @{
 				FullyQualifiedName = @{
-					ModuleName = $moduleSpec[0];
-					ModuleVersion = $moduleSpec[1]
+					ModuleName = $moduleName
+					ModuleVersion = $version
 				}
 			}
 			$installParams = @{
-				Name = $moduleSpec[0];
-				MinimumVersion = $moduleSpec[1]
-			}
+				Name = $moduleName
+				MinimumVersion = $fullVersion
+				AllowPrerelease = $versionSpec.Length -gt 1
+				}
 			$importParams = @{
-				Name = $moduleSpec[0];
-				MinimumVersion = $moduleSpec[1]
+				FullyQualifiedName = @{
+					ModuleName = $moduleName
+					ModuleVersion = $version
+				}
 				Scope = 'Local'
 			}
 		}
