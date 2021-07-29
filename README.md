@@ -17,10 +17,8 @@ This project is still highly in development and not completely production ready.
 
 Create unit tests for:
 
-- Unit tests for `GetProjectConfig`.
-- Unit tests for `SetProjectConfig`.
-
-Create unit tests for:
+- `GetProjectConfig`.
+- `SetProjectConfig`.
 
 - `Get-GitWorktree`.
 - `New-GitWorktreeProject`.

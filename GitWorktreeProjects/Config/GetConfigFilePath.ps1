@@ -7,22 +7,17 @@ function GetConfigFilePath
 		[String] $ChildPath
 	)
 
-	function GetFromEnv($VarName)
-	{
-		(Get-Item "Env:${VarName}" -ErrorAction SilentlyContinue).Value
-	}
-
-	$configFilePath = GetFromEnv GitWorktreeConfigPath
+	$configFilePath = __GitWorktree_GetFromEnv GitWorktreeConfigPath
 	if (-not $configFilePath)
 	{
-		$configPath = GetFromEnv USERPROFILE
+		$configPath = __GitWorktree_GetFromEnv USERPROFILE
 		if (-not $configPath)
 		{
-			$configPath = "$(GetFromEnv HOMEDRIVE)$(GetFromEnv HOMEPATH)"
+			$configPath = "$(__GitWorktree_GetFromEnv HOMEDRIVE)$(__GitWorktree_GetFromEnv HOMEPATH)"
 		}
 		if (-not $configPath)
 		{
-			$configPath = GetFromEnv HOME
+			$configPath = __GitWorktree_GetFromEnv HOME
 		}
 		if (-not $configPath)
 		{
