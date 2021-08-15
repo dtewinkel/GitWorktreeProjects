@@ -17,9 +17,6 @@ This project is still highly in development and not completely production ready.
 
 Create unit tests for:
 
-- `GetProjectConfig`.
-
-- `Get-GitWorktree`.
 - `New-GitWorktreeProject`.
 - `New-GitWorktree`.
 

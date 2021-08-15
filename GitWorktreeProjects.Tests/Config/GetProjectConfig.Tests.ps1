@@ -24,7 +24,7 @@ Describe "GetProjectConfig" {
 		$fileContents = @{
 			SchemaVersion = 1
 			Name          = $projectName
-			Worktrees = $worktrees
+			Worktrees     = $worktrees
 		}
 
 	}
