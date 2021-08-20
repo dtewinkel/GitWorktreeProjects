@@ -20,11 +20,7 @@
 
 	begin
 	{
-		$git = Get-Command git
-		if(-not $git)
-		{
-			throw "git not found!"
-		}
+		ValidateGit
 		Push-Location
 	}
 

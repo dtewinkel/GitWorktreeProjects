@@ -18,11 +18,7 @@
 		[String] $Path
 	)
 
-	$git = Get-Command git
-	if (-not $git)
-	{
-		throw "git not found!"
-	}
+	ValidateGit
 
 	if (-not $Commitish -and -not $Path -and -not $Name -and -not $NewBranch)
 	{
