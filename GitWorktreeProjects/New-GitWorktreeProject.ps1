@@ -18,13 +18,10 @@
 		[Switch] $Force
 	)
 
-	begin
-	{
-		ValidateGit
-		Push-Location
-	}
+	ValidateGit
+	Push-Location
 
-	process
+	try
 	{
 		$projectConfig = GetProjectConfig -Project $Project -ErrorAction SilentlyContinue
 		if($projectConfig -and -not $Force.IsPresent)
@@ -73,8 +70,7 @@
 		$projectConfig.GitRepository = $Repository
 		SetProjectConfig -Project $Project -ProjectConfig $projectConfig
 	}
-
-	end
+	finally
 	{
 		Pop-Location
 	}
