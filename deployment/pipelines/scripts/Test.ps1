@@ -36,6 +36,9 @@ $configuration.Output.Verbosity = $OutputVerbosity
 $configuration.CodeCoverage.Enabled = $true
 $configuration.CodeCoverage.Path = "${moduleFolder}/*.psm1", "${moduleFolder}/*-*.ps1", "${moduleFolder}/*/*.ps1"
 $configuration.CodeCoverage.OutputPath = $CoverageOutput
+$configuration.CodeCoverage.UseBreakpoints = $false
+$configuration.TestDrive.Enabled = $false
+$configuration.TestRegistry.Enabled = $false
 if($CoverageOutputFormat)
 {
 	$configuration.CodeCoverage.OutputFormat = $CoverageOutputFormat
