@@ -39,24 +39,25 @@
 				throw "TargetPath '${TargetPath}' must exist!"
 		}
 
+		$projectPath = Join-Path $TargetPath $Project
+		# Make sure get the proper canonical path.
+		$projectPath = (Get-Item $projectPath).FullName
+		if((Test-Path $projectPath) -and -not $Force.IsPresent)
+		{
+			throw "Folder '${projectPath}' must not yet exist!"
+		}
+		if(-not (Test-Path $projectPath))
+		{
+			$null = New-Item -ItemType directory -Path $projectPath
+		}
+
+		$gitPath = Join-Path $projectPath .gitworktree
+
 		if(-not $SourceBranch)
 		{
 			$SourceBranch = $globalConfig.DefaultSourceBranch
 		}
 
-		$projectPath = Join-Path $TargetPath $Project
-		if((Test-Path $projectPath) -and -not $Force.IsPresent)
-		{
-			throw "Folder ${projectPath} must not yet exist!"
-		}
-
-		$gitPath = Join-Path $projectPath .gitworktree
-		if(-not (Test-Path $projectPath))
-		{
-			$null = New-Item -ItemType directory -Path $projectPath
-		}
-		# Make sure get the proper canonical path.
-		$projectPath = (Get-Item $projectPath).FullName
 		Set-Location $projectPath
 		git clone $Repository $gitPath
 		Set-Location $gitPath
