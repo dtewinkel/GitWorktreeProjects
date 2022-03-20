@@ -2,7 +2,7 @@
 param (
 		[Parameter()]
 		[string]
-		$ModuleFolder
+		$ModuleFolder = (Resolve-Path (Join-Path $PSScriptRoot '..' '..', 'GitWorktreeProjects')).Path
 )
 
 $getConfigFilePathCombinations = @(

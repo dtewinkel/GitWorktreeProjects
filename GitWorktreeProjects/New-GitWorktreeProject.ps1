@@ -1,4 +1,7 @@
-﻿function New-GitWorktreeProject
+﻿<#
+
+#>
+Function New-GitWorktreeProject
 {
 	[cmdletbinding()]
 	param(
@@ -18,7 +21,6 @@
 		[Switch] $Force
 	)
 
-	ValidateGit
 	Push-Location
 
 	try
@@ -36,12 +38,18 @@
 		}
 		if (-not (Test-Path -Path $TargetPath))
 		{
+			if ($Force.IsPresent)
+			{
+				mkdir $TargetPath -Force
+			}
+			else
+			{
 				throw "TargetPath '${TargetPath}' must exist!"
+			}
 		}
 
 		$projectPath = Join-Path $TargetPath $Project
 		# Make sure get the proper canonical path.
-		$projectPath = (Get-Item $projectPath).FullName
 		if((Test-Path $projectPath) -and -not $Force.IsPresent)
 		{
 			throw "Folder '${projectPath}' must not yet exist!"
@@ -50,6 +58,7 @@
 		{
 			$null = New-Item -ItemType directory -Path $projectPath
 		}
+		$projectPath = (Get-Item $projectPath).FullName
 
 		$gitPath = Join-Path $projectPath .gitworktree
 
@@ -59,9 +68,9 @@
 		}
 
 		Set-Location $projectPath
-		git clone $Repository $gitPath
+		InvokeGit clone $Repository $gitPath
 		Set-Location $gitPath
-		git checkout -b bare $SourceBranch
+		InvokeGit checkout -b bare $SourceBranch
 
 		$projectConfig = [Project]::new()
 		$projectConfig.Name = $Project

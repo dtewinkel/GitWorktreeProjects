@@ -2,7 +2,7 @@
 param (
 		[Parameter()]
 		[string]
-		$ModuleFolder
+		$ModuleFolder = (Resolve-Path (Join-Path $PSScriptRoot '..' 'GitWorktreeProjects')).Path
 )
 
 Describe "New-GitWorktreeProject" {
@@ -17,7 +17,6 @@ Describe "New-GitWorktreeProject" {
 
 	BeforeEach {
 		# the following should be called always:
-		Mock ValidateGit -ModuleName GitWorktreeProjects -Verifiable
 		Mock Push-Location -ModuleName GitWorktreeProjects -Verifiable
 		Mock Pop-Location -ModuleName GitWorktreeProjects -Verifiable
 		Mock New-Item -ModuleName GitWorktreeProjects
@@ -70,12 +69,11 @@ Describe "New-GitWorktreeProject" {
 
 		$defaultPath = '/default/root'
 		$projectPath = "${defaultPath}/${projectName}"
-		$canonicalProjectPath = "${defaultPath}/${projectName}/"
+		$canonicalProjectPath = "${defaultPath}/${projectName}"
 		Mock GetProjectConfig { } -ModuleName GitWorktreeProjects -ParameterFilter { $Project -eq $projectName } -Verifiable
 		Mock GetGlobalConfig { @{ DefaultRootPath = $defaultPath } } -ModuleName GitWorktreeProjects -Verifiable
 		Mock Test-Path { $true } -ModuleName GitWorktreeProjects -ParameterFilter { $Path -eq $defaultPath } -Verifiable
 		Mock Join-Path { $projectPath } -ModuleName GitWorktreeProjects -ParameterFilter { $Path -eq $defaultPath -and $ChildPath -eq $projectName } -Verifiable
-		Mock Get-Item { @{ FullName = $canonicalProjectPath } } -ModuleName GitWorktreeProjects -ParameterFilter { $Path -eq $projectPath } -Verifiable
 		Mock Test-Path { $true } -ModuleName GitWorktreeProjects -ParameterFilter { $Path -eq $canonicalProjectPath } -Verifiable
 
 		{ New-GitWorktreeProject -Project $projectName -Repository $repository } | Should -Throw "Folder '${canonicalProjectPath}' must not yet exist!"

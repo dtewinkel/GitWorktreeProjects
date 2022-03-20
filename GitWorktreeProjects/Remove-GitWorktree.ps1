@@ -12,8 +12,6 @@
 		[Switch] $Force
 	)
 
-	ValidateGit
-
 	$config = GetProjectConfig -Project $Project -FailOnMissing
 	$worktreeConfig = $config.worktrees | Where-Object Name -CEQ $Worktree
 	if (-not $worktreeConfig)

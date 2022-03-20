@@ -13,5 +13,15 @@
     "coverage-gutters.showLineCoverage": true,
 		"coverage-gutters.coverageFileNames": [
 			"Coverage.Pester.xml"
-	]
+	],
+    
+  "[plaintext]": {
+      "editor.rulers": [80, 120]
+  },
+  "[powershell]": {
+      "editor.rulers": [80, 120]
+  },
+  "files.associations": {
+    "*.yaml": "home-assistant"
+  }
 }

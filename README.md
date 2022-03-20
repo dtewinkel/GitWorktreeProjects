@@ -11,7 +11,21 @@ Main purpose is to provide a set of CmdLets to make working with git working tre
 
 ## To Do
 
-This project is still highly in development and not completely production ready. I use it at a daily base. But thing need to be done to make it better still.
+This project is still highly in development and not completely production ready. I use it at a daily base. But things need to be done to make it better still.
+
+### Documentation
+
+- Add documentation:
+  - `about_GitWorktreeProject`
+  - `Get-GitWorktreeProject`
+  - `New-GitWorktreeProject`
+  - `New-GitWorktree`
+  - `Open-GitWorktree`
+  - `Remove-GirWorktree`
+  - `Get-GitWorktreeDefaults`
+  - `Set-GitWorktreeDefaults`
+  - `Project` class?
+  - `Worktree` class?
 
 ### Finish Pester unit tests
 
@@ -25,17 +39,10 @@ Create unit tests for:
 - Finish `Remove-GitWorktree`.
 - Add `Remove-GitWorktreeProject`.
 
-### Finish tools functionality
+### Rethink tools functionality
 
-- Copy tools from defaults config in `New-GitWorkTreeProject`.
-- Copy tools from GitWorktree project config in `New-GitWorkTree`.
-- Add CmdLet or CmdLets to add and remove tools for GitWorktree Projects and working trees.
-- Unit test tools.
-- Add ways to add more tools. Document the process.
-
-### Documentation
-
-- Add documentation.
+- Allow to define script in project to start when opening worktree?
+- Default script in project or project settings?
 
 ## Assumptions
 

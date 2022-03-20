@@ -18,8 +18,6 @@
 		[String] $Path
 	)
 
-	ValidateGit
-
 	if (-not $Commitish -and -not $Path -and -not $Name -and -not $NewBranch)
 	{
 		throw "At lease one of -Commitish, -Path, -NewBranch, and -Name must be given."

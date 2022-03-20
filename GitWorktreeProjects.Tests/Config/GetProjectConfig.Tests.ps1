@@ -2,7 +2,7 @@
 param (
 	[Parameter()]
 	[string]
-	$ModuleFolder
+	$ModuleFolder = (Resolve-Path (Join-Path $PSScriptRoot '..' '..', 'GitWorktreeProjects')).Path
 )
 
 Describe "GetProjectConfig" {
@@ -161,17 +161,23 @@ Describe "GetProjectConfig" {
 		$config = GetProjectConfig -Project $projectName -WorktreeFilter None*
 
 		Should -InvokeVerifiable
-		$config | Should -BeNullOrEmpty
+		$config | Should -Not -BeNullOrEmpty
+		$config.Name | Should -Be $projectName
+		$config.Worktrees | Should -HaveCount 0
 	}
 
-	It "returns nothing when Worktrees not matching if config file exists, and -WorktreeExactMatch" {
+	It "returns an empty array when Worktrees not matching if config file exists, and -WorktreeExactMatch" {
 
 		Mock GetConfigFile { $fileContents } -ParameterFilter { $FileName -eq "${projectName}.project" } -Verifiable
 
 		$config = GetProjectConfig -Project $projectName -WorktreeFilter Test* -WorktreeExactMatch
 
 		Should -InvokeVerifiable
-		$config | Should -BeNullOrEmpty
+
+		$config.GetType() | should -Be 'Project'
+		$config | Should -Not -BeNullOrEmpty
+		$config.Name | Should -Be $projectName
+		$config.Worktrees | Should -HaveCount 0
 	}
 
 	It "Fail with selected Worktrees not matching if config file exists, and -WorktreeExactMatch and -FailOnMissing" {

@@ -1,4 +1,4 @@
-#Requires -Module @{ ModuleName="Pester"; ModuleVersion="5.1.0" }
+#Requires -Module @{ ModuleName="Pester"; ModuleVersion="5.3.1" }
 
 param(
 	[Parameter()]
@@ -23,12 +23,41 @@ param(
 	[String] $OutputVerbosity = 'Detailed'
 )
 
-$testOutputFolder =  ([System.IO.Fileinfo]$TestOutput).DirectoryName
+$testDataFileName = 'testdata.json'
+if(Test-Path $testDataFileName)
+{
+	$testData = get-content $testDataFileName -Raw | ConvertFrom-Json
+}
+else
+{
+	$testData = @{
+		RunIntegrationTests = $false
+	}
+}
+
+$RunIntegrationTests = $testData.RunIntegrationTests ?? $false
+
+$testOutputFolder = ([System.IO.Fileinfo]$TestOutput).DirectoryName
+
+$testConfigData = @{
+	ModuleFolder = $moduleFolder
+}
+
+$testConfigDataIntegratoinTests = @{
+	ModuleFolder        = $moduleFolder
+}
 
 $configuration = New-PesterConfiguration
 
-$container = New-PesterContainer -Path $testPath -Data @{ ModuleFolder = $moduleFolder }
-$configuration.Run.Container = $container
+$containers = New-PesterContainer -Path (Join-Path $testPath '*' '*.Tests.ps1') -Data $testConfigData
+$containers += New-PesterContainer -Path (Join-Path $testPath '*.Tests.ps1') -Data $testConfigData
+if ($RunIntegrationTests)
+{
+	$containers += New-PesterContainer -Path (Join-Path $testPath '*' '*.IntegrationTests.ps1') -Data $testConfigDataIntegratoinTests
+	$containers += New-PesterContainer -Path (Join-Path $testPath '*.IntegrationTests.ps1') -Data $testConfigDataIntegratoinTests
+}
+
+$configuration.Run.Container = $containers
 
 $configuration.TestResult.Enabled = $true
 $configuration.TestResult.OutputPath = $TestOutput
@@ -39,7 +68,7 @@ $configuration.CodeCoverage.OutputPath = $CoverageOutput
 $configuration.CodeCoverage.UseBreakpoints = $false
 $configuration.TestDrive.Enabled = $false
 $configuration.TestRegistry.Enabled = $false
-if($CoverageOutputFormat)
+if ($CoverageOutputFormat)
 {
 	$configuration.CodeCoverage.OutputFormat = $CoverageOutputFormat
 }

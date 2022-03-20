@@ -20,10 +20,12 @@ function GetCurrentProject
 	}
 
 	$currentPath = (Get-Location).Path
-	foreach ($projectName in GetProjects )
+	foreach ($projectName in GetProjects)
 	{
+		Write-Verbose $projectName
 		$fileName = "${projectName}.project"
 		$config = GetConfigFile -FileName $fileName
+		Write-Verbose ($config | ConvertTo-Json -Depth 5)
 		if (IsChildPathOf $currentPath $config.RootPath)
 		{
 			return $config.Name

@@ -3,3 +3,6 @@
 /Repositories/
 /tools/
 /TestResults/
+
+# Local test settings
+testdata.json
