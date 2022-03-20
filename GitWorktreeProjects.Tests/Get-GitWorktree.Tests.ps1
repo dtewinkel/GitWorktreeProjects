@@ -70,9 +70,9 @@ Describe "Get-GitWorktree" {
 		$projectFilter = 'Testing123'
 		$worktreeFilter = 'None'
 		$projectConfig.Worktrees = @()
-		Mock GetProjects { @( $projectFilter ) } -ModuleName GitWorktreeProjects
+		Mock GetProjects { @( $projectFilter ) } -ModuleName GitWorktreeProjects `
 			-ParameterFilter { $Filter -eq $projectFilter } -Verifiable
-		Mock GetProjectConfig { $projectConfig } -ModuleName GitWorktreeProjects
+		Mock GetProjectConfig { $projectConfig } -ModuleName GitWorktreeProjects `
 			-ParameterFilter { $Project -eq $projectFilter -and $WorktreeFilter -eq $WorktreeFilter } -Verifiable
 
 		$worktrees = Get-GitWorktree -Project $projectFilter -WorktreeFilter $worktreeFilter
@@ -85,12 +85,11 @@ Describe "Get-GitWorktree" {
 	It "should fail if -Project is not '.' and no project can be found" {
 
 		Mock GetProjectConfig { } -ModuleName GitWorktreeProjects
-		Mock GetProjects { } -ModuleName GitWorktreeProjects
+		Mock GetProjects { } -ModuleName GitWorktreeProjects `
 			-ParameterFilter { $Filter -eq $projectName } -Verifiable
 		$projectName = 'Test*'
 
-		{ Get-GitWorktree -Project $projectName } | Should `
-			-Throw "No project found with name ${projectName}. Make sure the name is correct and that no wildcards are used that match more than one project."
+		{ Get-GitWorktree -Project $projectName } | Should -Throw "No project found with name ${projectName}. Make sure the name is correct and that no wildcards are used that match more than one project."
 
 		Should -InvokeVerifiable
 		Should -Not -Invoke GetProjectConfig -ModuleName GitWorktreeProjects
@@ -103,8 +102,7 @@ Describe "Get-GitWorktree" {
 			-ParameterFilter { $Filter -eq $projectName } -Verifiable
 		$projectName = 'Test*'
 
-		{ Get-GitWorktree -Project $projectName } | Should `
-			-Throw "No project found with name ${projectName}. Make sure the name is correct and that no wildcards are used that match more than one project."
+		{ Get-GitWorktree -Project $projectName } | Should -Throw "No project found with name ${projectName}. Make sure the name is correct and that no wildcards are used that match more than one project."
 
 		Should -InvokeVerifiable
 		Should -Not -Invoke GetProjectConfig -ModuleName GitWorktreeProjects
