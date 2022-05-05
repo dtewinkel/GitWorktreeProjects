@@ -43,7 +43,7 @@
 		Get-GitWorktreeProject
 #>
 
-[cmdletbinding()]
+	[cmdletbinding()]
 	[OutputType([Worktree[]])]
 	param(
 		<#
@@ -52,19 +52,21 @@
 		The special project name '.' may be used to refer to the current project.
 		This can be used when called from anywhere inside the folder structure of the current project.
 
-		Defaults to the current project.
+		Defaults to '.' to the current project.
+
 		Support tab completion to select the project.
 		#>
 		[Parameter()]
 		[String] $Project = '.',
 
 		<#
-		Filter for the worktrees.
+		Filter to select the worktrees names for the project.
 
 		Either specify an exact name of a worktree, or use wildcards to filter for a specific worktree or set of
 		worktrees. For the fitering the same wildcards can be used as for the -like operator.
 
-		Defaults to filter for all worktrees.
+		Defaults to '*' to get all worktrees.
+
 		Supports tab competion to select a worktree for the project.
 		#>
 		[Parameter()]

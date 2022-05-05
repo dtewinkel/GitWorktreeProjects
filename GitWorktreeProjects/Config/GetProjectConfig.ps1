@@ -51,5 +51,6 @@ function GetProjectConfig
 	{
 		$projectConfig.Worktrees = [Worktree[]]@($projectConfig.Worktrees | Where-Object Name -like $WorktreeFilter)
 	}
+
 	$projectConfig
 }

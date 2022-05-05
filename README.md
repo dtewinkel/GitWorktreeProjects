@@ -16,7 +16,6 @@ This project is still highly in development and not completely production ready.
 ### Documentation
 
 - Add documentation:
-  - `about_GitWorktreeProject`
   - `Get-GitWorktreeProject`
   - `New-GitWorktreeProject`
   - `New-GitWorktree`
@@ -24,6 +23,7 @@ This project is still highly in development and not completely production ready.
   - `Remove-GirWorktree`
   - `Get-GitWorktreeDefaults`
   - `Set-GitWorktreeDefaults`
+  - `about_GitWorktreeProject`
   - `Project` class?
   - `Worktree` class?
 
