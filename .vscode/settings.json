@@ -14,11 +14,14 @@
 		"coverage-gutters.coverageFileNames": [
 			"Coverage.Pester.xml"
 	],
-    
-  "[plaintext]": {
-      "editor.rulers": [80, 120]
-  },
-  "[powershell]": {
-      "editor.rulers": [80, 120]
-  }
+
+    "[plaintext][powershell]": {
+        "editor.rulers": [80, 120]
+    },
+    "cSpell.words": [
+        "ggwp",
+        "gitworktree",
+        "ngwp",
+        "Worktree"
+    ]
 }

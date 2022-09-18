@@ -90,6 +90,4 @@
 	}
 }
 
-Register-ArgumentCompleter -CommandName New-GitWorktree -ParameterName Project -ScriptBlock ${function:ProjectArgumentCompleter}
-
 New-Alias -Name ngw New-GitWorktree

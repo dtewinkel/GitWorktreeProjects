@@ -40,7 +40,4 @@
 	}
 }
 
-Register-ArgumentCompleter -CommandName Open-GitWorktree -ParameterName Project -ScriptBlock ${function:ProjectArgumentCompleter}
-Register-ArgumentCompleter -CommandName Open-GitWorktree -ParameterName Worktree -ScriptBlock ${function:WorktreeArgumentCompleter}
-
 New-Alias -Name ogw Open-GitWorktree

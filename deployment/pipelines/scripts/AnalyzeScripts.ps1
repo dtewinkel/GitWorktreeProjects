@@ -12,4 +12,3 @@ $testFolder = Join-Path $RootPath GitWorktreeProjects.Tests
 
 Invoke-ScriptAnalyzer (Join-Path -Path $moduleFolder -ChildPath *.ps1) -ExcludeRule PSUseShouldProcessForStateChangingFunctions
 Invoke-ScriptAnalyzer $testFolder -Severity Error
-

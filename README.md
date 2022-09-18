@@ -52,7 +52,7 @@ Create unit tests for:
 
 Global configuration and configuration where projects can be found is stored in the .gitworktree folder in the user directory (i.e. `$HOME`).
 
-## Cmdlets
+## CmdLets
 
 The following CmdLets are supported:
 

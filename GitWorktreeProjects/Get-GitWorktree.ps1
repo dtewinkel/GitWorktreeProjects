@@ -1,4 +1,4 @@
-﻿function Get-GitWorktree
+function Get-GitWorktree
 {
 <#
 	.SYNOPSIS
@@ -85,8 +85,5 @@
 	$projectConfig = GetProjectConfig -Project $Project -WorktreeFilter $WorktreeFilter -FailOnMissing
 	Write-Output ([Worktree[]]($projectConfig.Worktrees) ?? @()) -NoEnumerate
 }
-
-Register-ArgumentCompleter -CommandName Get-GitWorktree -ParameterName Project -ScriptBlock ${function:ProjectArgumentCompleter}
-Register-ArgumentCompleter -CommandName Get-GitWorktree -ParameterName WorktreeFilter -ScriptBlock ${function:WorktreeArgumentCompleter}
 
 New-Alias -Name ggw Get-GitWorktree

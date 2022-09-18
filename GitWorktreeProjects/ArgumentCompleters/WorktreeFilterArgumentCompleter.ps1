@@ -1,6 +1,8 @@
-﻿function WorktreeFilterArgumentCompleter($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
-{
+﻿$worktreeFilterArgumentCompleter = {
+
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', '')]
+
+	param ($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
 
 	$projectFilter = $fakeBoundParameters.ProjectFilter
 	if ($projectFilter -eq '.')
@@ -35,3 +37,10 @@
 	}
 	return $result
 }
+
+function WorktreeFilterArgumentCompleter($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
+{
+	& $worktreeFilterArgumentCompleter $commandName $parameterName $wordToComplete $commandAst $fakeBoundParameters
+}
+
+Register-ArgumentCompleter -CommandName Get-GitWorktreeProject -ParameterName WorktreeFilter -ScriptBlock $worktreeFilterArgumentCompleter
