@@ -66,7 +66,4 @@
 	}
 }
 
-Register-ArgumentCompleter -CommandName Remove-GitWorktree -ParameterName Project -ScriptBlock ${function:ProjectArgumentCompleter}
-Register-ArgumentCompleter -CommandName Remove-GitWorktree -ParameterName Worktree -ScriptBlock ${function:WorktreeArgumentCompleter}
-
 New-Alias -Name rgw Remove-GitWorktree
