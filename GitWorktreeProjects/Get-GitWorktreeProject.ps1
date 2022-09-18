@@ -50,6 +50,7 @@
 		Supports tab competion to select specific project.
 		#>
 		[Parameter()]
+		[ArgumentCompleter({ _gwp__ProjectArgumentCompleter @args })]
 		[String] $ProjectFilter = '*',
 
 		<#
@@ -66,6 +67,7 @@
 		Supports tab competion to select a worktree.
 		#>
 		[Parameter()]
+		[ArgumentCompleter({ _gwp__worktreeFilterArgumentCompleter @args })]
 		[String] $WorktreeFilter = '*'
 	)
 

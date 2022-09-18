@@ -14,7 +14,7 @@ Describe "ProjectArgumentCompleter" {
 
 	It "should have the right parameters" {
 
-		$command = Get-Command ProjectArgumentCompleter
+		$command = Get-Command _gwp__ProjectArgumentCompleter
 		$command | Should -HaveParameter wordToComplete
 	}
 
@@ -22,7 +22,7 @@ Describe "ProjectArgumentCompleter" {
 
 		Mock GetProjects { @() } -ParameterFilter { $Filter -eq '*' } -Verifiable
 
-		$result = ProjectArgumentCompleter -wordToComplete ""
+		$result = _gwp__ProjectArgumentCompleter -wordToComplete ""
 
 		Should -InvokeVerifiable
 		$result | Should -BeNullOrEmpty
@@ -35,7 +35,7 @@ Describe "ProjectArgumentCompleter" {
 		Mock GetProjectConfig { @{ Name = 'P2'; RootPath = '/p2' } } -ParameterFilter { $Project -eq 'P2' } -Verifiable
 		Mock GetProjectConfig { @{ Name = '3'; RootPath = '/p3' } } -ParameterFilter { $Project -eq '3' } -Verifiable
 
-		$result = ProjectArgumentCompleter -wordToComplete ""
+		$result = _gwp__ProjectArgumentCompleter -wordToComplete ""
 
 		Should -InvokeVerifiable
 		$result | Should -HaveCount 3

@@ -3,9 +3,11 @@
 	[cmdletbinding()]
 	param(
 		[Parameter()]
+		[ArgumentCompleter({ _gwp__ProjectArgumentCompleter @args })]
 		[String] $Project = '.',
 
 		[Parameter(Mandatory)]
+		[ArgumentCompleter({ _gwp__worktreeArgumentCompleter @args })]
 		[String] $Worktree,
 
 		[Parameter()]

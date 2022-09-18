@@ -3,6 +3,7 @@
 	[cmdletbinding()]
 	param(
 		[Parameter(Mandatory)]
+		[ArgumentCompleter({ _gwp__ProjectArgumentCompleter @args })]
 		[String] $Project,
 
 		[Parameter()]

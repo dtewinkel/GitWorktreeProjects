@@ -14,7 +14,7 @@ Describe "WorktreeArgumentCompleter" {
 
 	It "should have the right parameters" {
 
-		$command = Get-Command WorktreeArgumentCompleter
+		$command = Get-Command _gwp__worktreeArgumentCompleter
 		$command | Should -HaveParameter wordToComplete
 		$command | Should -HaveParameter fakeBoundParameters
 	}
@@ -23,7 +23,7 @@ Describe "WorktreeArgumentCompleter" {
 
 		Mock GetProjects { @() } -ParameterFilter { $Filter -eq 'NonExistingProject' } -Verifiable
 
-		$result = WorktreeArgumentCompleter -fakeBoundParameters @{ Project = "NonExistingProject" } -wordToComplete ""
+		$result = _gwp__worktreeArgumentCompleter -fakeBoundParameters @{ Project = "NonExistingProject" } -wordToComplete ""
 
 		Should -InvokeVerifiable
 		$result | Should -BeNullOrEmpty
@@ -33,7 +33,7 @@ Describe "WorktreeArgumentCompleter" {
 
 		Mock GetProjects { @("1", "2") } -ParameterFilter { $Filter -eq '*' } -Verifiable
 
-		$result = WorktreeArgumentCompleter -fakeBoundParameters @{ Project = "*" } -wordToComplete ""
+		$result = _gwp__worktreeArgumentCompleter -fakeBoundParameters @{ Project = "*" } -wordToComplete ""
 
 		Should -InvokeVerifiable
 		$result | Should -BeNullOrEmpty
@@ -47,7 +47,7 @@ Describe "WorktreeArgumentCompleter" {
 		Mock GetProjects { @("P1") } -ParameterFilter { $Filter -eq 'P1' } -Verifiable
 		Mock GetProjectConfig { $emptyProject } -ParameterFilter { $Project -eq 'P1' -and $WorktreeFilter -eq '*' } -Verifiable
 
-		$result = WorktreeArgumentCompleter -fakeBoundParameters @{ Project = "P1" } -wordToComplete ""
+		$result = _gwp__worktreeArgumentCompleter -fakeBoundParameters @{ Project = "P1" } -wordToComplete ""
 
 		Should -InvokeVerifiable
 		$result | Should -BeNullOrEmpty
@@ -71,7 +71,7 @@ Describe "WorktreeArgumentCompleter" {
 		Mock GetProjects { @("P1") } -ParameterFilter { $Filter -eq 'P1' } -Verifiable
 		Mock GetProjectConfig { $projectWithWorktrees } -ParameterFilter { $Project -eq 'P1' -and $WorktreeFilter -eq 'W*' } -Verifiable
 
-		$result = WorktreeArgumentCompleter -fakeBoundParameters @{ Project = '.' } -wordToComplete "W"
+		$result = _gwp__worktreeArgumentCompleter -fakeBoundParameters @{ Project = '.' } -wordToComplete "W"
 
 		Should -InvokeVerifiable
 		$result | Should -HaveCount 2

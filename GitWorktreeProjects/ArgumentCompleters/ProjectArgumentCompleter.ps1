@@ -1,7 +1,5 @@
-﻿$projectArgumentCompleter = {
-
-	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', '')]
-
+﻿function global:_gwp__ProjectArgumentCompleter
+{
 	param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
 
 	$projects = GetProjects "${wordToComplete}*"
@@ -17,15 +15,3 @@
 		[System.Management.Automation.CompletionResult]::new($name, $name, "ParameterValue", $description)
 	}
 }
-
-function ProjectArgumentCompleter($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
-{
-	& $projectArgumentCompleter $commandName $parameterName $wordToComplete $commandAst $fakeBoundParameters
-}
-
-
-Register-ArgumentCompleter -CommandName Get-GitWorktree -ParameterName Project -ScriptBlock $projectArgumentCompleter
-Register-ArgumentCompleter -CommandName Get-GitWorktreeProject -ParameterName ProjectFilter -ScriptBlock $projectArgumentCompleter
-Register-ArgumentCompleter -CommandName New-GitWorktree -ParameterName Project -ScriptBlock $projectArgumentCompleter
-Register-ArgumentCompleter -CommandName Open-GitWorktree -ParameterName Project -ScriptBlock $projectArgumentCompleter
-Register-ArgumentCompleter -CommandName Remove-GitWorktree -ParameterName Project -ScriptBlock $projectArgumentCompleter

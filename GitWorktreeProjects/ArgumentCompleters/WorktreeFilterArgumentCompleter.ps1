@@ -1,4 +1,5 @@
-﻿$worktreeFilterArgumentCompleter = {
+﻿function global:_gwp__worktreeFilterArgumentCompleter
+{
 
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', '')]
 
@@ -37,10 +38,3 @@
 	}
 	return $result
 }
-
-function WorktreeFilterArgumentCompleter($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
-{
-	& $worktreeFilterArgumentCompleter $commandName $parameterName $wordToComplete $commandAst $fakeBoundParameters
-}
-
-Register-ArgumentCompleter -CommandName Get-GitWorktreeProject -ParameterName WorktreeFilter -ScriptBlock $worktreeFilterArgumentCompleter
