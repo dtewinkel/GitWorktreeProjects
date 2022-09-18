@@ -1,4 +1,4 @@
-function Get-GitWorktree
+﻿function Get-GitWorktree
 {
 <#
 	.SYNOPSIS
@@ -49,12 +49,17 @@ function Get-GitWorktree
 		<#
 		The project to get the worktrees for.
 
+		Either specify the exact name of a project, or use wildcards to filter for a specific project. Exactly one project name must match the wildcard.
+		For the fitering the same wildcards can be used as for the -like operator.
+		If the project name does not exist, or the wilcard does not match exactly one project, then this will throw an error.
+
 		The special project name '.' may be used to refer to the current project.
 		This can be used when called from anywhere inside the folder structure of the current project.
+		If project name '.' is used outside of the folder structure of the current project then this will throw an error.
 
-		Defaults to '.' to the current project.
+		Defaults to '.' to get the current project.
 
-		Support tab completion to select the project.
+		Supports tab completion to select the project.
 		#>
 		[Parameter()]
 		[String] $Project = '.',
@@ -62,7 +67,7 @@ function Get-GitWorktree
 		<#
 		Filter to select the worktrees names for the project.
 
-		Either specify an exact name of a worktree, or use wildcards to filter for a specific worktree or set of
+		Either specify the exact name of a worktree, or use wildcards to filter for a specific worktree or set of
 		worktrees. For the fitering the same wildcards can be used as for the -like operator.
 
 		Defaults to '*' to get all worktrees.
