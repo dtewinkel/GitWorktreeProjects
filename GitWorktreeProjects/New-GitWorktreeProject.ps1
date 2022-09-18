@@ -68,9 +68,9 @@ Function New-GitWorktreeProject
 		}
 
 		Set-Location $projectPath
-		InvokeGit clone $Repository $gitPath
+		InvokeGit clone $Repository $gitPath --quiet
 		Set-Location $gitPath
-		InvokeGit checkout -b bare $SourceBranch
+		InvokeGit checkout -b bare $SourceBranch --quiet
 
 		$projectConfig = [Project]::new()
 		$projectConfig.Name = $Project
