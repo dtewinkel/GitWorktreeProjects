@@ -43,10 +43,10 @@
 		{
 			$forceParameter = @('--force')
 		}
-		git worktree remove @forceParameter $worktreeConfig.RelativePath
-		if ($LastExitCode -ne 0 -and -not $Force.IsPresent)
+		$gitResult = InvokeGit worktree remove @forceParameter $worktreeConfig.RelativePath
+		if (-not $Force.IsPresent)
 		{
-			throw "Git failed with exit code ${LastExitCode}."
+			AssertGitSuccess $gitResult | Out-Null
 		}
 		if (Test-Path $worktreePath)
 		{

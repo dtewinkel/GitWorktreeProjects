@@ -59,16 +59,16 @@
 
 	if ($NewBranch)
 	{
-		$exitingBranch = git branch -l $NewBranch
+		$exitingBranch = InvokeGit branch -l $NewBranch | AssertGitSuccess
 		if ($exitingBranch)
 		{
 			throw "Branch '${NewBranch}' already exists!"
 		}
-		git worktree add -b $NewBranch $worktreePath $Commitish
+		InvokeGit worktree add -b $NewBranch $worktreePath $Commitish | AssertGitSuccess | Out-Null
 	}
 	else
 	{
-		git worktree add $worktreePath $Commitish
+		InvokeGit worktree add $worktreePath $Commitish | AssertGitSuccess | Out-Null
 	}
 	if ($LastExitCode -ne 0)
 	{
