@@ -71,8 +71,8 @@
 		'New-GitWorktreeProject'
 		'Open-GitWorktree'
 		'Remove-GitWorktree'
-		'Get-GitWorktreeDefaults'
-		'Set-GitWorktreeDefaults'
+		'Get-GitWorktreeDefault'
+		'Set-GitWorktreeDefault'
 		'__GitWorktree_GetFromEnv'
 		)
 

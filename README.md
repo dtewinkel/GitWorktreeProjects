@@ -21,8 +21,8 @@ This project is still highly in development and not completely production ready.
   - `New-GitWorktree`
   - `Open-GitWorktree`
   - `Remove-GirWorktree`
-  - `Get-GitWorktreeDefaults`
-  - `Set-GitWorktreeDefaults`
+  - `Get-GitWorktreeDefault`
+  - `Set-GitWorktreeDefault`
   - `about_GitWorktreeProject`
   - `Project` class?
   - `Worktree` class?
@@ -92,11 +92,11 @@ Alias: `rgw`.
 
 Remove a working tree for a GitWorktree project.
 
-### Get-GitWorktreeDefaults
+### Get-GitWorktreeDefault
 
-Sets the defaults to be used when creating a new GitWorktree project.
+Gets the defaults that are used when creating a new GitWorktree project.
 
-### Set-GitWorktreeDefaults
+### Set-GitWorktreeDefault
 
 Sets the defaults to be used when creating a new GitWorktree project, such as the default Git Worktree projects root directory and the default initial branch name.
 

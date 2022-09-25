@@ -1,4 +1,4 @@
-﻿function Set-GitWorktreeDefaults
+﻿function Set-GitWorktreeDefault
 {
 	[cmdletbinding()]
 	param(

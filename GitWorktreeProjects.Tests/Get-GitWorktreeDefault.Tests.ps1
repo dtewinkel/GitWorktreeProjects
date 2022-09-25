@@ -5,7 +5,7 @@ param (
 		$ModuleFolder = (Resolve-Path (Join-Path $PSScriptRoot '..' 'GitWorktreeProjects')).Path
 )
 
-Describe "Get-GitWorktreeDefaults" {
+Describe "Get-GitWorktreeDefault" {
 
 	BeforeAll {
 		. $PSScriptRoot/Helpers/LoadModule.ps1 -ModuleFolder $ModuleFolder
@@ -21,7 +21,7 @@ Describe "Get-GitWorktreeDefaults" {
 
 		Mock GetGlobalConfig { $configFromFile } -Verifiable -ModuleName GitWorktreeProjects
 
-		$config = Get-GitWorktreeDefaults
+		$config = Get-GitWorktreeDefault
 
 		$config.DefaultRootPath | Should -Be '/root'
 		$config.DefaultSourceBranch | Should -Be 'origin'
