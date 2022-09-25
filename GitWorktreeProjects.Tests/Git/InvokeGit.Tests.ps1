@@ -5,15 +5,16 @@ param (
 	$ModuleFolder = (Resolve-Path (Join-Path $PSScriptRoot '..' '..', 'GitWorktreeProjects')).Path
 )
 
-function git()
-{
-}
-
 Describe "InvokeGit" {
 
 	BeforeAll {
 
 		. $PSScriptRoot/../Helpers/LoadAllModuleFiles.ps1 -ModuleFolder $ModuleFolder
+
+		$gitCommand = 'path-to-git'
+		$defaultGitResult = [PSCustomObject]@{
+			ExitCode = 0
+		}
 	}
 
 	It "should throw exception if git is not found" {
@@ -27,68 +28,102 @@ Describe "InvokeGit" {
 
 	It "should not throw exception if git is found" {
 
-		Mock Get-Command { @{ Path = 'git' } } -ParameterFilter { $Name -eq 'git' -and $CommandType -eq 'Application' } -Verifiable
+		Mock Get-Command { @{ Path = $gitCommand } } -ParameterFilter { $Name -eq 'git' -and $CommandType -eq 'Application' } -Verifiable
+		Mock Start-Process { $defaultGitResult } -ParameterFilter { $FilePath -eq $gitCommand -and $Wait -and $NoNewWindow -and $PassThru } -Verifiable
 
 		{ InvokeGit } | Should -Not -Throw
 
 		Should -InvokeVerifiable
 	}
 
-	It "should set git script variabele if git is found" {
+	It "should find Git and invoke it" {
 
-		$script:git = $null
-		$gitPath = 'git'
-		$gitResponse = "yes!"
-		Mock git { $gitResponse }
-		Mock Get-Command { @{ Path = $gitPath } } -ParameterFilter { $Name -eq 'git' -and $CommandType -eq 'Application' } -Verifiable
+		Mock Get-Command { @{ Path = $gitCommand } } -ParameterFilter { $Name -eq 'git' -and $CommandType -eq 'Application' } -Verifiable
+		Mock Start-Process { $defaultGitResult } -ParameterFilter { $FilePath -eq $gitCommand -and $Wait -and $NoNewWindow -and $PassThru } -Verifiable
 
 		$result = InvokeGit
 
-		$script:git | Should -Be $gitPath
-
-		$result | Should -Be $gitResponse
 		Should -InvokeVerifiable
+
+		$result.git | Should -Be $gitCommand
 	}
 
-	It "should pass parameters to InvokeGitCmd" {
+	It "should pass parameters to git invocation" {
 
-		$parameters = 'test', 123
-		Mock git {}
-		$gitcmd = 'git'
-		$script:git = $gitcmd
+		$parameters = 'test', 123, '-v'
+
+		Mock Get-Command { @{ Path = $gitCommand } } -ParameterFilter { $Name -eq 'git' -and $CommandType -eq 'Application' } -Verifiable
+		Mock Start-Process { $defaultGitResult } -ParameterFilter { $FilePath -eq $gitCommand -and $Wait -and $NoNewWindow -and $PassThru }
 
 		InvokeGit @parameters
 
-		Should -Invoke git -ParameterFilter { $args.Length -eq $parameters.Length -and $args[0] -eq $parameters[0] -and $args[1] -eq $parameters[1] }
+		Should -Invoke Start-Process -ParameterFilter { $FilePath -eq $gitCommand -and $Wait -and $NoNewWindow -and $PassThru `
+			-and $ArgumentList.Length -eq $ArgumentList.Length -and $parameters[0] -eq $parameters[0] -and $ArgumentList[1] -eq $parameters[1] -and $ArgumentList[2] -eq $parameters[2] }
 	}
 
-	It "return output if InvokeGitCmd succeeds" {
+	It "return stdout output from git invocation" {
 
 		$parameters = 'test', 123
-		Mock git { $parameters }
-		$gitcmd = 'git'
-		$script:git = $gitcmd
+		$script:stdOutFile = $null
+		$script:stdErrFile = $null
+		$stdOutFileText = "from stdout!"
+
+		Mock Get-Command { @{ Path = $gitCommand } } -ParameterFilter { $Name -eq 'git' -and $CommandType -eq 'Application' } -Verifiable
+		Mock Start-Process { $script:stdOutFile = $PesterBoundParameters.RedirectStandardOutput; $script:stdErrFile = $PesterBoundParameters.RedirectStandardError; $defaultGitResult } -ParameterFilter { $FilePath -eq $gitCommand -and $Wait -and $NoNewWindow -and $PassThru } -Verifiable
+		Mock Test-Path { $true } -ParameterFilter { $Path -eq $script:stdOutFile } -Verifiable
+		Mock Test-Path { $false } -ParameterFilter { $Path -eq $script:stdErrFile } -Verifiable
+		Mock Remove-Item { } -ParameterFilter { $Path -eq $script:stdOutFile } -Verifiable
+		Mock Get-Content { $stdOutFileText } -ParameterFilter { $Path -eq $script:stdOutFile -and $Raw } -Verifiable
 
 		$result = InvokeGit @parameters
 
-		$result | Should -Match "^test`n123$"
+		Should -InvokeVerifiable
+
+		$result.outputText  | Should -Be $stdOutFileText
+		$result.errorText  | Should -BeNull
 	}
 
-	It "should throw exception if git fails" {
+	It "return stderr output from git invocation" {
 
-		Mock git { throw "oops" }
-		$gitcmd = 'git'
-		$script:git = $gitcmd
+		$parameters = 'test', 123
+		$script:stdOutFile = $null
+		$script:stdErrFile = $null
+		$stdErrFileText = "from stderr!"
 
-		{ InvokeGit } | Should -Throw "oops"
+		Mock Get-Command { @{ Path = $gitCommand } } -ParameterFilter { $Name -eq 'git' -and $CommandType -eq 'Application' } -Verifiable
+		Mock Start-Process { $script:stdOutFile = $PesterBoundParameters.RedirectStandardOutput; $script:stdErrFile = $PesterBoundParameters.RedirectStandardError; $defaultGitResult } -ParameterFilter { $FilePath -eq $gitCommand -and $Wait -and $NoNewWindow -and $PassThru } -Verifiable
+		Mock Test-Path { $false } -ParameterFilter { $Path -eq $script:stdOutFile } -Verifiable
+		Mock Test-Path { $true } -ParameterFilter { $Path -eq $script:stdErrFile } -Verifiable
+		Mock Remove-Item { } -ParameterFilter { $Path -eq $script:stdErrFile } -Verifiable
+		Mock Get-Content { $stdErrFileText } -ParameterFilter { $Path -eq $script:stdErrFile -and $Raw } -Verifiable
+
+		$result = InvokeGit @parameters
+
+		Should -InvokeVerifiable
+
+		$result.outputText | Should -BeNull
+		$result.errorText | Should -Be $stdErrFileText
 	}
 
-	It "should throw exception if git fails with ErrorRecord" {
+	It "return errorcode from git invocation" {
 
-		Mock git { Write-Error "oops" }
-		$gitcmd = 'git'
-		$script:git = $gitcmd
+		$parameters = 'test', 123
+		$script:stdOutFile = $null
+		$script:stdErrFile = $null
+		$stdErrFileText = "from stderr!"
 
-		{ InvokeGit } | Should -Throw "oops"
+		Mock Get-Command { @{ Path = $gitCommand } } -ParameterFilter { $Name -eq 'git' -and $CommandType -eq 'Application' } -Verifiable
+		Mock Start-Process { $script:stdOutFile = $PesterBoundParameters.RedirectStandardOutput; $script:stdErrFile = $PesterBoundParameters.RedirectStandardError; $defaultGitResult } -ParameterFilter { $FilePath -eq $gitCommand -and $Wait -and $NoNewWindow -and $PassThru } -Verifiable
+		Mock Test-Path { $false } -ParameterFilter { $Path -eq $script:stdOutFile } -Verifiable
+		Mock Test-Path { $true } -ParameterFilter { $Path -eq $script:stdErrFile } -Verifiable
+		Mock Remove-Item { } -ParameterFilter { $Path -eq $script:stdErrFile } -Verifiable
+		Mock Get-Content { $stdErrFileText } -ParameterFilter { $Path -eq $script:stdErrFile -and $Raw } -Verifiable
+
+		$result = InvokeGit @parameters
+
+		Should -InvokeVerifiable
+
+		$result.outputText | Should -BeNull
+		$result.errorText | Should -Be $stdErrFileText
 	}
 }
