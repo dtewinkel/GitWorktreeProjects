@@ -45,7 +45,7 @@ Describe "InvokeGit" {
 
 		Should -InvokeVerifiable
 
-		$result.git | Should -Be $gitCommand
+		$result.GitExecutable | Should -Be $gitCommand
 	}
 
 	It "should pass parameters to git invocation" {
@@ -79,8 +79,8 @@ Describe "InvokeGit" {
 
 		Should -InvokeVerifiable
 
-		$result.outputText  | Should -Be $stdOutFileText
-		$result.errorText  | Should -BeNull
+		$result.OutputText  | Should -Be $stdOutFileText
+		$result.ErrorText  | Should -BeNull
 	}
 
 	It "return stderr output from git invocation" {
@@ -101,8 +101,8 @@ Describe "InvokeGit" {
 
 		Should -InvokeVerifiable
 
-		$result.outputText | Should -BeNull
-		$result.errorText | Should -Be $stdErrFileText
+		$result.OutputText | Should -BeNull
+		$result.ErrorText | Should -Be $stdErrFileText
 	}
 
 	It "return errorcode from git invocation" {
@@ -123,7 +123,7 @@ Describe "InvokeGit" {
 
 		Should -InvokeVerifiable
 
-		$result.outputText | Should -BeNull
-		$result.errorText | Should -Be $stdErrFileText
+		$result.OutputText | Should -BeNull
+		$result.ErrorText | Should -Be $stdErrFileText
 	}
 }
