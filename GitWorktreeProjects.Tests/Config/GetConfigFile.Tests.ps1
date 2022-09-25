@@ -59,7 +59,7 @@ Describe "GetConfigFile" {
 		$config.SomeOtherField | Should -Be $text
 	}
 
-	It "Throws exception if content '<_>' is not valid JSON." -ForEach @(
+	It "Throws exception if content '<_>' is not valid JSON." -TestCases @(
 		""
 		"Oops"
 		"{ `"SchemaVersion`" = 1 }"
@@ -74,7 +74,7 @@ Describe "GetConfigFile" {
 		Should -InvokeVerifiable
 	}
 
-	It "Throws an exception if schema version '<version>' is not the expected version <expected>" -ForEach @(
+	It "Throws an exception if schema version '<version>' is not the expected version <expected>" -TestCases @(
 		@{ version = 1; expected = 2 }
 		@{ version = 2; expected = 1 }
 	) {

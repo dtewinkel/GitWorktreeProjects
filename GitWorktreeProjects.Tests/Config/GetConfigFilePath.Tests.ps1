@@ -74,7 +74,7 @@ Describe "GetConfigFilePath" {
 		{ GetConfigFilePath } | Should -Throw "Cannot determine location of GitWorktreeProject configuration files."
 	}
 
-	It "should use the environment variable <VarName>" -ForEach $getConfigFilePathCombinations {
+	It "should use the environment variable <VarName>" -TestCases $getConfigFilePathCombinations {
 
 		MockEnvironmentVariable 'GitWorktreeConfigPath' $_GitWorktreeConfigPath
 		MockEnvironmentVariable 'USERPROFILE' $_USERPROFILE
@@ -88,7 +88,7 @@ Describe "GetConfigFilePath" {
 		$config | Should -Be ($Expected -replace '/', $config[0])
 	}
 
-	It "should use the environment variable <VarName> and add ChildPath" -ForEach $getConfigFilePathCombinations {
+	It "should use the environment variable <VarName> and add ChildPath" -TestCases $getConfigFilePathCombinations {
 
 		MockEnvironmentVariable 'GitWorktreeConfigPath' $_GitWorktreeConfigPath
 		MockEnvironmentVariable 'USERPROFILE' $_USERPROFILE

@@ -12,7 +12,7 @@ Describe "GetCurrentProject" {
 		. $PSScriptRoot/../Helpers/LoadAllModuleFiles.ps1 -ModuleFolder $ModuleFolder
 	}
 
-	It "Returns '<Result>' for current location '<Current>' " -ForEach @(
+	It "Returns '<Result>' for current location '<Current>' " -TestCases @(
 		@{
 			Current = '/projects/p1/sources'
 			Result = 'Project1'

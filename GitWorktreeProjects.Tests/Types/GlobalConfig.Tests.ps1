@@ -12,7 +12,7 @@ Describe "GlobalConfig" {
 		. $PSScriptRoot/../Helpers/LoadAllModuleFiles.ps1 -ModuleFolder $ModuleFolder
 	}
 
-	It "Creates a new instance with sensible defaults for <VarName>" -ForEach @(
+	It "Creates a new instance with sensible defaults for <VarName>" -TestCases @(
 		@{
 			VarName      = 'USERPROFILE'
 			_USERPROFILE = "/path/to/USERPROFILE"
