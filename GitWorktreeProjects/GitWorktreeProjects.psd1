@@ -10,7 +10,7 @@
 	ModuleVersion     = '0.0.1'
 
 	# Supported PSEditions
-	# CompatiblePSEditions = @()
+	CompatiblePSEditions = @('Core')
 
 	# ID used to uniquely identify this module
 	GUID              = '8585a1c9-b179-4c68-92f9-6ce6f9ff1b32'
@@ -28,7 +28,7 @@
 	Description       = 'Cmdlets to manage Git Worktree projects in a convenient way.'
 
 	# Minimum version of the PowerShell engine required by this module
-	# PowerShellVersion = ''
+	PowerShellVersion = '7.0.0'
 
 	# Name of the PowerShell host required by this module
 	# PowerShellHostName = ''
@@ -100,10 +100,10 @@
 		PSData = @{
 
 			# Tags applied to this module. These help with module discovery in online galleries.
-			Tags         = 'powershell', 'git', 'worktree', 'project'
+			Tags         = 'powershell', 'git', 'worktree', 'project', 'Windows', 'Linux', 'Mac', 'PSEdition_Core'
 
 			# A URL to the license for this module.
-			# LicenseUri = ''
+			LicenseUri = 'https://raw.githubusercontent.com/dtewinkel/GitWorktreeProjects/master/GitWorktreeProjects/license.txt'
 
 			# A URL to the main website for this project.
 			ProjectUri   = 'https://github.com/dtewinkel/GitWorktreeProjects'

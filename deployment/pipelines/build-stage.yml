@@ -18,7 +18,7 @@
           os: macos
           pool: macos-latest
           publish: false
-    displayName: Build, publish AzureCli Module
+    displayName: Build, publish GitWorktreeProjects Module
     variables:
       Modules.Path: Modules
       Repository.Name: Local$(Module.Name)Repo
