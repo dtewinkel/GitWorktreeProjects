@@ -16,7 +16,7 @@ To run these tests the following conditions must be met:
 
 #>
 
-Describe "GetCanonicalPath" {
+Describe "GetCanonicalPath" -Skip:$true {
 
 	BeforeAll {
 
