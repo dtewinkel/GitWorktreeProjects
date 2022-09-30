@@ -13,21 +13,52 @@ Main purpose is to provide a set of CmdLets to make working with git working tre
 
 This project is still highly in development and not completely production ready. I use it at a daily base. But things need to be done to make it better still.
 
+In progress:
+
+- `Get-GitWorktree`
+
+To complete:
+
+- `Get-GitWorktreeProject`
+- `New-GitWorktreeProject`
+- `Remove-GitWorktreeProject`
+- `New-GitWorktree`
+- `Get-GitWorktree`
+- `Open-GitWorktree`
+- `Remove-GirWorktree`
+- `Get-GitWorktreeDefault`
+- `Set-GitWorktreeDefault`
+- `about_GitWorktreeProject`
+
 ### Documentation
 
-- Add documentation:
-  - `Get-GitWorktreeProject`
-  - `New-GitWorktreeProject`
-  - `New-GitWorktree`
-  - `Open-GitWorktree`
-  - `Remove-GirWorktree`
-  - `Get-GitWorktreeDefault`
-  - `Set-GitWorktreeDefault`
-  - `about_GitWorktreeProject`
-  - `Project` class?
-  - `Worktree` class?
+Add documentation to:
+
+- `Get-GitWorktreeProject`
+- `New-GitWorktreeProject`
+- `New-GitWorktree`
+- `Open-GitWorktree`
+- `Remove-GirWorktree`
+- `Get-GitWorktreeDefault`
+- `Set-GitWorktreeDefault`
+- `about_GitWorktreeProject`
+- `Project` class?
+- `Worktree` class?
 
 ### Finish Pester unit tests
+
+Rethink tests for:
+
+- `GetCanonicalPath`
+
+Review / complete unit tests for:
+
+- `Get-GitWorktreeProject`
+- `Open-GitWorktree`
+- `Remove-GirWorktree`
+- `Get-GitWorktreeDefault`
+- `Set-GitWorktreeDefault`
+- `about_GitWorktreeProject`
 
 Create unit tests for:
 
