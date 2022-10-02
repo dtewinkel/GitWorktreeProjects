@@ -1,0 +1,35 @@
+
+About GitWorktreeProjects
+
+
+Short description
+
+Work with git working trees in PowerShell.
+
+
+Long description
+
+A detailed, full description of the subject or purpose of the module.
+
+
+Examples
+
+    New-GitWorktreeProject GitWorktreeProjects https://github.com/dtewinkel/GitWorktreeProjects.git -SourceBranch master
+    new-GirWorktree GitWorktreeProjects master
+
+Will create a new project called GitWorktreeProjects and clone it from github. Then it will create a worktree called
+'master' based on the master branch.
+
+See also
+
+    About git working trees: https://git-scm.com/docs/git-worktree
+
+    New-GitWorktreeProject
+    Get-GitWorktreeProject
+    Remove-GitWorktreeProject
+    New-GitWorktree
+    Get-GitWorktree
+    Open-GitWorktree
+    Remove-GirWorktree
+    Get-GitWorktreeDefault
+    Set-GitWorktreeDefault

@@ -34,6 +34,7 @@ To complete:
 
 Add documentation to:
 
+- About GitWorktreeProject
 - `Get-GitWorktreeProject`
 - `New-GitWorktreeProject`
 - `New-GitWorktree`
