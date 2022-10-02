@@ -84,4 +84,36 @@ Describe "WorktreeArgumentCompleter" {
 		$result[1].ResultType | Should -Be "ParameterValue"
 		$result[1].ToolTip | Should -BeLike "Working tree Worktree in /w2"
 	}
+
+	It "should expand to the working trees of the current project if no project is given" {
+
+		$projectWithWorktrees = @{
+			Worktrees = @(
+				@{
+					Name = "W1"
+					RelativePath = '/w1/path'
+				},
+				@{
+					Name = "Worktree"
+					RelativePath = '/w2'
+				}
+			)
+		}
+		Mock GetCurrentProject { @("P1") } -Verifiable
+		Mock GetProjects { @("P1") } -ParameterFilter { $Filter -eq 'P1' } -Verifiable
+		Mock GetProjectConfig { $projectWithWorktrees } -ParameterFilter { $Project -eq 'P1' -and $WorktreeFilter -eq 'W*' } -Verifiable
+
+		$result = _gwp__worktreeArgumentCompleter -FakeBoundParameters @{} -WordToComplete "W"
+
+		Should -InvokeVerifiable
+		$result | Should -HaveCount 2
+		$result[0].CompletionText | Should -Be "W1"
+		$result[0].ListItemText | Should -Be "W1"
+		$result[0].ResultType | Should -Be "ParameterValue"
+		$result[0].ToolTip | Should -BeLike "Working tree W1 in /w1/path"
+		$result[1].CompletionText | Should -Be "Worktree"
+		$result[1].ListItemText | Should -Be "Worktree"
+		$result[1].ResultType | Should -Be "ParameterValue"
+		$result[1].ToolTip | Should -BeLike "Working tree Worktree in /w2"
+	}
 }

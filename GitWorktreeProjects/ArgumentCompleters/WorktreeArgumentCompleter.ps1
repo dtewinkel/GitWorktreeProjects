@@ -2,12 +2,12 @@
 {
 	param($WordToComplete, $FakeBoundParameters)
 
-	$project = $FakeBoundParameters.Project
+	$project = $FakeBoundParameters.Project ?? '.'
 	if ($project -eq '.')
 	{
 		$project = GetCurrentProject
 	}
-	
+
 	$projects = @(GetProjects $project)
 	if ($projects.Length -ne 1 -or $projects[0] -ne $project)
 	{

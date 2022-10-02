@@ -13,17 +13,19 @@ Main purpose is to provide a set of CmdLets to make working with git working tre
 
 This project is still highly in development and not completely production ready. I use it at a daily base. But things need to be done to make it better still.
 
-In progress:
+Completed:
 
 - `Get-GitWorktree`
+
+In progress:
+
+- `Get-GitWorktreeProject`
 
 To complete:
 
-- `Get-GitWorktreeProject`
 - `New-GitWorktreeProject`
 - `Remove-GitWorktreeProject`
 - `New-GitWorktree`
-- `Get-GitWorktree`
 - `Open-GitWorktree`
 - `Remove-GirWorktree`
 - `Get-GitWorktreeDefault`
@@ -34,8 +36,6 @@ To complete:
 
 Add documentation to:
 
-- About GitWorktreeProject
-- `Get-GitWorktreeProject`
 - `New-GitWorktreeProject`
 - `New-GitWorktree`
 - `Open-GitWorktree`
@@ -43,8 +43,6 @@ Add documentation to:
 - `Get-GitWorktreeDefault`
 - `Set-GitWorktreeDefault`
 - `about_GitWorktreeProject`
-- `Project` class?
-- `Worktree` class?
 
 ### Finish Pester unit tests
 
