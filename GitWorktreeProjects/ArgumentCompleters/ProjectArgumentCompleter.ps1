@@ -1,12 +1,13 @@
 ﻿function global:_gwp__ProjectArgumentCompleter
 {
-	param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
+	param($WordToComplete)
 
-	$projects = GetProjects "${wordToComplete}*"
+	$projects = GetProjects "${WordToComplete}*"
 	if (-not $projects -or $projects.Length -eq 0)
 	{
 		return $null
 	}
+
 	foreach ( $project in $projects )
 	{
 		$projectConfig = GetProjectConfig -Project $project

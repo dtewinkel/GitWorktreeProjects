@@ -1,10 +1,8 @@
 ﻿function global:_gwp__worktreeFilterArgumentCompleter
 {
-	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', '')]
+	param($WordToComplete, $FakeBoundParameters)
 
-	param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
-
-	$projectFilter = $fakeBoundParameters.ProjectFilter
+	$projectFilter = $FakeBoundParameters.ProjectFilter
 	if ($projectFilter -eq '.')
 	{
 		$projectFilter = GetCurrentProject
@@ -23,7 +21,7 @@
 
 	$result = foreach ($projectName in $projects)
 	{
-		$project = GetProjectConfig -Project $projectName -WorktreeFilter "${wordToComplete}*"
+		$project = GetProjectConfig -Project $projectName -WorktreeFilter "${WordToComplete}*"
 		foreach ($worktree in $project.Worktrees)
 		{
 			$name = $worktree.Name
