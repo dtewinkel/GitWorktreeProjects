@@ -73,7 +73,7 @@ Create unit tests for:
 
 ### Rethink tools functionality
 
-- Allow to define script in project to start when opening worktree?
+- Allow to define script in project to start when opening working tree?
 - Default script in project or project settings?
 
 ## Assumptions
@@ -130,7 +130,7 @@ Gets the defaults that are used when creating a new GitWorktree project.
 
 ### Set-GitWorktreeDefault
 
-Sets the defaults to be used when creating a new GitWorktree project, such as the default Git Worktree projects root directory and the default initial branch name.
+Sets the defaults to be used when creating a new GitWorktree project, such as the default git working tree projects root directory and the default initial branch name.
 
 ## Common behavior
 

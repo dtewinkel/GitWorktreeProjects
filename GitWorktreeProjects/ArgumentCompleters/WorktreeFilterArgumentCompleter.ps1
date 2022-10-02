@@ -27,7 +27,7 @@
 		foreach ($worktree in $project.Worktrees)
 		{
 			$name = $worktree.Name
-			$description = "Worktree ${name} for project $($project.Name)"
+			$description = "Working tree ${name} for project $($project.Name)"
 			[System.Management.Automation.CompletionResult]::new($name, $name, "ParameterValue", $description)
 		}
 	}

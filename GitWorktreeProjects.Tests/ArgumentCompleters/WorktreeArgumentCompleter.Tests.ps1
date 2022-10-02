@@ -39,7 +39,7 @@ Describe "WorktreeArgumentCompleter" {
 		$result | Should -BeNullOrEmpty
 	}
 
-	It "should expand to nothing when project has no worktrees" {
+	It "should expand to nothing when project has no working trees" {
 
 		$emptyProject = @{
 			Worktrees = @()
@@ -53,7 +53,7 @@ Describe "WorktreeArgumentCompleter" {
 		$result | Should -BeNullOrEmpty
 	}
 
-	It "should expand to the worktrees of the current project" {
+	It "should expand to the working trees of the current project" {
 
 		$projectWithWorktrees = @{
 			Worktrees = @(
@@ -78,10 +78,10 @@ Describe "WorktreeArgumentCompleter" {
 		$result[0].CompletionText | Should -Be "W1"
 		$result[0].ListItemText | Should -Be "W1"
 		$result[0].ResultType | Should -Be "ParameterValue"
-		$result[0].ToolTip | Should -BeLike "Worktree W1 in /w1/path"
+		$result[0].ToolTip | Should -BeLike "Working tree W1 in /w1/path"
 		$result[1].CompletionText | Should -Be "Worktree"
 		$result[1].ListItemText | Should -Be "Worktree"
 		$result[1].ResultType | Should -Be "ParameterValue"
-		$result[1].ToolTip | Should -BeLike "Worktree Worktree in /w2"
+		$result[1].ToolTip | Should -BeLike "Working tree Worktree in /w2"
 	}
 }

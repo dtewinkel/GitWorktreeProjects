@@ -44,7 +44,7 @@ function GetProjectConfig
 		$projectConfig.Worktrees = [Worktree[]]@($projectConfig.Worktrees | Where-Object Name -ceq $WorktreeFilter)
 		if ((-not $projectConfig.Worktrees -or $projectConfig.Worktrees.Length -ne 1) -and $FailOnMissing.IsPresent)
 		{
-			throw "Worktree '$WorktreeFilter' for project '${Project}' not found! Use New-GitWorktree to create it."
+			throw "Working tree '$WorktreeFilter' for project '${Project}' not found! Use New-GitWorktree to create it."
 		}
 	}
 	else

@@ -20,7 +20,7 @@
 	if (-not (Test-Path $fullPath))
 	{
 		$projectName = $projectConfig.Name
-		throw "Path '${fullPath}' for worktree '${Worktree}' in project '${projectName}' not found!"
+		throw "Path '${fullPath}' for working tree '${Worktree}' in project '${projectName}' not found!"
 	}
 	Set-Location $fullPath
 

@@ -2,7 +2,7 @@ function Invoke-ToolWindowTitle
 {
 	[cmdletbinding()]
 	param(
-		# Project with single or no worktree.
+		# Project with single or no working tree.
 		[Parameter(mandatory)]
 		[Project] $Project,
 

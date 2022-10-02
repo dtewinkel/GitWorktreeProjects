@@ -127,7 +127,7 @@ Describe "GetProjectConfig" {
 
 	}
 
-	It "returns config with selected Worktrees if config file exists" {
+	It "returns config with selected working trees if config file exists" {
 
 		Mock GetConfigFile { $fileContents } -ParameterFilter { $FileName -eq "${projectName}.project" } -Verifiable
 
@@ -140,7 +140,7 @@ Describe "GetProjectConfig" {
 		$config.Worktrees[0].Name | Should -Be "Test123"
 	}
 
-	It "returns config with selected Worktrees if config file exists" {
+	It "returns config with selected working trees if config file exists" {
 
 		Mock GetConfigFile { $fileContents } -ParameterFilter { $FileName -eq "${projectName}.project" } -Verifiable
 
@@ -154,7 +154,7 @@ Describe "GetProjectConfig" {
 	}
 
 
-	It "returns nothing with selected Worktrees not matching if config file exists" {
+	It "returns nothing with selected working trees not matching if config file exists" {
 
 		Mock GetConfigFile { $fileContents } -ParameterFilter { $FileName -eq "${projectName}.project" } -Verifiable
 
@@ -166,7 +166,7 @@ Describe "GetProjectConfig" {
 		$config.Worktrees | Should -HaveCount 0
 	}
 
-	It "returns an empty array when Worktrees not matching if config file exists, and -WorktreeExactMatch" {
+	It "returns an empty array when working trees not matching if config file exists, and -WorktreeExactMatch" {
 
 		Mock GetConfigFile { $fileContents } -ParameterFilter { $FileName -eq "${projectName}.project" } -Verifiable
 
@@ -180,12 +180,12 @@ Describe "GetProjectConfig" {
 		$config.Worktrees | Should -HaveCount 0
 	}
 
-	It "Fail with selected Worktrees not matching if config file exists, and -WorktreeExactMatch and -FailOnMissing" {
+	It "Fail with selected working trees not matching if config file exists, and -WorktreeExactMatch and -FailOnMissing" {
 
 		Mock GetConfigFile { $fileContents } -ParameterFilter { $FileName -eq "${projectName}.project" } -Verifiable
 
 		{ GetProjectConfig -Project $projectName -WorktreeFilter None123 -WorktreeExactMatch -FailOnMissing } |
-			Should -Throw "Worktree 'None123' for project '${projectName}' not found! Use New-GitWorktree to create it."
+			Should -Throw "Working tree 'None123' for project '${projectName}' not found! Use New-GitWorktree to create it."
 
 		Should -InvokeVerifiable
 	}

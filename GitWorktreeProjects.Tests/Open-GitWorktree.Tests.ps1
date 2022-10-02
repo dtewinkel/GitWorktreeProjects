@@ -20,7 +20,7 @@ Describe "Open-GitWorktree" {
 		$command | Should -HaveParameter NoTools
 	}
 
-	It "should fail if it cannot get the project or worktree" {
+	It "should fail if it cannot get the project or working tree" {
 		{
 			$projectName = "NonExisting"
 			$worktreeName = "None"
@@ -33,7 +33,7 @@ Describe "Open-GitWorktree" {
 		Should -InvokeVerifiable
 	}
 
-	It "should fail if the Worktree path does not exist" {
+	It "should fail if the working tree path does not exist" {
 
 		$projectName = "TestProject"
 		$worktreeName = "myWorktree"
@@ -57,7 +57,7 @@ Describe "Open-GitWorktree" {
 
 		{
 			Open-GitWorktree -Project $projectName -Worktree $worktreeName
-		} | Should -Throw "Path '${fullPath}' for worktree '${worktreeName}' in project '${projectName}' not found!"
+		} | Should -Throw "Path '${fullPath}' for working tree '${worktreeName}' in project '${projectName}' not found!"
 
 		Should -InvokeVerifiable
 	}
@@ -120,7 +120,7 @@ Describe "Open-GitWorktree" {
 		Should -InvokeVerifiable
 	}
 
-	It "Should fail if a tools for the worktree is not found" {
+	It "Should fail if a tools for the working tree is not found" {
 
 		$projectName = "TestProject"
 		$worktreeName = "myWorktree"
@@ -155,7 +155,7 @@ Describe "Open-GitWorktree" {
 		Should -InvokeVerifiable
 	}
 
-	It "Should execute the tools as defined for the worktree" {
+	It "Should execute the tools as defined for the working tree" {
 
 		$script:fn1ProjectConfig = $Null
 		$script:fn1Parameters = $null
@@ -218,7 +218,7 @@ Describe "Open-GitWorktree" {
 		Should -InvokeVerifiable
 	}
 
-	It "Should not execute the tools as defined for the worktree if NoTools is given" {
+	It "Should not execute the tools as defined for the working tree if NoTools is given" {
 
 		$projectName = "TestProject"
 		$worktreeName = "myWorktree"

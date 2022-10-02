@@ -36,7 +36,7 @@ Describe "WorktreeFilterArgumentCompleter" {
 		$result | Should -BeNullOrEmpty
 	}
 
-	It "should expand to nothing when project has no worktrees" {
+	It "should expand to nothing when project has no working trees" {
 
 		$emptyProject = @{
 			Worktrees = @()
@@ -50,7 +50,7 @@ Describe "WorktreeFilterArgumentCompleter" {
 		$result | Should -BeNullOrEmpty
 	}
 
-	It "should expand to worktrees for all found projects" {
+	It "should expand to working trees for all found projects" {
 
 		$projectsWithWorktrees = @(
 			@{
@@ -93,18 +93,18 @@ Describe "WorktreeFilterArgumentCompleter" {
 		$result[0].CompletionText | Should -Be "W1"
 		$result[0].ListItemText | Should -Be "W1"
 		$result[0].ResultType | Should -Be "ParameterValue"
-		$result[0].ToolTip | Should -BeLike "Worktree W1 for project P1"
+		$result[0].ToolTip | Should -BeLike "Working tree W1 for project P1"
 		$result[1].CompletionText | Should -Be "Worktree"
 		$result[1].ListItemText | Should -Be "Worktree"
 		$result[1].ResultType | Should -Be "ParameterValue"
-		$result[1].ToolTip | Should -BeLike "Worktree Worktree for project P1"
+		$result[1].ToolTip | Should -BeLike "Working tree Worktree for project P1"
 		$result[2].CompletionText | Should -Be "X1"
 		$result[2].ListItemText | Should -Be "X1"
 		$result[2].ResultType | Should -Be "ParameterValue"
-		$result[2].ToolTip | Should -BeLike "Worktree X1 for project P2"
+		$result[2].ToolTip | Should -BeLike "Working tree X1 for project P2"
 	}
 
-	It "should expand to the worktrees of the current project" {
+	It "should expand to the working trees of the current project" {
 
 		$projectWithWorktrees = @{
 			Name      = "P1"
@@ -131,10 +131,10 @@ Describe "WorktreeFilterArgumentCompleter" {
 		$result[0].CompletionText | Should -Be "W1"
 		$result[0].ListItemText | Should -Be "W1"
 		$result[0].ResultType | Should -Be "ParameterValue"
-		$result[0].ToolTip | Should -BeLike "Worktree W1 for project P1"
+		$result[0].ToolTip | Should -BeLike "Working tree W1 for project P1"
 		$result[1].CompletionText | Should -Be "Worktree"
 		$result[1].ListItemText | Should -Be "Worktree"
 		$result[1].ResultType | Should -Be "ParameterValue"
-		$result[1].ToolTip | Should -BeLike "Worktree Worktree for project P1"
+		$result[1].ToolTip | Should -BeLike "Working tree Worktree for project P1"
 	}
 }

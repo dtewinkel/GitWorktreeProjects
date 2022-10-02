@@ -22,7 +22,7 @@
 	foreach ($worktree in $worktrees)
 	{
 		$name = $worktree.Name
-		$description = "Worktree ${name} in $($worktree.RelativePath)"
+		$description = "Working tree ${name} in $($worktree.RelativePath)"
 		[System.Management.Automation.CompletionResult]::new($name, $name, "ParameterValue", $description)
 	}
 }

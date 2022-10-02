@@ -18,12 +18,12 @@
 	$worktreeConfig = $config.worktrees | Where-Object Name -CEQ $Worktree
 	if (-not $worktreeConfig)
 	{
-		throw "Worktree '${Worktree}' not found in project '$($config.Name)' configuration!"
+		throw "Working tree '${Worktree}' not found in project '$($config.Name)' configuration!"
 	}
 	$worktreePath = (Get-Item (Join-Path $config.RootPath $worktreeConfig.RelativePath)).FullName
 	if (-not (Test-Path $worktreePath) -and -not $Force.IsPresent)
 	{
-		throw "Worktree path '${worktreePath} not found"
+		throw "Working tree path '${worktreePath} not found"
 	}
 	$gitPath = $config.GitPath
 	if (-not (Test-Path $gitPath))

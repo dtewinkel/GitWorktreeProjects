@@ -17,7 +17,7 @@ Examples
     New-GitWorktreeProject GitWorktreeProjects https://github.com/dtewinkel/GitWorktreeProjects.git -SourceBranch master
     new-GirWorktree GitWorktreeProjects master
 
-Will create a new project called GitWorktreeProjects and clone it from github. Then it will create a worktree called
+Will create a new project called GitWorktreeProjects and clone it from github. Then it will create a working tree called
 'master' based on the master branch.
 
 See also

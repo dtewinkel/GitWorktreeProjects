@@ -47,14 +47,14 @@
 	$worktree = $projectConfig.Worktrees | Where-Object Name -EQ $Name
 	if ($worktree)
 	{
-		throw "Worktree with name '${Name}' already exists!"
+		throw "Working tree with name '${Name}' already exists!"
 	}
 
 	Set-Location -Path $projectConfig.GitPath
 	$worktreePath = Join-Path $projectConfig.RootPath $Path
 	if (Test-Path $worktreePath)
 	{
-		throw "Worktree path '${worktreePath}' already exists!"
+		throw "Working tree path '${worktreePath}' already exists!"
 	}
 
 	if ($NewBranch)
@@ -87,7 +87,7 @@
 	}
 	else
 	{
-		throw "Failed to create folder '${branchPath}'. Worktree not created"
+		throw "Failed to create folder '${branchPath}'. Working tree not created"
 	}
 }
 
