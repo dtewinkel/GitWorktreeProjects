@@ -1,9 +1,8 @@
 ﻿function global:_gwp__worktreeFilterArgumentCompleter
 {
-
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSReviewUnusedParameter', '')]
 
-	param ($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
+	param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
 
 	$projectFilter = $fakeBoundParameters.ProjectFilter
 	if ($projectFilter -eq '.')
@@ -32,7 +31,7 @@
 			[System.Management.Automation.CompletionResult]::new($name, $name, "ParameterValue", $description)
 		}
 	}
-	if(-not $result -or $result.Length -eq 0)
+	if (-not $result -or $result.Length -eq 0)
 	{
 		return $null
 	}
