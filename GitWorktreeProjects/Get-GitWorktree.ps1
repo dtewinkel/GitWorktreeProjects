@@ -71,7 +71,7 @@
 		Supports tab completion to select the project.
 		#>
 		[Parameter()]
-		[ArgumentCompleter({ _gwp__ProjectArgumentCompleter -WordToCompete $args[2] })]
+		[ArgumentCompleter({ _gwp__ProjectArgumentCompleter -WordToComplete $args[2] })]
 		[String] $Project = '.',
 
 		<#
@@ -87,7 +87,7 @@
 		#>
 		[Parameter()]
 		[Alias("Filter")]
-		[ArgumentCompleter({ _gwp__worktreeArgumentCompleter -WordToCompete $args[2] -FakeBoundParameters $args[4] })]
+		[ArgumentCompleter({ _gwp__worktreeArgumentCompleter -WordToComplete $args[2] -FakeBoundParameters $args[4] })]
 		[String] $WorktreeFilter = '*'
 	)
 

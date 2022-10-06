@@ -3,11 +3,11 @@
 	[cmdletbinding()]
 	param(
 		[Parameter(Mandatory)]
-		[ArgumentCompleter({ _gwp__ProjectArgumentCompleter -WordToCompete $args[2] })]
+		[ArgumentCompleter({ _gwp__ProjectArgumentCompleter -WordToComplete $args[2] })]
 		[String] $Project,
 
 		[Parameter(Mandatory)]
-		[ArgumentCompleter({ _gwp__worktreeArgumentCompleter -WordToCompete $args[2] -FakeBoundParameters $args[4] })]
+		[ArgumentCompleter({ _gwp__worktreeArgumentCompleter -WordToComplete $args[2] -FakeBoundParameters $args[4] })]
 		[String] $Worktree,
 
 		[Parameter()]
