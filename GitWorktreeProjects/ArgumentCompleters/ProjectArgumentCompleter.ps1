@@ -2,7 +2,7 @@
 {
 	param($WordToComplete)
 
-	$projects = GetProjects "${WordToComplete}*"
+	$projects = GetProjects -Filter "${WordToComplete}*"
 	if (-not $projects -or $projects.Length -eq 0)
 	{
 		return $null
