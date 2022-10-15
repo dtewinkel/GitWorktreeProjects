@@ -64,7 +64,7 @@
 		This can be used when called from anywhere inside the folder structure of
 		the current project.
 		If project name '.' is used outside of the folder structure of the current
-		project then this will throw an error.
+		project then an error will be thrown.
 
 		Defaults to '.' to get the current project.
 

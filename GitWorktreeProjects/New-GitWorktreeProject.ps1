@@ -15,6 +15,7 @@ Function New-GitWorktreeProject
 		[String] $TargetPath,
 
 		[Parameter()]
+		[ArgumentCompletions('main', 'develop', 'trunk', 'root', 'dev', 'primary', 'master')]
 		[String] $SourceBranch,
 
 		[Parameter()]
