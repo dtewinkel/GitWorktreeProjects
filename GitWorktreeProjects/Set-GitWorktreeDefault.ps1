@@ -6,7 +6,7 @@
 		[String] $DefaultRoot,
 
 		[Parameter()]
-		[ArgumentCompletion('main', 'develop', 'trunk', 'root', 'dev', 'primary', 'master')]
+		[ArgumentCompletions('main', 'develop', 'trunk', 'root', 'dev', 'primary', 'master')]
 		[String] $DefaultBranch
 	)
 
