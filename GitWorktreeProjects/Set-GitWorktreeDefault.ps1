@@ -6,15 +6,13 @@
 		[String] $DefaultRoot,
 
 		[Parameter()]
-		[String] $DefaultBranch,
-
-		[Parameter()]
-		[String[]] $DefaultTools
+		[ArgumentCompletion('main', 'develop', 'trunk', 'root', 'dev', 'primary', 'master')]
+		[String] $DefaultBranch
 	)
 
-	if (-not $DefaultRoot -and -not $DefaultBranch -and -not $DefaultTools)
+	if (-not $DefaultRoot -and -not $DefaultBranch)
 	{
-		throw "At least either -DefaultRoot, -DefaultBranch, or -DefaultTools must be specified!"
+		throw "At least either -DefaultRoot or -DefaultBranch must be specified!"
 	}
 
 	$globalConfig = GetGlobalConfig
@@ -30,11 +28,6 @@
 	if ($DefaultBranch)
 	{
 		$globalConfig.DefaultSourceBranch = $DefaultBranch
-	}
-
-	if ($DefaultTools)
-	{
-		$globalConfig.DefaultTools = $DefaultTools
 	}
 
 	SetGlobalConfig -GlobalConfig $globalConfig

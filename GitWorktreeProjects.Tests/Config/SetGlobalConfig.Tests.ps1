@@ -12,7 +12,6 @@ Describe "SetGlobalConfig" {
 		$globalConfig = @{
 			DefaultRootPath     = '/root'
 			DefaultSourceBranch = 'origin'
-			DefaultTools        = @( '1', 'a')
 		}
 
 		$configFilePath = '/config/path'
@@ -58,7 +57,6 @@ Describe "SetGlobalConfig" {
 			SchemaVersion       = 1
 			DefaultRootPath     = '/root'
 			DefaultSourceBranch = 'origin'
-			DefaultTools        = @( '1', 'a')
 		}
 		Mock Test-Path { $true } -ParameterFilter { $Path -eq $configFilePath } -Verifiable
 		Mock ConvertTo-Json { $stringContent } -Verifiable -ParameterFilter { & $PSScriptRoot/../Helpers/CompareObject.ps1 $InputObject $expectedConfig GlobalConfigFile -AsBoolean }

@@ -41,8 +41,8 @@ function CompareComplexItem($actual,	$Expected, $itemType)
 		Tool             = 'Name:string', 'Parameters:string[]'
 		Project          = 'Name:string', 'RootPath:string', 'GitPath:string', 'GitRepository:string', 'SourceBranch:string', 'WorkTrees:WorkTree[]', 'Tools:Tool[]'
 		ProjectFile      = 'Name:string', 'SchemaVersion:Int32', 'RootPath:string', 'GitPath:string', 'GitRepository:string', 'SourceBranch:string', 'WorkTrees:WorkTree[]', 'Tools:Tool[]'
-		GlobalConfig     = 'DefaultRootPath:string', 'DefaultSourceBranch:string', 'DefaultTools:string[]'
-		GlobalConfigFile = 'SchemaVersion:Int32', 'DefaultRootPath:string', 'DefaultSourceBranch:string', 'DefaultTools:string[]'
+		GlobalConfig     = 'DefaultRootPath:string', 'DefaultSourceBranch:string'
+		GlobalConfigFile = 'SchemaVersion:Int32', 'DefaultRootPath:string', 'DefaultSourceBranch:string'
 	}.$itemType
 
 	foreach($property in $properties)

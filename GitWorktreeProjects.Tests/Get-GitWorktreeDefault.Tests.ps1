@@ -16,7 +16,6 @@ Describe "Get-GitWorktreeDefault" {
 		$configFromFile = @{
 			DefaultRootPath     = '/root'
 			DefaultSourceBranch = 'origin'
-			DefaultTools        = @( '1', 'a')
 		}
 
 		Mock GetGlobalConfig { $configFromFile } -Verifiable -ModuleName GitWorktreeProjects
