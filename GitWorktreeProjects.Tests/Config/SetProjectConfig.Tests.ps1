@@ -9,7 +9,7 @@ Describe "SetProjectConfig" {
 
 	BeforeAll {
 
-		. $PSScriptRoot/../Helpers/LoadAllModuleFiles.ps1 -ModuleFolder $ModuleFolder
+		. $PSScriptRoot/../TestHelpers/LoadAllModuleFiles.ps1 -ModuleFolder $ModuleFolder
 
 		$configFileDirectory = "DoesNotExist"
 		$configFilePath = "DoesNotExist/${projectName}.project"

@@ -9,7 +9,7 @@ Describe "Remove-GitWorktree" {
 
 	BeforeAll {
 		Push-Location
-		. $PSScriptRoot/Helpers/LoadModule.ps1 -ModuleFolder $ModuleFolder
+		. $PSScriptRoot/TestHelpers/LoadModule.ps1 -ModuleFolder $ModuleFolder
 	}
 
 	It "should have the right parameters" {

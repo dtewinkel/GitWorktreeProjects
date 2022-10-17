@@ -9,7 +9,7 @@ Describe "GetGlobalConfig" {
 
 	BeforeAll {
 
-		. $PSScriptRoot/../Helpers/LoadAllModuleFiles.ps1 -ModuleFolder $ModuleFolder
+		. $PSScriptRoot/../TestHelpers/LoadAllModuleFiles.ps1 -ModuleFolder $ModuleFolder
 	}
 
 	It "should throw if GetConfigFile throws" {

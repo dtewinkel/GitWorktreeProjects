@@ -9,7 +9,7 @@ Describe "New-GitWorktreeProject" {
 
 	BeforeAll {
 		Push-Location
-		. $PSScriptRoot/Helpers/LoadModule.ps1 -ModuleFolder $ModuleFolder
+		. $PSScriptRoot/TestHelpers/LoadModule.ps1 -ModuleFolder $ModuleFolder
 
 		$projectName = "MyProject"
 		$repository = "https://my.repository/"

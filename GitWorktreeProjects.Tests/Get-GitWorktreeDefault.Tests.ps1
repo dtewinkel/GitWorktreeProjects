@@ -8,7 +8,7 @@ param (
 Describe "Get-GitWorktreeDefault" {
 
 	BeforeAll {
-		. $PSScriptRoot/Helpers/LoadModule.ps1 -ModuleFolder $ModuleFolder
+		. $PSScriptRoot/TestHelpers/LoadModule.ps1 -ModuleFolder $ModuleFolder
 	}
 
 	It "should use GetGlobalConfig and pass on the results" {

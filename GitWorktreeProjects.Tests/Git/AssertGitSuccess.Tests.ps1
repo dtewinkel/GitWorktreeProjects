@@ -9,7 +9,7 @@ Describe "AssertGitSuccess" {
 
 	BeforeAll {
 
-		. $PSScriptRoot/../Helpers/LoadAllModuleFiles.ps1 -ModuleFolder $ModuleFolder
+		. $PSScriptRoot/../TestHelpers/LoadAllModuleFiles.ps1 -ModuleFolder $ModuleFolder
 	}
 
 	It "should throw exception if git was not successful" -TestCases @(

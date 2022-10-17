@@ -55,7 +55,7 @@ Describe "GetConfigFilePath" {
 			Mock Get-Item $resultScriptBlock -ParameterFilter $parameterFilterScriptBlock
 		}
 
-		. $PSScriptRoot/../Helpers/LoadAllModuleFiles.ps1 -ModuleFolder $ModuleFolder
+		. $PSScriptRoot/../TestHelpers/LoadAllModuleFiles.ps1 -ModuleFolder $ModuleFolder
 	}
 
 	It "should have the right parameters" {

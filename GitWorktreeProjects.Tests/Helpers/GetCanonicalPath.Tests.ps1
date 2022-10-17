@@ -10,7 +10,7 @@ Describe "GetCanonicalPath" {
 
 	BeforeAll {
 
-		. $PSScriptRoot/../Helpers/LoadAllModuleFiles.ps1 -ModuleFolder $ModuleFolder
+		. $PSScriptRoot/../TestHelpers/LoadAllModuleFiles.ps1 -ModuleFolder $ModuleFolder
 	}
 
 }

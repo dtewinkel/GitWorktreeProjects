@@ -9,7 +9,7 @@ Describe "GlobalConfig" {
 
 	BeforeAll {
 
-		. $PSScriptRoot/../Helpers/LoadAllModuleFiles.ps1 -ModuleFolder $ModuleFolder
+		. $PSScriptRoot/../TestHelpers/LoadAllModuleFiles.ps1 -ModuleFolder $ModuleFolder
 	}
 
 	It "Creates a new instance with sensible defaults for <VarName>" -TestCases @(

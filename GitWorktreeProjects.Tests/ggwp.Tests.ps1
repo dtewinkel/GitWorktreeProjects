@@ -8,7 +8,7 @@ param (
 Describe "ggwp" {
 
 	BeforeAll {
-		. $PSScriptRoot/Helpers/LoadModule.ps1 -ModuleFolder $ModuleFolder
+		. $PSScriptRoot/TestHelpers/LoadModule.ps1 -ModuleFolder $ModuleFolder
 	}
 
 	It "should be an alias of Get-GitWorktreeProject" {

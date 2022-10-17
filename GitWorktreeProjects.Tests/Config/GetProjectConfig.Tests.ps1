@@ -9,7 +9,7 @@ Describe "GetProjectConfig" {
 
 	BeforeAll {
 
-		. $PSScriptRoot/../Helpers/LoadAllModuleFiles.ps1 -ModuleFolder $ModuleFolder
+		. $PSScriptRoot/../TestHelpers/LoadAllModuleFiles.ps1 -ModuleFolder $ModuleFolder
 
 		$projectName = "Testing123"
 		$worktrees = @(

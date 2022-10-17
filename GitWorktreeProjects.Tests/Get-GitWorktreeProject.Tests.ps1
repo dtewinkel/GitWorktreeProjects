@@ -9,7 +9,7 @@ Describe "Get-GitWorktreeProject" {
 
 	BeforeAll {
 		Push-Location
-		. $PSScriptRoot/Helpers/LoadModule.ps1 -ModuleFolder $ModuleFolder
+		. $PSScriptRoot/TestHelpers/LoadModule.ps1 -ModuleFolder $ModuleFolder
 	}
 
 	It "should have the right parameters" {
@@ -21,7 +21,7 @@ Describe "Get-GitWorktreeProject" {
 
 	It "should get project information for a specific project" {
 		$ProjectName = "SecondProject"
-		$ExpectedProject = @{}
+		$ExpectedProject = @{ Name = $ProjectName }
 
 		Mock GetProjects { @( $ProjectName ) } -ParameterFilter { $Filter -eq $ProjectName } -Verifiable -ModuleName GitWorktreeProjects
 		Mock GetProjectConfig { $ExpectedProject } -ParameterFilter { $Project -eq $ProjectName -and $WorkTreeFilter -eq '*' } -Verifiable -ModuleName GitWorktreeProjects
@@ -29,7 +29,7 @@ Describe "Get-GitWorktreeProject" {
 		$result = Get-GitWorktreeProject -ProjectFilter $ProjectName
 
 		Should -InvokeVerifiable
-		$result | Should -Be $ExpectedProject
+		Test-Equality $result, $ExpectedProject | Should -Be $true -Because "boo"
 	}
 
 	It "Should return information about all projects if called without parameters" {
@@ -46,7 +46,7 @@ Describe "Get-GitWorktreeProject" {
 		$result = Get-GitWorktreeProject
 
 		Should -InvokeVerifiable
-		$result | Should -Be @( $ExpectedProject1, $ExpectedProject2 )
+		Test-Equality $result, @( $ExpectedProject1, $ExpectedProject2 ) | Should -Be $true -Because "boo"
 	}
 
 	It "Should return information about the current project" {
@@ -60,6 +60,6 @@ Describe "Get-GitWorktreeProject" {
 
 		Should -InvokeVerifiable
 		Should -Not -Invoke GetProjects -ModuleName GitWorktreeProjects
-		$result | Should -Be $ExpectedProject
+		Test-Equality $result, $ExpectedProject | Should -Be $true -Because "boo"
 	}
 }

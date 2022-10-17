@@ -8,7 +8,8 @@ param (
 Describe "Set-GitWorktreeDefault" {
 
 	BeforeAll {
-		. $PSScriptRoot/Helpers/LoadModule.ps1 -ModuleFolder $ModuleFolder
+		. $PSScriptRoot/TestHelpers/LoadModule.ps1 -ModuleFolder $ModuleFolder
+		. $PSScriptRoot/TestHelpers/LoadTestHelperFiles.ps1
 	}
 
 	BeforeEach {
@@ -71,7 +72,7 @@ Describe "Set-GitWorktreeDefault" {
 		Set-GitWorktreeDefault -DefaultBranch $expectedBranch
 
 		Should -InvokeVerifiable
-		Should -Invoke SetGlobalConfig -ParameterFilter { & $PSScriptRoot/Helpers/CompareObject.ps1 $GlobalConfig $expectedConfig GlobalConfig -AsBoolean } -ModuleName GitWorktreeProjects
+		Should -Invoke SetGlobalConfig -ParameterFilter { Compare-TestObject $GlobalConfig $expectedConfig GlobalConfig -AsBoolean } -ModuleName GitWorktreeProjects
 	}
 
 	It "should update all if all are set" {
@@ -86,6 +87,6 @@ Describe "Set-GitWorktreeDefault" {
 		Set-GitWorktreeDefault -DefaultRoot $expectedDefaultRoot -DefaultBranch $expectedBranch
 
 		Should -InvokeVerifiable
-		Should -Invoke SetGlobalConfig -ParameterFilter { & $PSScriptRoot/Helpers/CompareObject.ps1 $GlobalConfig $expectedConfig GlobalConfig -AsBoolean } -ModuleName GitWorktreeProjects
+		Should -Invoke SetGlobalConfig -ParameterFilter { Compare-TestObject $GlobalConfig $expectedConfig GlobalConfig -AsBoolean } -ModuleName GitWorktreeProjects
 	}
 }

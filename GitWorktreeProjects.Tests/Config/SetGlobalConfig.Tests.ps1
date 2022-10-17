@@ -17,7 +17,8 @@ Describe "SetGlobalConfig" {
 		$configFilePath = '/config/path'
 		$configFile = '/config/file'
 
-		. $PSScriptRoot/../Helpers/LoadAllModuleFiles.ps1 -ModuleFolder $ModuleFolder
+		. $PSScriptRoot/../TestHelpers/LoadAllModuleFiles.ps1 -ModuleFolder $ModuleFolder
+		. $PSScriptRoot/../TestHelpers/LoadTestHelperFiles.ps1
 
 		Mock Out-File {} -RemoveParameterType "Encoding"
 		Mock New-Item { @{} }
@@ -59,7 +60,7 @@ Describe "SetGlobalConfig" {
 			DefaultSourceBranch = 'origin'
 		}
 		Mock Test-Path { $true } -ParameterFilter { $Path -eq $configFilePath } -Verifiable
-		Mock ConvertTo-Json { $stringContent } -Verifiable -ParameterFilter { & $PSScriptRoot/../Helpers/CompareObject.ps1 $InputObject $expectedConfig GlobalConfigFile -AsBoolean }
+		Mock ConvertTo-Json { $stringContent } -Verifiable -ParameterFilter { Compare-TestObject $InputObject $expectedConfig GlobalConfigFile -AsBoolean }
 
 		SetGlobalConfig -GlobalConfig $globalConfig
 

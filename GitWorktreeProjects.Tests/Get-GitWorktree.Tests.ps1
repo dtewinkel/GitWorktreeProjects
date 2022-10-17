@@ -9,9 +9,10 @@ Describe "Get-GitWorktree" {
 
 	BeforeEach {
 		Push-Location
-		. $PSScriptRoot/Helpers/LoadModule.ps1 -ModuleFolder $ModuleFolder
+		. $PSScriptRoot/TestHelpers/LoadModule.ps1 -ModuleFolder $ModuleFolder
+		. $PSScriptRoot/TestHelpers/LoadTestHelperFiles.ps1
 
-		$projectConfigs = & $PSScriptRoot/Helpers/GetTestProjectConfig.ps1
+		$projectConfigs = Get-TestProjectConfig
 		$projectConfig = $projectConfigs[0]
 	}
 
